@@ -87,6 +87,21 @@ public sealed class ConversionPipeline
             generated.Add(pagePath);
         }
 
+        // Redirect topics for context IDs declared on sub-headings. The compiler resolves an
+        // alias only to a topic file, so each anchored ID gets a stub that forwards to the
+        // anchor; these files must also be listed in [FILES].
+        var anchorFiles = new List<string>();
+        foreach (var page in document.Pages)
+        {
+            foreach (var anchor in page.Anchors)
+            {
+                var stubPath = Path.Combine(outputDirectory, anchor.FileName);
+                File.WriteAllText(stubPath, _html.GenerateAnchorPage(anchor, page.Title, document));
+                generated.Add(stubPath);
+                anchorFiles.Add(anchor.FileName);
+            }
+        }
+
         var indexPath = Path.Combine(outputDirectory, "index.html");
         File.WriteAllText(indexPath, _html.GenerateIndexPage(document));
         generated.Add(indexPath);
@@ -96,6 +111,7 @@ public sealed class ConversionPipeline
         var hasIndex = document.IndexEntries.Count > 0;
         var files = document.Pages.Select(p => p.FileName)
             .Concat(new[] { "index.html", CssGenerator.FileName })
+            .Concat(anchorFiles)
             .Concat(hasIndex ? new[] { names.HhkFile } : Array.Empty<string>())
             .Concat(parsed.Images.Select(i => "assets/" + i.FileName))
             .ToList();

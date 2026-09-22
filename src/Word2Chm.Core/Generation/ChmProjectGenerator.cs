@@ -65,7 +65,9 @@ public static class ChmProjectGenerator
 
             foreach (var anchor in page.Anchors)
             {
-                builder.AppendLine($"{anchor.Symbol}={page.FileName}#{anchor.Anchor}");
+                // The compiler resolves an alias only to a topic file, so the symbol
+                // targets the redirect stub rather than "page.html#anchor".
+                builder.AppendLine($"{anchor.Symbol}={anchor.FileName}");
             }
         }
 

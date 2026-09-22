@@ -40,10 +40,17 @@ si filtrano con `grep -v NETSDK1188`.
 - **ID di contesto**: definiti dall'utente nei titoli come `Titolo {#IDH_NOME}`
   (o `{#IDH_NOME=1234}`). Vanno mantenuti stabili: sono il contratto verso il
   codice C++ che chiama `HtmlHelp`.
-- **ID di contesto su sottotitoli**: `[ALIAS]` accetta anche
-  `IDH_X=file.htm#anchor`, quindi un marcatore su un titolo sotto il livello di
-  pagina non viene scartato: finisce in `HelpPage.Anchors` e punta a un'ancora
-  nella pagina che lo contiene.
+- **ID di contesto su sottotitoli**: `[ALIAS]` accetta solo un file, non
+  `file.htm#anchor`: `hhc.exe` cercherebbe un file con quel nome letterale e
+  segnala `HHC3015 ... the file does not exist`, senza però fallire la
+  compilazione. Un marcatore su un titolo sotto il livello di pagina finisce
+  quindi in `HelpPage.Anchors` e riceve una piccola pagina di reindirizzamento
+  (`<nome>-<ancora>-id.html`) che porta all'ancora; lo stub va elencato in
+  `[FILES]`.
+- **Codifica dei file letti da `hhc.exe`**: `.hhc`, `.hhk` e anche i file HTML
+  vanno ASCII puri. `hhc.exe` li legge come ANSI, quindi i caratteri UTF-8
+  (apostrofi tipografici, trattini lunghi) vanno emessi come entità numeriche.
+  In HTML lo fa `HtmlGenerator.ToAsciiSafe`.
 - **Campi XE**: Word spezza l'istruzione di un campo su più run
   (` XE "` + parola chiave + `" `), spesso annidata in un campo `HYPERLINK`.
   Vanno concatenati i `FieldCode` tra `fldChar begin/end`; leggere un solo run

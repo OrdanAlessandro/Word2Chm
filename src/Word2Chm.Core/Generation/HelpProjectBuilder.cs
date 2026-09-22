@@ -62,17 +62,20 @@ public sealed class HelpProjectBuilder
                 }
                 else if (!string.IsNullOrEmpty(heading.Symbol))
                 {
-                    // A Help 1 context ID maps to a topic file, but [ALIAS] also accepts
-                    // "file.htm#anchor", so a marker on a sub-heading is bound to an anchor
-                    // inside the page instead of being dropped.
+                    // A Help 1 context ID resolves to a topic file, and the compiler does not
+                    // accept an anchor in that file name, so a marker on a sub-heading is
+                    // bound to a small redirect topic that forwards to the page anchor.
                     heading.Anchor = slugger.Slug(heading.Title);
                     var id = ResolveContextId(heading.Symbol, heading.ExplicitId, options, usedIds, ref nextId);
+                    var anchorTarget = $"{current.FileName}#{heading.Anchor}";
                     current.Anchors.Add(new HelpAnchor
                     {
                         Symbol = heading.Symbol!,
                         ContextId = id,
                         Anchor = heading.Anchor,
                         Title = heading.Title,
+                        FileName = AnchorFileName(current.FileName, heading.Anchor),
+                        Target = anchorTarget,
                     });
 
                     var aliasTarget = (current, heading.Anchor);
@@ -151,6 +154,17 @@ public sealed class HelpProjectBuilder
         {
             _bookmarks[name] = new BookmarkTarget(target.Page.FileName, target.Anchor);
         }
+    }
+
+    /// <summary>
+    /// Builds the file name of the redirect topic for an anchored context ID. The page
+    /// slug is reused with an <c>-id</c> suffix so the stub stays recognisable next to
+    /// the page it forwards to.
+    /// </summary>
+    private static string AnchorFileName(string pageFileName, string anchor)
+    {
+        var stem = Path.GetFileNameWithoutExtension(pageFileName);
+        return stem + "-" + anchor + "-id.html";
     }
 
     private static void RegisterIndexKeywords(

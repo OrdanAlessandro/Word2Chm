@@ -241,18 +241,36 @@ public sealed class ConversionPipelineTests : IDisposable
         var header = File.ReadAllText(result.HeaderPath!);
         Assert.Contains("#define IDH_PRIMO", header);
 
-        // IDH_SEZIONE sits on a level-2 heading. It is bound to an in-page anchor through
-        // [ALIAS] ("file.htm#anchor"), which is how a Help 1 context ID reaches a
-        // sub-section, so it must appear in the header and the alias file.
+        // IDH_SEZIONE sits on a level-2 heading. The compiler resolves an alias only to a
+        // topic file ("file.htm#anchor" triggers HHC3015 and the CHM then fails to open),
+        // so the symbol targets a small redirect topic that forwards to the section.
         Assert.Contains("#define IDH_SEZIONE", header);
 
         var page = result.Document.Pages[0];
         var anchor = Assert.Single(page.Anchors);
         Assert.Equal("IDH_SEZIONE", anchor.Symbol);
         Assert.Equal("sezione", anchor.Anchor);
+        Assert.Equal(page.FileName + "#sezione", anchor.Target);
 
         var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
-        Assert.Contains("IDH_SEZIONE=" + page.FileName + "#sezione", hhp);
+
+        // No alias may carry an anchor, or hhc.exe reports the file as missing.
+        Assert.DoesNotContain("#", AliasSection(hhp));
+        Assert.Contains("IDH_SEZIONE=" + anchor.FileName, hhp);
+
+        var stub = Path.Combine(result.OutputDirectory, anchor.FileName);
+        Assert.True(File.Exists(stub));
+        Assert.Contains(page.FileName + "#sezione", File.ReadAllText(stub));
+        Assert.Contains(anchor.FileName, hhp);
+    }
+
+    /// <summary>Returns the [ALIAS] section of a .hhp file.</summary>
+    private static string AliasSection(string hhp)
+    {
+        var start = hhp.IndexOf("[ALIAS]", StringComparison.Ordinal);
+        Assert.True(start >= 0);
+        var end = hhp.IndexOf("\n[", start + 1, StringComparison.Ordinal);
+        return end < 0 ? hhp[start..] : hhp[start..end];
     }
 
     [Fact]

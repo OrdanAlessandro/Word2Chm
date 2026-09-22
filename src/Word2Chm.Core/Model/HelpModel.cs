@@ -86,6 +86,17 @@ public sealed class HelpAnchor
 
     /// <summary>Visible heading text, used for the generated header comment.</summary>
     public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Redirect topic bound to the symbol in [ALIAS]. The Help compiler resolves an
+    /// alias only to a topic file: <c>file.htm#anchor</c> is rejected with
+    /// "HHC3015 ... the file does not exist", so the alias targets a small stub page
+    /// that forwards to <see cref="Target"/>.
+    /// </summary>
+    public string FileName { get; set; } = string.Empty;
+
+    /// <summary>Page file and anchor the stub forwards to.</summary>
+    public string Target { get; set; } = string.Empty;
 }
 
 /// <summary>An entry of the table of contents tree, mirroring document heading levels.</summary>

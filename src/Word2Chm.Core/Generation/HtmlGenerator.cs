@@ -12,6 +12,31 @@ public sealed class HtmlGenerator
 {
     private const string CssFileName = "help.css";
 
+    /// <summary>
+    /// Renders the small redirect topic bound to a context ID declared on a sub-heading.
+    /// The Help compiler only resolves an alias to a topic file, so this page carries
+    /// the ID and forwards the viewer to the anchor that actually holds the section.
+    /// </summary>
+    public string GenerateAnchorPage(HelpAnchor anchor, string pageTitle, HelpDocument document)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("<!DOCTYPE html>");
+        builder.AppendLine("<html lang=\"" + WebUtility.HtmlEncode(document.Language) + "\">");
+        builder.AppendLine("<head>");
+        builder.AppendLine("<meta charset=\"utf-8\">");
+        builder.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
+        builder.AppendLine("<title>" + WebUtility.HtmlEncode(anchor.Title) + "</title>");
+        builder.AppendLine("<meta http-equiv=\"refresh\" content=\"0; url=" + EscapeAttribute(anchor.Target) + "\">");
+        builder.AppendLine("</head>");
+        builder.AppendLine("<body>");
+        builder.AppendLine("<p>" + WebUtility.HtmlEncode(pageTitle) + " &gt; <a href=\"" +
+                           EscapeAttribute(anchor.Target) + "\">" +
+                           WebUtility.HtmlEncode(anchor.Title) + "</a></p>");
+        builder.AppendLine("</body>");
+        builder.AppendLine("</html>");
+        return ToAsciiSafe(builder.ToString());
+    }
+
     public string GeneratePage(HelpPage page, HelpDocument document, string cssPath)
     {
         var builder = new StringBuilder();
@@ -35,7 +60,7 @@ public sealed class HtmlGenerator
         builder.AppendLine("<div class=\"footer\">" + WebUtility.HtmlEncode(document.Title) + "</div>");
         builder.AppendLine("</body>");
         builder.AppendLine("</html>");
-        return builder.ToString();
+        return ToAsciiSafe(builder.ToString());
     }
 
     public string GenerateIndexPage(HelpDocument document)
@@ -59,7 +84,7 @@ public sealed class HtmlGenerator
         builder.AppendLine("</ul>");
         builder.AppendLine("</body>");
         builder.AppendLine("</html>");
-        return builder.ToString();
+        return ToAsciiSafe(builder.ToString());
     }
 
     private static void RenderTocNode(StringBuilder builder, TocNode node)
@@ -316,4 +341,28 @@ public sealed class HtmlGenerator
     }
 
     private static string EscapeAttribute(string value) => WebUtility.HtmlEncode(value);
+
+    /// <summary>
+    /// Rewrites every non-ASCII character as a numeric entity. The Help compiler reads the
+    /// topics as ANSI, so literal UTF-8 punctuation (typographic quotes, dashes) is
+    /// mis-decoded and the resulting CHM can fail to open. Entities keep the files pure
+    /// ASCII while the viewer still renders the original characters.
+    /// </summary>
+    private static string ToAsciiSafe(string html)
+    {
+        var builder = new StringBuilder(html.Length);
+        foreach (var ch in html)
+        {
+            if (ch < 0x80)
+            {
+                builder.Append(ch);
+            }
+            else
+            {
+                builder.Append("&#").Append((int)ch).Append(';');
+            }
+        }
+
+        return builder.ToString();
+    }
 }
