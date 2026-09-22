@@ -91,9 +91,12 @@ public sealed class ConversionPipeline
         File.WriteAllText(indexPath, _html.GenerateIndexPage(document));
         generated.Add(indexPath);
 
-        // Help Workshop project files.
+        // Help Workshop project files. The index must also be declared in [FILES],
+        // otherwise its keywords never make it into the compiled CHM.
+        var hasIndex = document.IndexEntries.Count > 0;
         var files = document.Pages.Select(p => p.FileName)
             .Concat(new[] { "index.html", CssGenerator.FileName })
+            .Concat(hasIndex ? new[] { names.HhkFile } : Array.Empty<string>())
             .Concat(parsed.Images.Select(i => "assets/" + i.FileName))
             .ToList();
 
@@ -105,7 +108,7 @@ public sealed class ConversionPipeline
         File.WriteAllText(hhcPath, ChmProjectGenerator.GenerateHhc(document));
         generated.Add(hhcPath);
 
-        if (document.IndexEntries.Count > 0)
+        if (hasIndex)
         {
             var hhkPath = Path.Combine(outputDirectory, names.HhkFile);
             File.WriteAllText(hhkPath, ChmProjectGenerator.GenerateHhk(document));

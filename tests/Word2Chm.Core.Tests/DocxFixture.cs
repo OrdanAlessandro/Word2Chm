@@ -70,6 +70,9 @@ internal static class DocxFixture
     /// A document authored by an Italian Word: the heading style has a localised id
     /// ("Titolo1") and no explicit outline level, which is the shape that used to
     /// yield zero headings, an empty C++ header and a broken table of contents.
+    /// The XE field is emitted the way Word really writes it - the instruction split
+    /// across three runs inside nested begin/separate/end field characters - because
+    /// reading only the first run was a second cause of the missing index.
     /// </summary>
     public static byte[] CreateLocalizedSample()
     {
@@ -99,7 +102,8 @@ internal static class DocxFixture
 
             body.Append(LocalizedHeading("Capitolo primo {#IDH_PRIMO}", "Titolo1"));
             body.Append(TextParagraph(Run("Testo del capitolo.")));
-            body.Append(LocalizedHeading("Sezione {#IDH_SEZIONE}", "Titolo2"));
+            body.Append(SplitXeHeading("Sezione {#IDH_SEZIONE}", "Titolo2", "sezione"));
+            body.Append(TextParagraph(Run("Testo della sezione.")));
 
             main.Document.Save();
         }
@@ -110,6 +114,24 @@ internal static class DocxFixture
     private static Paragraph LocalizedHeading(string text, string styleId) => new(
         new ParagraphProperties(new ParagraphStyleId { Val = styleId }),
         new Run(new Text(text)));
+
+    /// <summary>
+    /// A heading carrying an XE index field whose instruction is split across runs, the
+    /// layout Word produces when it wraps the index entry in a bookmark.
+    /// </summary>
+    private static Paragraph SplitXeHeading(string text, string styleId, string keyword)
+    {
+        var paragraph = new Paragraph(
+            new ParagraphProperties(new ParagraphStyleId { Val = styleId }),
+            new Run(new Text(text)),
+            new Run(new FieldChar { FieldCharType = FieldCharValues.Begin }),
+            new Run(new FieldCode(" XE \"") { Space = SpaceProcessingModeValues.Preserve }),
+            new Run(new FieldCode(keyword)),
+            new Run(new FieldCode("\" ") { Space = SpaceProcessingModeValues.Preserve }),
+            new Run(new FieldChar { FieldCharType = FieldCharValues.End }));
+
+        return paragraph;
+    }
 
     private static Paragraph TextParagraph(params Run[] runs)
     {

@@ -30,9 +30,10 @@ public sealed class HelpDocument
     public string? DefaultTopicFileName => Pages.Count > 0 ? Pages[0].FileName : null;
 
     /// <summary>
-    /// Non-fatal problems found while building the project, such as a context ID
-    /// declared on a heading that does not start a page. Surfacing these avoids the
-    /// silent disappearance of identifiers the user expects to find in the header.
+    /// Non-fatal problems found while building the project, such as a symbol declared
+    /// twice. Surfacing these avoids the silent disappearance of identifiers the user
+    /// expects to find in the header. Context IDs on sub-headings are no longer reported
+    /// here: they are bound to an in-page anchor through <see cref="HelpPage.Anchors"/>.
     /// </summary>
     public List<string> Warnings { get; } = new();
 }
@@ -62,6 +63,29 @@ public sealed class HelpPage
 
     /// <summary>Index entries that point at this page.</summary>
     public List<IndexEntry> IndexEntries { get; } = new();
+
+    /// <summary>
+    /// Additional context IDs on sub-headings of this page. A Help 1 ID normally maps to a
+    /// topic file, but <c>[ALIAS]</c> also accepts <c>file.htm#anchor</c>, so a marker on a
+    /// heading below the page level resolves to an in-page anchor instead of being dropped.
+    /// </summary>
+    public List<HelpAnchor> Anchors { get; } = new();
+}
+
+/// <summary>A symbolic context ID bound to an anchor inside a page.</summary>
+public sealed class HelpAnchor
+{
+    /// <summary>Symbolic identifier declared in the document, e.g. <c>IDH_AXES</c>.</summary>
+    public string Symbol { get; set; } = string.Empty;
+
+    /// <summary>Numeric context ID written to the [MAP] section.</summary>
+    public int ContextId { get; set; }
+
+    /// <summary>Anchor generated for the heading that declared the symbol.</summary>
+    public string Anchor { get; set; } = string.Empty;
+
+    /// <summary>Visible heading text, used for the generated header comment.</summary>
+    public string Title { get; set; } = string.Empty;
 }
 
 /// <summary>An entry of the table of contents tree, mirroring document heading levels.</summary>

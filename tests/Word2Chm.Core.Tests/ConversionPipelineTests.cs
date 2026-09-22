@@ -229,6 +229,7 @@ public sealed class ConversionPipelineTests : IDisposable
         {
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "loc-out"),
+            BaseName = "guida",
             Build = new BuildOptions { DefaultContextId = 1000 },
             Compile = new CompileOptions(),
         });
@@ -240,10 +241,46 @@ public sealed class ConversionPipelineTests : IDisposable
         var header = File.ReadAllText(result.HeaderPath!);
         Assert.Contains("#define IDH_PRIMO", header);
 
-        // IDH_SEZIONE sits on a level-2 heading: a Help 1 context ID resolves to a topic
-        // file, so it cannot be honoured and must be reported rather than dropped.
-        Assert.DoesNotContain("IDH_SEZIONE", header);
-        Assert.Contains(result.Document.Warnings, w => w.Contains("IDH_SEZIONE"));
+        // IDH_SEZIONE sits on a level-2 heading. It is bound to an in-page anchor through
+        // [ALIAS] ("file.htm#anchor"), which is how a Help 1 context ID reaches a
+        // sub-section, so it must appear in the header and the alias file.
+        Assert.Contains("#define IDH_SEZIONE", header);
+
+        var page = result.Document.Pages[0];
+        var anchor = Assert.Single(page.Anchors);
+        Assert.Equal("IDH_SEZIONE", anchor.Symbol);
+        Assert.Equal("sezione", anchor.Anchor);
+
+        var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+        Assert.Contains("IDH_SEZIONE=" + page.FileName + "#sezione", hhp);
+    }
+
+    [Fact]
+    public void ReadsXeInstructionSplitAcrossRuns()
+    {
+        // Word writes an XE instruction as several runs (" XE \"" + keyword + "\" ").
+        // Reading only the first FieldCode yielded no index at all.
+        var path = Path.Combine(_workDirectory, "localizzato.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateLocalizedSample());
+
+        var result = new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "loc-out"),
+            BaseName = "guida",
+            Build = new BuildOptions { DefaultContextId = 1000 },
+            Compile = new CompileOptions(),
+        });
+
+        var entry = Assert.Single(result.Document.IndexEntries);
+        Assert.Equal("sezione", entry.Keyword);
+        Assert.Equal(result.Document.Pages[0].FileName, entry.FileName);
+
+        // The index must also be declared in [FILES], or its keywords never reach the CHM.
+        var hhkPath = Path.Combine(result.OutputDirectory, "guida.hhk");
+        Assert.True(File.Exists(hhkPath));
+        Assert.Contains("name=\"Name\" value=\"sezione\"", File.ReadAllText(hhkPath));
+        Assert.Contains("guida.hhk", File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp")));
     }
 
     [Fact]

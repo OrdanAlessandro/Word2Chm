@@ -287,7 +287,13 @@ internal sealed class MainForm : Form
         AppendLog($"Pagine generate: {result.Document.Pages.Count}");
 
         var withIds = result.Document.Pages.Count(p => p.Symbol is not null);
-        AppendLog($"ID di contesto definiti: {withIds}");
+        var anchoredIds = result.Document.Pages.Sum(p => p.Anchors.Count);
+        AppendLog($"ID di contesto definiti: {withIds + anchoredIds}");
+        if (anchoredIds > 0)
+        {
+            AppendLog($"  di cui su sottotitoli (collegati a un'ancora): {anchoredIds}");
+        }
+
         AppendLog($"Voci di indice: {result.Document.IndexEntries.Count}");
 
         foreach (var warning in result.Document.Warnings)

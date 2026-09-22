@@ -30,6 +30,9 @@ public sealed class HeadingBlock : DocumentBlock
     public int? ExplicitId { get; set; }
 
     public List<InlineNode> Inlines { get; } = new();
+
+    /// <summary>Word index entry keywords declared by an XE field in this heading.</summary>
+    public List<IndexKeyword> IndexKeywords { get; } = new();
 }
 
 /// <summary>A regular paragraph.</summary>

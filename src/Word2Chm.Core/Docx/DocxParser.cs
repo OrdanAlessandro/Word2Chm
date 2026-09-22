@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
@@ -188,6 +189,7 @@ public sealed class DocxParser
 
         heading.Inlines.AddRange(RewriteInlineText(inlines, marker));
         AddBookmarkNames(heading, bookmarks);
+        heading.IndexKeywords.AddRange(ExtractIndexKeywords(paragraph));
 
         return heading.Title.Length == 0 && heading.Inlines.Count == 0 ? null : heading;
     }
@@ -569,14 +571,14 @@ public sealed class DocxParser
             }
         }
 
-        foreach (var fieldCode in paragraph.Descendants<FieldCode>())
+        foreach (var instruction in CollectFieldInstructions(paragraph))
         {
-            if (!IsIndexField(fieldCode.Text))
+            if (!IsIndexField(instruction))
             {
                 continue;
             }
 
-            var keyword = ParseXeInstruction(fieldCode.Text);
+            var keyword = ParseXeInstruction(instruction);
             if (keyword is not null)
             {
                 keywords.Add(keyword);
@@ -584,6 +586,62 @@ public sealed class DocxParser
         }
 
         return keywords;
+    }
+
+    /// <summary>
+    /// Reads the instruction of every complex field (fldChar begin/end pair) in a
+    /// paragraph. Word splits a single instruction across several runs, and an XE field
+    /// nested inside a bookmark or HYPERLINK field is common, so the fragments are
+    /// concatenated and nesting is tracked instead of assuming one run per instruction.
+    /// </summary>
+    private static IEnumerable<string> CollectFieldInstructions(Paragraph paragraph)
+    {
+        var instructions = new List<string>();
+        var depth = 0;
+        var current = new StringBuilder();
+
+        foreach (var run in paragraph.Descendants<Run>())
+        {
+            foreach (var child in run.ChildElements)
+            {
+                switch (child)
+                {
+                    case FieldChar fieldChar when fieldChar.FieldCharType?.Value == FieldCharValues.Begin:
+                        depth++;
+                        current.Clear();
+                        break;
+
+                    case FieldChar fieldChar when fieldChar.FieldCharType?.Value == FieldCharValues.End:
+                        if (depth > 0)
+                        {
+                            depth--;
+                        }
+
+                        if (current.Length > 0)
+                        {
+                            instructions.Add(current.ToString());
+                            current.Clear();
+                        }
+
+                        break;
+
+                    case FieldChar:
+                        break;
+
+                    case FieldCode code:
+                        current.Append(code.Text);
+                        break;
+                }
+            }
+        }
+
+        // An unterminated field still carries a usable instruction.
+        if (current.Length > 0)
+        {
+            instructions.Add(current.ToString());
+        }
+
+        return instructions;
     }
 
     private static bool IsIndexField(string? instruction) =>

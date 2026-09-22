@@ -62,6 +62,11 @@ public static class ChmProjectGenerator
             {
                 builder.AppendLine($"{page.Symbol}={page.FileName}");
             }
+
+            foreach (var anchor in page.Anchors)
+            {
+                builder.AppendLine($"{anchor.Symbol}={page.FileName}#{anchor.Anchor}");
+            }
         }
 
         builder.AppendLine();
@@ -71,6 +76,11 @@ public static class ChmProjectGenerator
             if (page.Symbol is not null && page.ContextId.HasValue)
             {
                 builder.AppendLine($"#define {page.Symbol} {page.ContextId.Value}");
+            }
+
+            foreach (var anchor in page.Anchors)
+            {
+                builder.AppendLine($"#define {anchor.Symbol} {anchor.ContextId}");
             }
         }
 
@@ -241,6 +251,11 @@ public static class ChmProjectGenerator
             if (page.Symbol is not null && page.ContextId.HasValue)
             {
                 builder.AppendLine($"#define {page.Symbol,-40} {page.ContextId.Value}   // {page.Title}");
+            }
+
+            foreach (var anchor in page.Anchors)
+            {
+                builder.AppendLine($"#define {anchor.Symbol,-40} {anchor.ContextId}   // {page.Title} > {anchor.Title}");
             }
         }
 

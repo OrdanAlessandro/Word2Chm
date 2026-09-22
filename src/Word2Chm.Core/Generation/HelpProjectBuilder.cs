@@ -62,14 +62,26 @@ public sealed class HelpProjectBuilder
                 }
                 else if (!string.IsNullOrEmpty(heading.Symbol))
                 {
-                    // A Help 1 context ID resolves to a topic file, never to an anchor, so a
-                    // symbol on a sub-heading cannot be honoured. Report it instead of
-                    // dropping it without a trace.
-                    document.Warnings.Add(
-                        $"Il simbolo '{heading.Symbol}' è dichiarato su \"{heading.Title}\" " +
-                        $"(livello {heading.Level}) e non compare nell'header .h: gli ID di contesto " +
-                        $"puntano a una pagina, non a un'ancora. Sposta il marcatore su un titolo di " +
-                        $"livello {options.PageLevel}.");
+                    // A Help 1 context ID maps to a topic file, but [ALIAS] also accepts
+                    // "file.htm#anchor", so a marker on a sub-heading is bound to an anchor
+                    // inside the page instead of being dropped.
+                    heading.Anchor = slugger.Slug(heading.Title);
+                    var id = ResolveContextId(heading.Symbol, heading.ExplicitId, options, usedIds, ref nextId);
+                    current.Anchors.Add(new HelpAnchor
+                    {
+                        Symbol = heading.Symbol!,
+                        ContextId = id,
+                        Anchor = heading.Anchor,
+                        Title = heading.Title,
+                    });
+
+                    var aliasTarget = (current, heading.Anchor);
+                    headingTargets[block] = aliasTarget;
+                    RegisterBookmarks(block, aliasTarget);
+                    tocBuilder.Add(heading.Level, heading.Title, current.FileName + "#" + heading.Anchor);
+                    RegisterIndexKeywords(block, heading.IndexKeywords, pendingIndexEntries);
+                    current.Blocks.Add(block);
+                    continue;
                 }
 
                 heading.Anchor = slugger.Slug(heading.Title);
@@ -77,6 +89,7 @@ public sealed class HelpProjectBuilder
                 headingTargets[block] = target;
                 RegisterBookmarks(block, target);
                 tocBuilder.Add(heading.Level, heading.Title, current.FileName + "#" + heading.Anchor);
+                RegisterIndexKeywords(block, heading.IndexKeywords, pendingIndexEntries);
                 current.Blocks.Add(block);
                 continue;
             }
@@ -137,6 +150,17 @@ public sealed class HelpProjectBuilder
         foreach (var name in block.Bookmarks)
         {
             _bookmarks[name] = new BookmarkTarget(target.Page.FileName, target.Anchor);
+        }
+    }
+
+    private static void RegisterIndexKeywords(
+        DocumentBlock block,
+        IEnumerable<IndexKeyword> keywords,
+        List<(IndexKeyword Keyword, DocumentBlock Block)> pending)
+    {
+        foreach (var keyword in keywords)
+        {
+            pending.Add((keyword, block));
         }
     }
 

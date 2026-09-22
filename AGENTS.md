@@ -40,5 +40,15 @@ si filtrano con `grep -v NETSDK1188`.
 - **ID di contesto**: definiti dall'utente nei titoli come `Titolo {#IDH_NOME}`
   (o `{#IDH_NOME=1234}`). Vanno mantenuti stabili: sono il contratto verso il
   codice C++ che chiama `HtmlHelp`.
+- **ID di contesto su sottotitoli**: `[ALIAS]` accetta anche
+  `IDH_X=file.htm#anchor`, quindi un marcatore su un titolo sotto il livello di
+  pagina non viene scartato: finisce in `HelpPage.Anchors` e punta a un'ancora
+  nella pagina che lo contiene.
+- **Campi XE**: Word spezza l'istruzione di un campo su più run
+  (` XE "` + parola chiave + `" `), spesso annidata in un campo `HYPERLINK`.
+  Vanno concatenati i `FieldCode` tra `fldChar begin/end`; leggere un solo run
+  produce zero voci di indice.
+- **File di indice**: `.hhk` va dichiarato sia come `Index file=` sia nella lista
+  `[FILES]` del `.hhp`, altrimenti le parole chiave non entrano nel CHM.
 - I test costruiscono il `.docx` a runtime (`DocxFixture`), quindi non esistono
   fixture binarie da mantenere.
