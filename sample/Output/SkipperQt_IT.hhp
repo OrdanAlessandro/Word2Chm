@@ -1,0 +1,89 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=SkipperQt_IT.chm
+Contents file=SkipperQt_IT.hhc
+Default topic=000-skipperqt.html
+Title=SKIPPER++
+Language=0x410 Italian (Italy)
+Display compile progress=No
+Full-text search=Yes
+Default Window=Main
+
+[WINDOWS]
+Main="SKIPPER++","SkipperQt_IT.hhc","","000-skipperqt.html",,,,,,,,,0x23520,,0x384e,,,,,,,,0
+
+[FILES]
+000-skipperqt.html
+001-macchinacnc.html
+index.html
+help.css
+assets/image8.png
+assets/image9.png
+assets/image10.png
+assets/image11.png
+assets/image12.png
+assets/image13.png
+assets/image14.png
+assets/image17.png
+assets/image19.png
+assets/image20.png
+assets/image21.png
+assets/image22.png
+assets/image23.png
+assets/image24.png
+assets/image26.png
+assets/image28.png
+assets/image29.png
+assets/image30.png
+assets/image31.png
+assets/image32.png
+assets/image33.png
+assets/image34.png
+assets/image35.png
+assets/image36.png
+assets/image37.png
+assets/image38.png
+assets/image39.png
+assets/image40.png
+assets/image41.png
+assets/image42.png
+assets/image43.png
+assets/image44.png
+assets/image45.png
+assets/image46.png
+assets/image47.png
+assets/image49.png
+assets/image50.png
+assets/image51.png
+assets/image52.png
+assets/image53.png
+assets/image54.png
+assets/image74.png
+assets/image75.png
+assets/image76.png
+assets/image77.png
+assets/image78.png
+assets/image79.png
+assets/image80.png
+assets/image81.png
+assets/image82.png
+assets/image83.png
+assets/image84.png
+assets/image85.png
+assets/image86.png
+assets/image87.png
+assets/image88.png
+assets/image89.png
+assets/image90.png
+assets/image91.png
+assets/image92.png
+assets/image93.png
+assets/image94.png
+assets/image95.png
+assets/image96.png
+
+[ALIAS]
+
+[MAP]
+
+[INFOTYPES]

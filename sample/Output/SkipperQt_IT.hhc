@@ -1,0 +1,1236 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<BODY>
+<OBJECT type="text/site properties">
+<param name="Window Styles" value="0x23520">
+</OBJECT>
+<UL>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="SkipperQt">
+    <param name="Local" value="000-skipperqt.html#skipperqt">
+  </OBJECT>
+  <UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Modificare i parametri del CN">
+      <param name="Local" value="000-skipperqt.html#modificare-i-parametri-del-cn">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Salvare i parametri nella memoria del CN">
+        <param name="Local" value="000-skipperqt.html#salvare-i-parametri-nella-memoria-del-cn">
+      </OBJECT>
+    </UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Eseguire una lavorazione">
+      <param name="Local" value="000-skipperqt.html#eseguire-una-lavorazione">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Operazioni preliminari all&#8217;invio">
+        <param name="Local" value="000-skipperqt.html#operazioni-preliminari-all-invio">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Inviare una lavorazione">
+        <param name="Local" value="000-skipperqt.html#inviare-una-lavorazione">
+      </OBJECT>
+    </UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Assi">
+      <param name="Local" value="000-skipperqt.html#assi">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Posizione iniziale assi">
+        <param name="Local" value="000-skipperqt.html#posizione-iniziale-assi">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Posizioni iniziali predefinite">
+        <param name="Local" value="000-skipperqt.html#posizioni-iniziali-predefinite">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Posizioni iniziali aggiuntive">
+        <param name="Local" value="000-skipperqt.html#posizioni-iniziali-aggiuntive">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Impostazione dell&#8217;origine per gli assi XY">
+        <param name="Local" value="000-skipperqt.html#impostazione-dell-origine-per-gli-assi-xy">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Assi di rotazione">
+        <param name="Local" value="000-skipperqt.html#assi-di-rotazione">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Velocit&#224; degli assi">
+        <param name="Local" value="000-skipperqt.html#velocita-degli-assi">
+      </OBJECT>
+    </UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Gruppo mandrino">
+      <param name="Local" value="000-skipperqt.html#gruppo-mandrino">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Fresa">
+        <param name="Local" value="000-skipperqt.html#fresa">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Cambio utensili automatico">
+        <param name="Local" value="000-skipperqt.html#cambio-utensili-automatico">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Multi-mandrino">
+        <param name="Local" value="000-skipperqt.html#multi-mandrino">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Diamantatrice">
+        <param name="Local" value="000-skipperqt.html#diamantatrice">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Diamantatrice cambio utensile">
+        <param name="Local" value="000-skipperqt.html#diamantatrice-cambio-utensile">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Preset utensile">
+        <param name="Local" value="000-skipperqt.html#preset-utensile">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Preset  automatico dell&#8217;utensile">
+        <param name="Local" value="000-skipperqt.html#preset-automatico-dell-utensile">
+      </OBJECT>
+    </UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Utilit&#224;">
+      <param name="Local" value="000-skipperqt.html#utilita">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Batch delle lavorazioni">
+        <param name="Local" value="000-skipperqt.html#batch-delle-lavorazioni">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Creare una lista di lavorazioni">
+          <param name="Local" value="000-skipperqt.html#creare-una-lista-di-lavorazioni">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Selezionare una lavorazione">
+          <param name="Local" value="000-skipperqt.html#selezionare-una-lavorazione">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Cancellare una lavorazione">
+          <param name="Local" value="000-skipperqt.html#cancellare-una-lavorazione">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Cambiare l&#8217;ordine delle lavorazioni">
+          <param name="Local" value="000-skipperqt.html#cambiare-l-ordine-delle-lavorazioni">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Salvare una lista di lavorazioni">
+          <param name="Local" value="000-skipperqt.html#salvare-una-lista-di-lavorazioni">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Aprire una lista di lavorazioni">
+          <param name="Local" value="000-skipperqt.html#aprire-una-lista-di-lavorazioni">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Aggiungere alla lista un file batch esistente">
+          <param name="Local" value="000-skipperqt.html#aggiungere-alla-lista-un-file-batch-esistente">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Modificare il nome della lavorazione">
+          <param name="Local" value="000-skipperqt.html#modificare-il-nome-della-lavorazione">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Espandere una lavorazione">
+          <param name="Local" value="000-skipperqt.html#espandere-una-lavorazione">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Modificare la posizione iniziale XY">
+          <param name="Local" value="000-skipperqt.html#modificare-la-posizione-iniziale-xy">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Modificare la posizione iniziale XY da &#8220;altre posizioni iniziali&#8221;">
+          <param name="Local" value="000-skipperqt.html#modificare-la-posizione-iniziale-xy-da-altre-posizioni-iniziali">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Aggiungere uno spostamento Y">
+          <param name="Local" value="000-skipperqt.html#aggiungere-uno-spostamento-y">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Modificare lo spessore del materiale H">
+          <param name="Local" value="000-skipperqt.html#modificare-lo-spessore-del-materiale-h">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Ripetere la lavorazione">
+          <param name="Local" value="000-skipperqt.html#ripetere-la-lavorazione">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Riprendere la lavorazione da una ripetizione diversa dalla prima">
+          <param name="Local" value="000-skipperqt.html#riprendere-la-lavorazione-da-una-ripetizione-diversa-dalla-prima">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Allineamento della lastra">
+          <param name="Local" value="000-skipperqt.html#allineamento-della-lastra">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Modifica dello spessore H calcolato dall&#8217;allineamento lastra">
+          <param name="Local" value="000-skipperqt.html#modifica-dello-spessore-h-calcolato-dall-allineamento-lastra">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Sospendere una lavorazione">
+          <param name="Local" value="000-skipperqt.html#sospendere-una-lavorazione">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Eseguire un batch">
+          <param name="Local" value="000-skipperqt.html#eseguire-un-batch">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Interrompere un batch">
+          <param name="Local" value="000-skipperqt.html#interrompere-un-batch">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="MDI (Manual Data Input)">
+        <param name="Local" value="000-skipperqt.html#mdi-manual-data-input">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Lavorazione ripetuta">
+        <param name="Local" value="000-skipperqt.html#lavorazione-ripetuta">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Ripetizioni nel piano XY">
+        <param name="Local" value="000-skipperqt.html#ripetizioni-nel-piano-xy">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allineamento lastra">
+        <param name="Local" value="000-skipperqt.html#allineamento-lastra">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Mappatura lastra">
+        <param name="Local" value="000-skipperqt.html#mappatura-lastra">
+      </OBJECT>
+    </UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Script">
+      <param name="Local" value="000-skipperqt.html#script">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Panoramica sul linguaggio">
+        <param name="Local" value="000-skipperqt.html#panoramica-sul-linguaggio">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Struttura e stile del linguaggio">
+        <param name="Local" value="000-skipperqt.html#struttura-e-stile-del-linguaggio">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Estensioni specifiche per Skipper">
+        <param name="Local" value="000-skipperqt.html#estensioni-specifiche-per-skipper">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Commenti">
+        <param name="Local" value="000-skipperqt.html#commenti">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Buone pratiche">
+        <param name="Local" value="000-skipperqt.html#buone-pratiche">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Gestione delle variabili">
+        <param name="Local" value="000-skipperqt.html#gestione-delle-variabili">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Dichiarazione e assegnazione">
+          <param name="Local" value="000-skipperqt.html#dichiarazione-e-assegnazione">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Tipi di dati supportati">
+          <param name="Local" value="000-skipperqt.html#tipi-di-dati-supportati">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Riassegnazione">
+          <param name="Local" value="000-skipperqt.html#riassegnazione">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Ambito delle variabili">
+          <param name="Local" value="000-skipperqt.html#ambito-delle-variabili">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Convenzioni consigliate">
+          <param name="Local" value="000-skipperqt.html#convenzioni-consigliate">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Operatori ed espressioni">
+        <param name="Local" value="000-skipperqt.html#operatori-ed-espressioni">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Operatori aritmetici">
+          <param name="Local" value="000-skipperqt.html#operatori-aritmetici">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Operatori di confronto">
+          <param name="Local" value="000-skipperqt.html#operatori-di-confronto">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Operatori logici">
+          <param name="Local" value="000-skipperqt.html#operatori-logici">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Operatori di assegnazione">
+        <param name="Local" value="000-skipperqt.html#operatori-di-assegnazione">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Concatenazione di stringhe">
+          <param name="Local" value="000-skipperqt.html#concatenazione-di-stringhe">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Strutture di controllo">
+        <param name="Local" value="000-skipperqt.html#strutture-di-controllo">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Condizionali">
+          <param name="Local" value="000-skipperqt.html#condizionali">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Cicli">
+          <param name="Local" value="000-skipperqt.html#cicli">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Comandi di controllo del flusso">
+          <param name="Local" value="000-skipperqt.html#comandi-di-controllo-del-flusso">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="break">
+            <param name="Local" value="000-skipperqt.html#break">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="continue">
+            <param name="Local" value="000-skipperqt.html#continue">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Switch">
+            <param name="Local" value="000-skipperqt.html#switch">
+          </OBJECT>
+        </UL>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Funzioni">
+        <param name="Local" value="000-skipperqt.html#funzioni">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Dichiarazione di una funzione">
+          <param name="Local" value="000-skipperqt.html#dichiarazione-di-una-funzione">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Uso di funzioni per organizzare la logica">
+          <param name="Local" value="000-skipperqt.html#uso-di-funzioni-per-organizzare-la-logica">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Funzioni come comandi specifici">
+          <param name="Local" value="000-skipperqt.html#funzioni-come-comandi-specifici">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Scope delle variabili all&#8217;interno delle funzioni">
+          <param name="Local" value="000-skipperqt.html#scope-delle-variabili-all-interno-delle-funzioni">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Parametri macchina e comandi specifici">
+        <param name="Local" value="000-skipperqt.html#parametri-macchina-e-comandi-specifici">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Come accedere e modificare i parametri macchina">
+          <param name="Local" value="000-skipperqt.html#come-accedere-e-modificare-i-parametri-macchina">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Struttura dei namespace">
+          <param name="Local" value="000-skipperqt.html#struttura-dei-namespace">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Accesso ai parametri">
+          <param name="Local" value="000-skipperqt.html#accesso-ai-parametri">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Modifica dei parametri">
+          <param name="Local" value="000-skipperqt.html#modifica-dei-parametri">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Variabili di stato">
+          <param name="Local" value="000-skipperqt.html#variabili-di-stato">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Elenco parametri supportati">
+        <param name="Local" value="000-skipperqt.html#elenco-parametri-supportati">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.Axis">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-axis">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.Blade">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-blade">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.Feedrate">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-feedrate">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Machine.Parameters.Feedrate.Cut">
+            <param name="Local" value="000-skipperqt.html#machine-parameters-feedrate-cut">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Machine.Parameters.Feedrate.Rapid">
+            <param name="Local" value="000-skipperqt.html#machine-parameters-feedrate-rapid">
+          </OBJECT>
+        </UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.G54[]-G55[]-G56[]">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-g54-g55-g56">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.Kinematics">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-kinematics">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Machine.Parameters.Kinematics.FeedrateModulation">
+            <param name="Local" value="000-skipperqt.html#machine-parameters-kinematics-feedratemodulation">
+          </OBJECT>
+        </UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.LensClamp">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-lensclamp">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.Multi">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-multi">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.MultiSpindle.T1/T2/T3/T4">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-multispindle-t1-t2-t3-t4">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.Origin">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-origin">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.PresetSensor">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-presetsensor">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Machine.Parameters.PresetSensor.Position">
+            <param name="Local" value="000-skipperqt.html#machine-parameters-presetsensor-position">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Machine.Parameters.PresetSensor.lastMeasure">
+            <param name="Local" value="000-skipperqt.html#machine-parameters-presetsensor-lastmeasure">
+          </OBJECT>
+        </UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.Probe3D">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-probe3d">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.LinearGauge">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-lineargauge">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.LinearGauge.AutomaticPreset [Qt]">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-lineargauge-automaticpreset-qt">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.LensGauge">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-lensgauge">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.Settings">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-settings">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Machine.Parameters.Settings.startupFeedrateOverride">
+            <param name="Local" value="000-skipperqt.html#machine-parameters-settings-startupfeedrateoverride">
+          </OBJECT>
+        </UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.SpindleTilting">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-spindletilting">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Parameters.Vision">
+          <param name="Local" value="000-skipperqt.html#machine-parameters-vision">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Elenco variabili di stato">
+        <param name="Local" value="000-skipperqt.html#elenco-variabili-di-stato">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Status.feedrateOverride">
+          <param name="Local" value="000-skipperqt.html#machine-status-feedrateoverride">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Status.Axis">
+          <param name="Local" value="000-skipperqt.html#machine-status-axis">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Elenco variabili informative">
+        <param name="Local" value="000-skipperqt.html#elenco-variabili-informative">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Info.serialNumber">
+          <param name="Local" value="000-skipperqt.html#machine-info-serialnumber">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Info.controlBoardType">
+          <param name="Local" value="000-skipperqt.html#machine-info-controlboardtype">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Info.firmwareVersion">
+          <param name="Local" value="000-skipperqt.html#machine-info-firmwareversion">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Elenco funzioni di controllo macchina">
+        <param name="Local" value="000-skipperqt.html#elenco-funzioni-di-controllo-macchina">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Functions.Start(int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-functions-start-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.WaitRunComplete(int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-waitruncomplete-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.Jog(int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-jog-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.Pause(int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-pause-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.Home(int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-home-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.MoveAbsolute(string position, int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-moveabsolute-string-position-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.SaveParameters()">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-saveparameters">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.Restart(int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-restart-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.WaitConnectionLost(int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-waitconnectionlost-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.WaitConnection(int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-waitconnection-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.PresetTool(int toolNumber, int timeout)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-presettool-int-toolnumber-int-timeout">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.GetProbingPoint(int index)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-getprobingpoint-int-index">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.GetVisionPoint(int index)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-getvisionpoint-int-index">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions. ClearIso()">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-cleariso">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.LoadFile(string filePath)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-loadfile-string-filepath">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.LoadString(string fileContent)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-loadstring-string-filecontent">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.LoadFirmware(string filePath)">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-loadfirmware-string-filepath">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.Backup()">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-backup">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions. SaveAllOnPc ()">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-saveallonpc">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Machine.Funtions.SaveParametersOnPc()">
+          <param name="Local" value="000-skipperqt.html#machine-funtions-saveparametersonpc">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Controllo della Batch in esecuzione">
+        <param name="Local" value="000-skipperqt.html#controllo-della-batch-in-esecuzione">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.Update()">
+          <param name="Local" value="000-skipperqt.html#batch-update">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.GetItemByLine(integer lineNumber) [Dep]">
+          <param name="Local" value="000-skipperqt.html#batch-getitembyline-integer-linenumber-dep">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.GetItemByIndex(integer itemIndex)">
+          <param name="Local" value="000-skipperqt.html#batch-getitembyindex-integer-itemindex">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.GetItemByName(string itemName)">
+          <param name="Local" value="000-skipperqt.html#batch-getitembyname-string-itemname">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.Stop()">
+          <param name="Local" value="000-skipperqt.html#batch-stop">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.ScheduleNextItem(BatchItem nextItem) [Qt]">
+          <param name="Local" value="000-skipperqt.html#batch-schedulenextitem-batchitem-nextitem-qt">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.InsertItem(string filePath) [Qt]">
+          <param name="Local" value="000-skipperqt.html#batch-insertitem-string-filepath-qt">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.InsertItem(string filePath, BatchItem parentItem) [Qt]">
+          <param name="Local" value="000-skipperqt.html#batch-insertitem-string-filepath-batchitem-parentitem-qt">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.InsertItem(integer targetIndex,string filePath) [Qt]">
+          <param name="Local" value="000-skipperqt.html#batch-insertitem-integer-targetindex-string-filepath-qt">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch. RemoveItem(integer targetIndex) [Qt]">
+          <param name="Local" value="000-skipperqt.html#batch-removeitem-integer-targetindex-qt">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch. ClearRepetitions() [Qt]">
+          <param name="Local" value="000-skipperqt.html#batch-clearrepetitions-qt">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Batch.thisLine">
+          <param name="Local" value="000-skipperqt.html#batch-thisline">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Variabili globali nella Batch in esecuzione">
+          <param name="Local" value="000-skipperqt.html#variabili-globali-nella-batch-in-esecuzione">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Batch.AddVariable(string variableName, type value) [Qt]">
+            <param name="Local" value="000-skipperqt.html#batch-addvariable-string-variablename-type-value-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Batch.ReadVariable(string variableName, type defaultValue) [Qt]">
+            <param name="Local" value="000-skipperqt.html#batch-readvariable-string-variablename-type-defaultvalue-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Batch.RemoveVariable(string variableName) [Qt]">
+            <param name="Local" value="000-skipperqt.html#batch-removevariable-string-variablename-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Batch.ClearVariables() [Qt]">
+            <param name="Local" value="000-skipperqt.html#batch-clearvariables-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Batch.GetVariableNames () [Qt]">
+            <param name="Local" value="000-skipperqt.html#batch-getvariablenames-qt">
+          </OBJECT>
+        </UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Propriet&#224; e funzioni di un elemento batch BatchItem">
+          <param name="Local" value="000-skipperqt.html#proprieta-e-funzioni-di-un-elemento-batch-batchitem">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="SendParameters()">
+            <param name="Local" value="000-skipperqt.html#sendparameters">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Enable(bool enable)">
+            <param name="Local" value="000-skipperqt.html#enable-bool-enable">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="GetLine()">
+            <param name="Local" value="000-skipperqt.html#getline">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="GetIndex()">
+            <param name="Local" value="000-skipperqt.html#getindex">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="GetName() [Qt]">
+            <param name="Local" value="000-skipperqt.html#getname-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="GetParent() [Qt]">
+            <param name="Local" value="000-skipperqt.html#getparent-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="GetChild(integer subItemIndex) [Qt]">
+            <param name="Local" value="000-skipperqt.html#getchild-integer-subitemindex-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="GetSibling(integer relativeIndex) [Qt]">
+            <param name="Local" value="000-skipperqt.html#getsibling-integer-relativeindex-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="GetChildCount() [Qt]">
+            <param name="Local" value="000-skipperqt.html#getchildcount-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="currentRepetition [Qt]">
+            <param name="Local" value="000-skipperqt.html#currentrepetition-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="repetitions [Qt]">
+            <param name="Local" value="000-skipperqt.html#repetitions-qt">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="mapIndex">
+            <param name="Local" value="000-skipperqt.html#mapindex">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="positionX">
+            <param name="Local" value="000-skipperqt.html#positionx">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="positionY">
+            <param name="Local" value="000-skipperqt.html#positiony">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="originIndex">
+            <param name="Local" value="000-skipperqt.html#originindex">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="deltaY">
+            <param name="Local" value="000-skipperqt.html#deltay">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="zam">
+            <param name="Local" value="000-skipperqt.html#zam">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="dH">
+            <param name="Local" value="000-skipperqt.html#dh">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="numOfRepX">
+            <param name="Local" value="000-skipperqt.html#numofrepx">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="numOfRepY">
+            <param name="Local" value="000-skipperqt.html#numofrepy">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="toolIntegrityCheck">
+            <param name="Local" value="000-skipperqt.html#toolintegritycheck">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="plateIntegrityCheck">
+            <param name="Local" value="000-skipperqt.html#plateintegritycheck">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="plateAlignmentIndex">
+            <param name="Local" value="000-skipperqt.html#platealignmentindex">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="runEvery">
+            <param name="Local" value="000-skipperqt.html#runevery">
+          </OBJECT>
+        </UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Propriet&#224; e funzioni di un elemento batch BatchScript">
+          <param name="Local" value="000-skipperqt.html#proprieta-e-funzioni-di-un-elemento-batch-batchscript">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="MaskStopFromMachine(bool mask)">
+            <param name="Local" value="000-skipperqt.html#maskstopfrommachine-bool-mask">
+          </OBJECT>
+        </UL>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Funzionalit&#224; di accesso e controllo di PigrecoGold">
+        <param name="Local" value="000-skipperqt.html#funzionalita-di-accesso-e-controllo-di-pigrecogold">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="PigrecoGold.Lens.SaveDirectFile()">
+          <param name="Local" value="000-skipperqt.html#pigrecogold-lens-savedirectfile">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Funzionalit&#224; di accesso e controllo di Skipper">
+        <param name="Local" value="000-skipperqt.html#funzionalita-di-accesso-e-controllo-di-skipper">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Skipper.GetInstallationFolder()">
+          <param name="Local" value="000-skipperqt.html#skipper-getinstallationfolder">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Skipper.GetTempFileName(string baseName, string extension)">
+          <param name="Local" value="000-skipperqt.html#skipper-gettempfilename-string-basename-string-extension">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Skipper.GetDirectFileName()">
+          <param name="Local" value="000-skipperqt.html#skipper-getdirectfilename">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Skipper.DeleteDirectFile()">
+          <param name="Local" value="000-skipperqt.html#skipper-deletedirectfile">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Skipper.Log(string message)">
+          <param name="Local" value="000-skipperqt.html#skipper-log-string-message">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Utilit&#224; di sistema">
+        <param name="Local" value="000-skipperqt.html#utilita-di-sistema">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="System.GetCurrentTime()">
+          <param name="Local" value="000-skipperqt.html#system-getcurrenttime">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="System.GetCurrentTimeFormat(string format)">
+          <param name="Local" value="000-skipperqt.html#system-getcurrenttimeformat-string-format">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="System.Sleep(int sleepTimeMs)">
+          <param name="Local" value="000-skipperqt.html#system-sleep-int-sleeptimems">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="System.File.Append(string filePath, string text)">
+          <param name="Local" value="000-skipperqt.html#system-file-append-string-filepath-string-text">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="System.File.AppendLine(string filePath, string text)">
+          <param name="Local" value="000-skipperqt.html#system-file-appendline-string-filepath-string-text">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="System.File.Delete(string filePath)">
+          <param name="Local" value="000-skipperqt.html#system-file-delete-string-filepath">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="System.Clipboard.Copy(string value)">
+          <param name="Local" value="000-skipperqt.html#system-clipboard-copy-string-value">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Messaggi popup">
+        <param name="Local" value="000-skipperqt.html#messaggi-popup">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="MessageBox.Show(string message)">
+          <param name="Local" value="000-skipperqt.html#messagebox-show-string-message">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="MessageBox.Show(string message, string title)">
+          <param name="Local" value="000-skipperqt.html#messagebox-show-string-message-string-title">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="MessageBox.Show(string message, string title, int options)">
+          <param name="Local" value="000-skipperqt.html#messagebox-show-string-message-string-title-int-options">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="MessageBox.Show(object parameters)">
+          <param name="Local" value="000-skipperqt.html#messagebox-show-object-parameters">
+        </OBJECT>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Funzioni matematiche">
+        <param name="Local" value="000-skipperqt.html#funzioni-matematiche">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.rad(x)">
+          <param name="Local" value="000-skipperqt.html#math-rad-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.deg(x)">
+          <param name="Local" value="000-skipperqt.html#math-deg-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.sin(x)">
+          <param name="Local" value="000-skipperqt.html#math-sin-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.sind(x)">
+          <param name="Local" value="000-skipperqt.html#math-sind-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.cos(x)">
+          <param name="Local" value="000-skipperqt.html#math-cos-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.cosd(x)">
+          <param name="Local" value="000-skipperqt.html#math-cosd-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.tan(x)">
+          <param name="Local" value="000-skipperqt.html#math-tan-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.tand(x)">
+          <param name="Local" value="000-skipperqt.html#math-tand-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.atan(x)">
+          <param name="Local" value="000-skipperqt.html#math-atan-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.atand(x)">
+          <param name="Local" value="000-skipperqt.html#math-atand-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.atan2(y, x)">
+          <param name="Local" value="000-skipperqt.html#math-atan2-y-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.atan2d(y, x)">
+          <param name="Local" value="000-skipperqt.html#math-atan2d-y-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.pow(b, e)">
+          <param name="Local" value="000-skipperqt.html#math-pow-b-e">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.sqrt(x)">
+          <param name="Local" value="000-skipperqt.html#math-sqrt-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.exp(x)">
+          <param name="Local" value="000-skipperqt.html#math-exp-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.log(x)">
+          <param name="Local" value="000-skipperqt.html#math-log-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.log10(x)">
+          <param name="Local" value="000-skipperqt.html#math-log10-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.log2(x)">
+          <param name="Local" value="000-skipperqt.html#math-log2-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.abs(x)">
+          <param name="Local" value="000-skipperqt.html#math-abs-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.sign(x)">
+          <param name="Local" value="000-skipperqt.html#math-sign-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.round(x)">
+          <param name="Local" value="000-skipperqt.html#math-round-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.floor(x)">
+          <param name="Local" value="000-skipperqt.html#math-floor-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.ceil(x)">
+          <param name="Local" value="000-skipperqt.html#math-ceil-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.trunc(x)">
+          <param name="Local" value="000-skipperqt.html#math-trunc-x">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Math.toFixed(x,numDec)">
+          <param name="Local" value="000-skipperqt.html#math-tofixed-x-numdec">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Costanti">
+          <param name="Local" value="000-skipperqt.html#costanti">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Math.PI">
+            <param name="Local" value="000-skipperqt.html#math-pi">
+          </OBJECT>
+        </UL>
+      </UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Tipi di dato specifici">
+        <param name="Local" value="000-skipperqt.html#tipi-di-dato-specifici">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Point">
+          <param name="Local" value="000-skipperqt.html#point">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="VisionData">
+          <param name="Local" value="000-skipperqt.html#visiondata">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="ProbePoint">
+          <param name="Local" value="000-skipperqt.html#probepoint">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="VisionPoint">
+          <param name="Local" value="000-skipperqt.html#visionpoint">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="ACCESSORI">
+          <param name="Local" value="000-skipperqt.html#accessori">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Tastatore">
+            <param name="Local" value="000-skipperqt.html#tastatore">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Satinatrice">
+            <param name="Local" value="000-skipperqt.html#satinatrice">
+          </OBJECT>
+        </UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="CONTROLLI">
+          <param name="Local" value="000-skipperqt.html#controlli">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Pannello di controllo">
+            <param name="Local" value="000-skipperqt.html#pannello-di-controllo">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Controllo allarmi">
+            <param name="Local" value="000-skipperqt.html#controllo-allarmi">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Controllo sequenze">
+            <param name="Local" value="000-skipperqt.html#controllo-sequenze">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Controllo parametri">
+            <param name="Local" value="000-skipperqt.html#controllo-parametri">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Controllo di IO">
+            <param name="Local" value="000-skipperqt.html#controllo-di-io">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Opzioni CN">
+            <param name="Local" value="000-skipperqt.html#opzioni-cn">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Configurazione CN">
+            <param name="Local" value="000-skipperqt.html#configurazione-cn">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Configurazione assi">
+            <param name="Local" value="000-skipperqt.html#configurazione-assi">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Connessione al CN">
+            <param name="Local" value="000-skipperqt.html#connessione-al-cn">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Report dal CN">
+            <param name="Local" value="000-skipperqt.html#report-dal-cn">
+          </OBJECT>
+        </UL>
+      </UL>
+    </UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Plugin">
+      <param name="Local" value="000-skipperqt.html#plugin">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Caricatore robot Yumi">
+        <param name="Local" value="000-skipperqt.html#caricatore-robot-yumi">
+      </OBJECT>
+      <UL>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Ricette robot">
+          <param name="Local" value="000-skipperqt.html#ricette-robot">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Archivio ricette">
+          <param name="Local" value="000-skipperqt.html#archivio-ricette">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Creazione ricetta">
+          <param name="Local" value="000-skipperqt.html#creazione-ricetta">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Modifica di una ricetta">
+          <param name="Local" value="000-skipperqt.html#modifica-di-una-ricetta">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Cancellazione di una ricetta">
+          <param name="Local" value="000-skipperqt.html#cancellazione-di-una-ricetta">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Caricamento di una ricetta">
+          <param name="Local" value="000-skipperqt.html#caricamento-di-una-ricetta">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Parametri modificabili">
+          <param name="Local" value="000-skipperqt.html#parametri-modificabili">
+        </OBJECT>
+        <LI> <OBJECT type="text/sitemap">
+          <param name="Name" value="Interfaccia grafica">
+          <param name="Local" value="000-skipperqt.html#interfaccia-grafica">
+        </OBJECT>
+        <UL>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Controllo del ciclo">
+            <param name="Local" value="000-skipperqt.html#controllo-del-ciclo">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Contatore pezzi">
+            <param name="Local" value="000-skipperqt.html#contatore-pezzi">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Log degli eventi Robot">
+            <param name="Local" value="000-skipperqt.html#log-degli-eventi-robot">
+          </OBJECT>
+          <LI> <OBJECT type="text/sitemap">
+            <param name="Name" value="Pannello Impostazioni">
+            <param name="Local" value="000-skipperqt.html#pannello-impostazioni">
+          </OBJECT>
+        </UL>
+      </UL>
+    </UL>
+  </UL>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Macchina CNC">
+    <param name="Local" value="001-macchinacnc.html#macchina-cnc">
+  </OBJECT>
+  <UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Messaggi di allarme">
+      <param name="Local" value="001-macchinacnc.html#messaggi-di-allarme">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi di sicurezza">
+        <param name="Local" value="001-macchinacnc.html#allarmi-di-sicurezza">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi EDM">
+        <param name="Local" value="001-macchinacnc.html#allarmi-edm">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi movimento assi">
+        <param name="Local" value="001-macchinacnc.html#allarmi-movimento-assi">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi sottoprogrammi">
+        <param name="Local" value="001-macchinacnc.html#allarmi-sottoprogrammi">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi memoria flash">
+        <param name="Local" value="001-macchinacnc.html#allarmi-memoria-flash">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi in lavorazione">
+        <param name="Local" value="001-macchinacnc.html#allarmi-in-lavorazione">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi preset utensile">
+        <param name="Local" value="001-macchinacnc.html#allarmi-preset-utensile">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi elettromandrino">
+        <param name="Local" value="001-macchinacnc.html#allarmi-elettromandrino">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi dispositivi pneumatici">
+        <param name="Local" value="001-macchinacnc.html#allarmi-dispositivi-pneumatici">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi controllo temperatura">
+        <param name="Local" value="001-macchinacnc.html#allarmi-controllo-temperatura">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi accessorio cambio utensile">
+        <param name="Local" value="001-macchinacnc.html#allarmi-accessorio-cambio-utensile">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi accessorio carica lastra">
+        <param name="Local" value="001-macchinacnc.html#allarmi-accessorio-carica-lastra">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi funzione allineamento lastra">
+        <param name="Local" value="001-macchinacnc.html#allarmi-funzione-allineamento-lastra">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Allarmi accessorio cambio anelli">
+        <param name="Local" value="001-macchinacnc.html#allarmi-accessorio-cambio-anelli">
+      </OBJECT>
+    </UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Elenco dei Comandi ISO">
+      <param name="Local" value="001-macchinacnc.html#elenco-dei-comandi-iso">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Funzioni Preparatorie">
+        <param name="Local" value="001-macchinacnc.html#funzioni-preparatorie">
+      </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Funzioni Miscellanee">
+        <param name="Local" value="001-macchinacnc.html#funzioni-miscellanee">
+      </OBJECT>
+    </UL>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Sottoprogrammi">
+      <param name="Local" value="001-macchinacnc.html#sottoprogrammi">
+    </OBJECT>
+    <UL>
+      <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="Test di un parametro e modifica del flusso del sottoprogramma">
+        <param name="Local" value="001-macchinacnc.html#test-di-un-parametro-e-modifica-del-flusso-del-sottoprogramma">
+      </OBJECT>
+    </UL>
+  </UL>
+</UL>
+</BODY>
+</HTML>

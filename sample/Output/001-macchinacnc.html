@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Macchina CNC</title>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+<body>
+<div class="page">
+<h1 id="macchina-cnc">Macchina CNC</h1>
+<h2 id="messaggi-di-allarme">Messaggi di allarme</h2>
+<h3 id="allarmi-di-sicurezza">Allarmi di sicurezza</h3>
+<table>
+<tr>
+<td><p><em><strong>ALLARME SICUREZZA</strong></em></p>
+</td>
+<td><p>(causa) il pulsante di emergenza &#232; stato premuto oppure &#232; intervenuto un dispositivo di sicurezza; </p>
+<p>(azione) eliminare la causa dell&#39;emergenza o ripristinare il pulsante.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>RIPARO MOBILE ATTIVO/DISATTIVO</strong></em></p>
+</td>
+<td><p>(causa) &#232; cambiata la posizione del selettore modale presente sulla console;</p>
+<p>(azione) agire sul selettore modale.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>SELETTORE MODALE</strong></em><em><strong> </strong></em><em><strong>IN SETTING</strong></em></p>
+</td>
+<td><p>(causa) &#232; stato richiesto un movimento degli assi con il selettore modale in posizione di setting;</p>
+<p>(azione) agire sul selettore modale.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>STOP OPERATORE</strong></em></p>
+</td>
+<td><p>(causa) &#232; stato premuto il pulsante di STOP del terminale o della console;</p>
+<p>(azione) eliminare la condizione anomala e comandare un ritorno a zero degli assi.</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-edm">Allarmi EDM</h3>
+<table>
+<tr>
+<td><p><em><strong>E1</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su valvola di emergenza</p>
+<p><em>(azione) controllare</em><em> il</em><em> funzionamento </em><em>del </em><em>sistema valvola-pressostato EMERGENZA. L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: il pressostato dovrebbe spegnersi entro 1 sec dall&#39;accensione della valvola ed accendersi entro 1 sec dallo spegnimento della stessa. Il problema pu&#242; presentarsi per un malfunzionamento del pressostato o</em><em> per una sua mal taratura, oppure in caso di malfunzionamento della valvola.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E2</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su valvola selettore modale</p>
+<p><em>(azione) controllare il funzionamento del sistema valvola-pressostato </em><em>SELETTORE MODALE. </em><em>L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: il pressostato dovrebbe spegnersi entro 1 sec dall&#39;accensione della valvola ed accendersi entro 1 sec dallo spegnimento della stessa. Il problema pu&#242; presentarsi per un malfunzionamento del pressostato o per una sua mal taratura, oppure in caso di malfunzionamento della valvola.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E3</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su blocco porta</p>
+<p><em>(azione) controllare funzionamento sistema valvola-cilindro blocco porta.  L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: il sensore sul cilindro dovrebbe spegnersi entro 1 sec dall&#39;accensione della valvola ed accendersi entro 1 sec dallo spegnimento della stessa. il problema pu&#242; presentarsi anche se la valvola non dovesse rispondere al comando elettrico del plc o se il sensore sul pistone &#232; mal posizionato.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E4</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su blocco porta sinistro</p>
+<p><em>(azione) vedasi E3</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E5</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su blocco porta destro</p>
+<p><em>(azione) vedasi E3</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E6</strong></em></p>
+</td>
+<td><p>(causa) Anomalia pressostato bassa pressione (posizione 0&#176; su TRS)</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema valvola-pressostato LOW-P. </em><em>L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: </em><em>il pressostato dovrebbe spegnersi entro 2,5 sec dall&#39;accensione della valvola ed accendersi entro 2,5 sec dallo spegnimento della stessa. Con valvola HP spenta si deve avere la condizione di bassa pressione (pressostato acceso), viceversa con condizione di alta pressione (pressostato spento). Il problema pu&#242; presentarsi anche se la valvola non dovesse rispondere al comando elettrico del plc o se il regolatore di pressione dedicato (LOW-P) &#232; stato manomesso, portando la pressione in uscita ad un livello troppo elevato che non consente lo spegnimento del pressostato normalmente tarato a 3BAR. Nel caso si tratti di tavola rotante, la valvola HP0&#176; viene attivata non appena la tavola inizia la rotazione per portare in posizione di lavoro la morsa 0&#176;.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E7</strong></em></p>
+</td>
+<td><p>(causa) Anomalia pressostato bassa pressione posizione 180&#176; su TRS</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema valvola-pressostato LOW-P. </em><em>L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: </em><em>il pressostato dovrebbe spegnersi entro 2,5 sec dall&#39;accensione della valvola ed accendersi entro 2,5 sec dallo spegnimento della stessa. Con valvola HP180 spenta si deve avere la condizione di bassa pressione (pressostato acceso), viceversa con condizione di alta pressione (pressostato spento). Il problema pu&#242; presentarsi anche se la valvola non dovesse rispondere al comando elettrico del plc o se il regolatore di pressione dedicato (LOW-P) &#232; stato manomesso, portando la pressione in uscita ad un livello troppo elevato che non consente lo spegnimento del pressostato normalmente tarato a 3BAR. Nel caso si tratti di tavola rotante, la valvola HP180&#176; viene attivata non appena la tavola inizia la rotazione per portare in posizione di lavoro la morsa </em><em>18</em><em>0&#176;.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E8</strong></em></p>
+</td>
+<td><p>(causa) Anomalia contattore inerziale</p>
+<p><em>(azione) </em><em>controllare funzionamento contatto NC del contattore C1 o K1. l&#39;errore implica un mancato cambio di stato del ritorno proveniente dal contatto normalmente chiuso del contattore, che dovrebbe essere alto quando la bobina dello stesso non &#232; comandata dal PLC e viceversa. in caso di errore il contattore potrebbe essere bloccato meccanicamente.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E9</strong></em></p>
+</td>
+<td><p>(causa) Anomalia contattore inerziale per controllo frenatura inverter</p>
+<p><em>(azione) </em><em>controllare funzionamento contatto NC del contattore C2 o K2. l&#39;errore implica un mancato cambio di stato del ritorno proveniente dal contatto normalmente chiuso del contattore, che dovrebbe essere alto quando la bobina dello stesso non &#232; comandata dal PLC e viceversa. in caso di errore il contattore potrebbe essere bloccato meccanicamente.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E10</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO inverter</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM degli inverter. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli inverter deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;inverter potrebbe essere spento o in fase di accensione. Nel caso di presenza di pi&#249; inverter, i canali EDM sono collegati in serie.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E11</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamenti non inerziali (XYZ su PLC in versione non ibrida)</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM degli assi non inerziali o degli assi X,Y,Z in caso di quadri con elettronica &quot;integrale&quot;. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione. il canale EDM dei vari azionamenti &#232; collegato in serie.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E12</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamento asse 4</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM dell&#39;asse n.4. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E13</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamento asse 6</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM dell&#39;asse n.6. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E14</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamenti inerziali (asse 7 su PLC in versione non ibrida)</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM degli assi inerziali o dell&#39;asse 7 in caso di quadri con elettronica &quot;integrale&quot;. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione. il canale EDM dei vari azionamenti &#232; collegato in serie.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E15</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamento asse 8</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM dell&#39;asse n.8. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione. questo asse viene depotenziato (vengono abbassati gli STO) quando &#232; in posizione di carico e le barriere vengono intruse (se non &#232; presente il robot).</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E16</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamento asse 9</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM dell&#39;asse n.9. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione. questo asse viene depotenziato (vengono abbassati gli STO) quando &#232; in posizione di carico e le barriere vengono intruse (se non &#232; presente il robot). </em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E17</strong></em></p>
+</td>
+<td><p>(causa) Anomalia modulo IO, possibile corto circuito o discrepanza segnali di test</p>
+<p><em>(azione) </em><em>controllare lo stato dei moduli costituenti il PLC, l&#39;errore potrebbe essere dovuto a cortocircuiti sugli ingressi o sulle uscite oppure ad una discrepanza sui segnali di test. Il modulo, l&#39;ingresso o l&#39;uscita in errore &#232; identificabile grazie a dei led rossi su di esso.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E18</strong></em></p>
+</td>
+<td><p>(causa) Anomalia connessione Ethernet-IP manifold pneumatico</p>
+<p><em>(azione) </em><em>errore dovuto a mancanza di comunicazione Ethernet IP tra PLC e </em><em>manifold</em><em> pneumatico. Controllare stato alimentazione del </em><em>manifold</em><em> ed eventualmente riprogrammare indirizzo IP.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E19</strong></em></p>
+</td>
+<td><p>(causa) Anomalia pressostato bassa pressione</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema valvola-pressostato LOW-P. L&#39;errore implica un malfunzionamento sul canale EDM, il pressostato dovrebbe infatti spegnersi entro 2,5sec dall&#39;accensione della valvola ed accendersi entro 2,5sec dallo spegnimento della stessa. con valvola HP spenta infatti, si deve avere la condizione di bassa pressione (pressostato acceso), viceversa condizione di alta pressione (pressostato spento). il problema pu&#242; presentarsi anche se la valvola non dovesse rispondere al comando elettrico del plc o se il regolatore di pressione dedicato (LOW-P) &#232; stato manomesso, portando la pressione in uscita ad un livello troppo elevato che non consente lo spegnimento del pressostato normalmente tarato a 3BAR.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E20</strong></em></p>
+</td>
+<td><p>(causa) Anomalia edm STO azionamento 5 asse</p>
+<p><em>(azione) controllare funzionamento sistema EDM dell&#39;asse n.5. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E21</strong></em></p>
+</td>
+<td><p>(causa) edm STO azionamento 5 asse stepper </p>
+<p>(azione) controllare funzionamento sistema EDM dell&#39;asse n.5 con motore stepper (TRS drill screw). Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E22</strong></em></p>
+</td>
+<td><p>(causa) edm STO azionamento 6 asse stepper </p>
+<p>(azione) controllare funzionamento sistema EDM dell&#39;asse n.6 con motore stepper (TRS drill screw). Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E23</strong></em></p>
+</td>
+<td><p>(causa) errore pressostato bassa pressione – Valvola SM2 </p>
+<p>(azione) controllare funzionamento del sistema di controllo abbassamento di pressione. All&#39;accensione della valvola SM2, viene atteso lo spegnimento del pressostato lowP (stato di alta pressione morsa), viceversa allo spegnimento della valvola viene attesa l&#39;accensione del pressostato (mancanza aria su morsa).</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-movimento-assi">Allarmi movimento assi</h3>
+<table>
+<tr>
+<td><p><em><strong>ALLARME AZIONAMENTI</strong></em></p>
+</td>
+<td><p>(causa) uno degli azionamenti assi &#232; in protezione; ci&#242; avviene quando l’asse &#232; ostacolato nel suo movimento;</p>
+<p>(azione) premere il pulsante di emergenza per qualche secondo e quindi ripristinarlo.</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>ASSE X </strong><strong>ALLARME ENCODER</strong></p>
+</td>
+<td><p><em>(causa) la differenza tra la posizione richiesta per </em><em>l’</em><em> asse</em><em> indicato</em><em> e quella trasmessa dall’encoder &#232; risultata maggiore dell’errore di inseguimento fissato per quell’asse;</em></p>
+<p><em>(azione) controllare l’errore di inseguimento o ridurre la velocit&#224; e ripetere l’operazione.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ALLARME SENSORE DI FINE CORSA</strong></em></p>
+</td>
+<td><p>(causa) uno dei sensori di fine corsa degli assi &#232; risultato attivo;</p>
+<p>(azione) comandare l’azzeramento degli assi e quindi ripetere l’operazione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>NON CONSENTITO! MANCA AZZERAMENTO ASSI</strong></em></p>
+</td>
+<td><p>(causa) &#232; stato richiesto un posizionamento assi senza un preventivo azzeramento degli stessi;</p>
+<p>(azione) comandare l’azzeramento degli assi e quindi ripetere l’operazione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>CONTROLLARE VELOCITA&#39;</strong></em></p>
+</td>
+<td><p>(causa) &#232; stato richiesto un posizionamento degli assi con il valore di velocit&#224; nullo;</p>
+<p>(azione) ripristinare la velocit&#224; e ripetere l’operazione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>X</strong></em><em><strong> FUORI LIMITE</strong></em></p>
+</td>
+<td><p>(causa) &#232; stato richiesto un movimento dell’asse X con una posizione finale che eccede i limiti imposti per quell’asse nella Configurazione assi;</p>
+<p>(azione) controllare la posizione finale.</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-sottoprogrammi">Allarmi sottoprogrammi</h3>
+<table>
+<tr>
+<td><p><strong>TIMEOUT         </strong></p>
+<p><strong>NON DEFINITO</strong></p>
+</td>
+<td><p>(causa) nella esecuzione di un sottoprogramma, non risulta specificato il tempo di attesa previsto;</p>
+<p>(azione) controllare il sottoprogramma.</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>PROG. RESIDENTE CORROTTO</strong></p>
+</td>
+<td><p>(causa) nella esecuzione di un sottoprogramma, &#232; stato rilevato un errore dal controllo di integrit&#224;;</p>
+<p>(azione) controllare il sottoprogramma.</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-memoria-flash">Allarmi memoria flash</h3>
+<table>
+<tr>
+<td><p><em><strong>ERRORE FLASH LETTURA PARAMETRI</strong></em></p>
+</td>
+<td><p>(causa) all’accensione del CN, &#232; stato rilevato un errore dal controllo di integrit&#224; dei parametri memorizzati;</p>
+<p>(azione) controllare i parametri e comandare una registrazione.</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>NON CONSENTITO! PARAMETRI ERRATI</strong></p>
+</td>
+<td><p><em> (causa) &#232; stata richiesta una funzionalit&#224; al CN dopo un errore in lettura dei parametri dalla memoria permanente,</em></p>
+<p><em>(azione) ripristinare i parametri, richiedere la registrazione degli stessi nella memoria permanente, spegnere e riaccendere la macchina.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ERASE FLASH ERROR</strong></em></p>
+<p><em><strong>WRITE FLASH ERROR</strong></em></p>
+</td>
+<td><p>(causa) si &#232; verificato un errore durante le operazioni di scrittura della memoria del CN;</p>
+<p>(azione) ripetere l’operazione.</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-in-lavorazione">Allarmi in lavorazione</h3>
+<table>
+<tr>
+<td><p><em><strong>DATI ASSENTI! INVIARE PERCORSO</strong></em></p>
+</td>
+<td><p>(causa) &#232; stato richiesto l’avvio della lavorazione senza inviare preventivamente un percorso utensile;</p>
+<p>(azione) inviare un percorso.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>DATI NON CORRETTI! INVIARE PERCORSO</strong></em></p>
+</td>
+<td><p>(causa) &#232; stato richiesto l’avvio della lavorazione avendo caricato un percorso troppo grande per la memoria del CN;</p>
+<p>(azione) inviare nuovamente il percorso utensile.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ASSE FUORI LIMITI! BLOCCO xxx</strong></em></p>
+</td>
+<td><p>(causa) alla riga xxx del percorso utensile caricato, l’asse indicato supera le dimensioni imposte;</p>
+<p>(azione) verificare il percorso utensile o modificare la posizione iniziale per quell’asse.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>CHECK CMD ISO   RIGA xxx</strong></em></p>
+</td>
+<td><p>(causa) alla riga xxx del percorso utensile caricato, nel comando iso mancano dei parametri;</p>
+<p> (azione) verificare il percorso utensile.</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>ERRORE RX DATI</strong></p>
+</td>
+<td><p> <em>(causa) sono stati ricevuti dati seriali non coerenti;</em></p>
+<p><em>(azione) controllare la corretta connessione usb.</em></p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-preset-utensile">Allarmi preset utensile</h3>
+<table>
+<tr>
+<td><p><em><strong>PRESET NON COMPLETATO</strong></em></p>
+</td>
+<td><p>(causa) l’operazione di preset utensile non &#232; stata terminata;</p>
+<p>(azione) ripetere l’operazione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ERRORE PRESET: </strong></em></p>
+<p><em><strong> MAX DISCESA Z</strong></em></p>
+</td>
+<td><p>(causa) nell’abbassamento sul sensore &#232; stata raggiunta la quota di massima discesa indicata nei parametri di Preset;</p>
+<p>(azione) controllare i parametri e ripetere l’operazione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ERRORE PRESET:  </strong></em></p>
+<p><em><strong>ALT OPERATORE</strong></em></p>
+</td>
+<td><p>(causa) nell’abbassamento sul sensore, l’operatore ha premuto un tasto del telecomando; questo arresta l’operazione di preset;</p>
+<p>(azione) ripetere l’operazione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ERRORE PRESET:  CHECK SENSORE</strong></em></p>
+</td>
+<td><p>(causa) nell’abbassamento in rapido sul sensore, &#232; stato rilevato il contatto prima di raggiungere la quota di abbassamento in rapido indicata nei parametri di Preset;</p>
+<p>(azione) controllare i parametri e ripetere l’operazione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>PERICOLO INTEGRITA&#39; CALIBRO</strong></em></p>
+</td>
+<td><p>(causa) la misura del calibro lineare ha superato 9 mm su 10 mm di corsa totale;</p>
+<p>(azione) comandare l’azzeramento degli assi.</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-elettromandrino">Allarmi elettromandrino</h3>
+<table>
+<tr>
+<td><p><em><strong>ALLARME INVERTER</strong></em></p>
+</td>
+<td><p>(causa) l’inverter &#232; in condizione di allarme; </p>
+<p>(azione) arrestare la lavorazione, controllare che il mandrino ruoti liberamente, controllare la temperatura del mandrino, premere il pulsante di emergenza per qualche secondo e quindi ripristinarlo.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ALLARME FLUSSO CONDIZIONAMENTO</strong></em></p>
+</td>
+<td><p>(causa) &#232; diminuito il flusso del liquido di raffreddamento del mandrino;</p>
+<p>(azione) controllare il livello del liquido e il funzionamento della pompa.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ALLARME TEMPERATURA CONDIZIONAMENTO</strong></em></p>
+</td>
+<td><p>(causa) la temperatura del liquido di raffreddamento del mandrino ha superato il limite impostato nel termostato;</p>
+<p>(azione) controllare la programmazione del termostato, controllare il livello del liquido e il funzionamento della pompa.</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>ALLARME LIVELLO SPRAY</strong></p>
+</td>
+<td><p><em>(causa) mancanza di liquido nell’impianto di nebulizzazione;</em></p>
+<p><em>(azione) ripristinare il livello del liquido;</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>MANDRINO ACCESO! COMANDO IGNORATO</strong></em></p>
+</td>
+<td><p>(causa) &#232; stata richiesta una funzionalit&#224; con il mandrino acceso;</p>
+<p>(azione) spegnere il mandrino e ripetere l’operazione.</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-dispositivi-pneumatici">Allarmi dispositivi pneumatici</h3>
+<table>
+<tr>
+<td><p><em><strong>ALLARME</strong></em><em><strong> PRESSIONE  IMPIANTO</strong></em></p>
+</td>
+<td><p> (causa) l’impianto dell’aria compressa &#232; scarico;</p>
+<p>(azione) ripristinare la pressione dell’aria.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ALLARME PNEUMATICA DIAMANTATRICE</strong></em><em><strong> SATINATRICE</strong></em></p>
+</td>
+<td><p>(causa) la diamantatrice o la satinatrice non si &#232; sollevata per mancanza di aria compressa o per errore di lettura del sensore di posizione;</p>
+<p>(azione) ripristinare la pressione dell’aria o controllare il sensore.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ALLARME PNEUMATICA MANDRINI</strong></em></p>
+</td>
+<td><p>(causa) un mandrino pneumatico non si &#232; sollevato per mancanza di aria compressa o per errore di lettura del sensore di posizione;</p>
+<p>(azione) ripristinare la pressione dell’aria o controllare il sensore.</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-controllo-temperatura">Allarmi controllo temperatura</h3>
+<table>
+<tr>
+<td><p><strong>ALLARME TEMP.   CHILLER</strong></p>
+</td>
+<td><p>(causa) la temperatura del liquido di raffreddamento del mandrino ha superato il limite impostato nei parametri di Controllo Allarmi;</p>
+<p>(azione) controllare il limite impostato nei parametri di Controllo Allarmi, controllare il livello del liquido e il funzionamento della pompa.</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>ALLARME TEMP.   ARMADIO</strong></p>
+</td>
+<td><p>(causa) la temperatura all’interno dell’armadio elettrico ha superato il limite impostato nei parametri di Controllo Allarmi;</p>
+<p>(azione) controllare il limite impostato nei parametri di Controllo Allarmi, controllare il funzionamento della ventola di aspirazione.</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-accessorio-cambio-utensile">Allarmi accessorio cambio utensile</h3>
+<table>
+<tr>
+<td><p><em><strong>PROBLEMI AL MAGAZZINO UTENSILI</strong></em></p>
+</td>
+<td><p>(causa) l’impianto dell’aria compressa &#232; scarico oppure il magazzino non ha raggiunto la posizione richiesta (errore nella lettura dei sensori di posizione);</p>
+<p>(azione) ripristinare la pressione dell’aria o controllare i sensori del magazzino utensile.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>CONO NON INSERITO</strong></em></p>
+</td>
+<td><p>(causa) &#232; stata richiesta una operazione con il mandrino senza il cono non inserito;</p>
+<p>(azione) controllare lo stato del cono inserito nei parametri del magazzino utensili.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>CONO GIA’ INSERITO</strong></em></p>
+</td>
+<td><p>(causa) &#232; stata richiesta una operazione di prelievo cono con un cono gi&#224; inserito nel mandrino;</p>
+<p>(azione) controllare lo stato del cono inserito nei parametri del magazzino utensili.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>TORRETTA VUOTA</strong></em></p>
+</td>
+<td><p>(causa) &#232; stata richiesta una operazione di prelievo cono da una torretta vuota; </p>
+<p>(azione) controllare lo stato delle torrette nei parametri del magazzino utensili.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>TORRETTA OCCUPATA</strong></em></p>
+</td>
+<td><p>(causa) &#232; stata richiesta una operazione di deposito cono in una torretta occupata;</p>
+<p>(azione) controllare lo stato delle torrette nei parametri del magazzino utensili.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>NUMERO DI TORRETTA ERRATO</strong></em></p>
+</td>
+<td><p>(causa) &#232; stata richiesta una operazione di cambio utensile con un numero di torretta errato; </p>
+<p>(azione) verificare il percorso utensile.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ASSE Y PERICOLO DI COLLISIONE</strong></em></p>
+</td>
+<td><p>(causa) &#232; stata richiesta l’apertura del magazzino utensili con il mandrino troppo vicino;</p>
+<p>(azione) allontanare il mandrino lungo y.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>RIENTRARE MAG. UTENSILI</strong></em></p>
+</td>
+<td><p>(causa) il magazzino utensili a 10 posizioni non risulta chiuso;</p>
+<p>(azione) chiudere manualmente il magazzino.</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>CONTROLLARE UTENSILE</strong></p>
+</td>
+<td><p><em>(causa) il numero dell’utensile indicato nella lavorazione &#232; improprio; </em></p>
+<p><em>(azione) controllare il numero dell’utensile e inviare la lavorazione corretta.</em></p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-accessorio-carica-lastra">Allarmi accessorio carica lastra</h3>
+<table>
+<tr>
+<td><p><em><strong>ALIM. LASTRA    ERRORE PRESSA</strong></em></p>
+</td>
+<td><p>(causa) dopo un comando di apertura o chiusura, il sensore della pressa non conferma la posizione richiesta;</p>
+<p> (azione) controllare il sensore.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ALIM. LASTRA    ERRORE VUOTO</strong></em></p>
+</td>
+<td><p>(causa) dopo un comando di avanzamento lastra, non &#232; stato raggiunto il livello di vuoto;</p>
+<p> (azione) controllare.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ALIM. LASTRA    ERRORE RULLI</strong></em></p>
+</td>
+<td><p>(causa) dopo un comando di apertura o chiusura, il sensore dei rulli non conferma la posizione richiesta;</p>
+<p> (azione) controllare il sensore.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ALIM. LASTRA    ASSENZA LASTRA</strong></em></p>
+</td>
+<td><p>(causa) dopo un comando di avanzamento lastra, il sensore non conferma la presenza lastra;</p>
+<p> (azione) caricare l’alimentatore.</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-funzione-allineamento-lastra">Allarmi funzione allineamento lastra</h3>
+<table>
+<tr>
+<td><p><em><strong>ALLINEAMENTO NON CONSENTITO</strong></em></p>
+<p><em><strong>VERIFICARE DATI LASTRA</strong></em></p>
+</td>
+<td><p><em>(causa)  &#232; stata richiesta la procedura di allineamento della lastra in assenza di dati o con dati errati;</em></p>
+<p><em>(azione)</em> controllare i dati di allineamento e ripetere l’operazione;</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>ERRORE RILEVAMENTO FORO</strong></p>
+</td>
+<td><p><em>(causa) durante la procedura di allineamento della lastra, l’operazione di ricerca del foro non &#232; stata completata ;</em></p>
+<p><em>(azione) accertarsi della posi</em><em>z</em><em>ione del foro </em>e ripetere l’operazione;</p>
+</td>
+</tr>
+</table>
+<h3 id="allarmi-accessorio-cambio-anelli">Allarmi accessorio cambio anelli</h3>
+<table>
+<tr>
+<td><p><em><strong>CAMBIO ANELLI   </strong></em></p>
+<p><em><strong>NON COMPLETATO</strong></em></p>
+</td>
+<td><p><em>(causa) durante la procedura di cambio </em><em>anello,per</em><em> uno dei dispositivi &#232; stato rilevato un errore;</em></p>
+<p><em>(azione) controllare il corretto funzionamento del dispositivo;</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>ERRORE </strong></em></p>
+<p><em><strong>-</strong></em><em><strong>MANO DI  PRESA</strong></em></p>
+<p><em><strong>-DEPOSITO</strong></em></p>
+<p><em><strong>-PRELIEVO</strong></em></p>
+<p><em><strong>-CARRELLO</strong></em></p>
+</td>
+<td><p>(causa) dopo un comando di cambio anello, il sensore indicato non conferma la posizione richiesta;</p>
+<p> (azione) controllare il sensore.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>DEPOSITO PIENO</strong></em></p>
+<p><em><strong>PRELIEVO VUOTO</strong></em></p>
+</td>
+<td><p>(causa) dopo un comando di cambio anello, il serbatoio di deposito risulta pieno oppure quello di prelievo risulta vuoto;</p>
+<p> (azione) ripristinare i serbatoi.</p>
+</td>
+</tr>
+</table>
+<hr class="pagebreak">
+<h2 id="elenco-dei-comandi-iso">Elenco dei Comandi ISO </h2>
+<p><em>A Asse rotativo perpendicolare all&#39;asse X</em></p>
+<p><em>B Asse rotativo perpendicolare all&#39;asse Y</em></p>
+<p><em>C Asse rotativo perpendicolare all&#39;asse Z</em></p>
+<p><em>D Seconda funzione utensile</em></p>
+<p><em>E Seconda funzione di avanzamento</em></p>
+<p><em>F Funzione di avanzamento (Feed)</em></p>
+<p><em>G Funzione preparatoria</em></p>
+<p><em>H Non assegnato</em></p>
+<p><em>I Centro di interpolazione circolare, asse X</em></p>
+<p><em>J Centro di interpolazione circolare, asse Y</em></p>
+<p><em>K Centro di interpolazione circolare, asse Z</em></p>
+<p><em>L Non assegnato</em></p>
+<p><em>M Funzione miscellanea</em></p>
+<p><em>N Numero di blocco (sequenza)</em></p>
+<p><em>O Non assegnato</em></p>
+<p><em>P Asse lineare parallelo all&#39;asse X </em></p>
+<p><em>Q Asse lineare parallelo all&#39;asse Y </em></p>
+<p><em>R Asse lineare parallelo all&#39;asse Z </em></p>
+<p><em>S Funzione di velocit&#224; </em><em>fresa</em><em>(Speed)</em></p>
+<p><em>T Funzione di definizione utensile</em></p>
+<p><em>U Asse lineare parallelo all&#39;asse X </em></p>
+<p><em>V Asse lineare parallelo all&#39;asse Y </em></p>
+<p><em>W Asse lineare parallelo all&#39;asse Z</em></p>
+<p><em>X Asse lineare X</em></p>
+<p><em>Y Asse lineare Y</em></p>
+<p><em>Z Asse lineare Z</em></p>
+<p><em>Codice ISO 6983.</em></p>
+<p><em>I valori X, Y, Z, I, J, e K sono assunti in millimetri.</em></p>
+<p><em>I valori A, B e C sono assunti in gradi e millesimi di grado.</em></p>
+<h3 id="funzioni-preparatorie">Funzioni Preparatorie</h3>
+<table>
+<tr>
+<td><p><strong>G00</strong> </p>
+</td>
+<td><p>Sintassi :<strong> </strong>	<strong>G00 {X, Y, Z, A, B, C}</strong></p>
+<p>posizionamento in rapido; movimento interpolato alla massima velocit&#224; programmata</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G01</strong></p>
+</td>
+<td><p>Sintassi : 	<strong>G01</strong><strong> {X, Y, Z, A, B, C</strong><strong>}</strong></p>
+<p>interpolazione lineare: movimento di uno o pi&#249; assi alla velocit&#224; programmata con la funzione F (Feed)</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G02</strong></p>
+</td>
+<td><p>Sintassi: 	<strong>G02 {X, Y, I</strong><strong>, J}</strong>		nel piano di interpolazione XY</p>
+<p>		<strong>G02</strong><strong> {X, Z, I, K}</strong>		nel piano di interpolazione XZ</p>
+<p>		<strong>G02 {Y, Z, J, K}</strong>		nel piano di interpolazione YZ</p>
+<p>interpolazione circolare oraria: movimento di due assi lungo un arco in senso orario.</p>
+<p>X Y e Z sono le coordinate del punto finale dell&#39;arco;</p>
+<p>I,J e K sono le differenze tra il centro dell&#39;arco e il punto iniziale</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G0</strong><strong>3</strong></p>
+</td>
+<td><p>Sintassi: 	<strong>G0</strong><strong>3</strong><strong> {X, Y, I</strong><strong>, J}</strong>		nel piano di interpolazione XY</p>
+<p>		<strong>G03 {X, Z, I, K}</strong>		nel piano di interpolazione XZ</p>
+<p>		<strong>G03 {Y, Z, J, K}</strong>		nel piano di interpolazione YZ</p>
+<p>interpolazione circolare antioraria: movimento di due assi lungo un arco in senso antiorario.</p>
+<p>X Y e Z sono le coordinate del punto finale dell&#39;arco;</p>
+<p>I,J e K sono le differenze tra il centro dell&#39;arco e il punto iniziale</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G04</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G04 {X}</strong></p>
+<p>		<strong>G04 {P}</strong></p>
+<p> sosta temporizzata: sosta per il tempo specificato dalle funzioni X o P che indicano i secondi di pausa; X ammette il punto decimale</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G12</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G12 </strong><strong>{X, Y,</strong><strong> Z,</strong><strong> I, J</strong><strong>, T</strong><strong>}</strong></p>
+<p>interpolazione elicoidale oraria dove Z &#232; la profondit&#224; finale e T &#232; il numero di giri.</p>
+<p>Solo nel piano di interpolazione XY</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1</strong><strong>3</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G1</strong><strong>3</strong><strong>{X, Y,</strong><strong> Z,</strong><strong> I, J</strong><strong>, T</strong><strong>}</strong></p>
+<p>interpolazione elicoidale antioraria dove Z &#232; la profondit&#224; finale e T &#232; il numero di giri</p>
+<p>Solo nel piano di interpolazione XY</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G14</strong></p>
+</td>
+<td><p>Sintassi:</p>
+<p>riga 1		<strong>G14 D1 X… </strong><strong>Y…</strong></p>
+<p>riga 2		<strong>G14 D1 X… Y…</strong></p>
+<p>riga 3		<strong>G14 D1 X… </strong><strong>Y…</strong></p>
+<p>Esegue la  tastatura di una superficie delimitata da tre punti.</p>
+<p>I’esecuzione della riga 3 comanda la tastatura nei tre punti indicati e il successivo calcolo dei coefficienti del piano a cui i tre punti appartengono. I dati sono memorizzati secondo l’indice D (da 1 a 20).</p>
+<p>La tastatura viene eseguita secondo i parametri del tastatore:</p>
+<ul>
+<li class="level-0">offset XY del tastatore</li>
+</ul>
+<ul>
+<li class="level-0">preset Z del tastatore</li>
+</ul>
+<ul>
+<li class="level-0">abbassamento Z in rapido</li>
+</ul>
+<ul>
+<li class="level-0">limite di discesa Z</li>
+</ul>
+<p>e considera il valore dello <strong>spessore materiale.</strong></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1</strong><strong>5</strong></p>
+</td>
+<td><p>Sintassi: 	<strong>G15 D1</strong></p>
+<p>Abilita la variazione della quota Z in relazione ai dati memorizzati secondo l’indice D.</p>
+<p>Per ogni successivo comando G01 la variazione della quota Z &#232; calcolata tenendo conto della posizione XY e dei coefficienti del piano determinati dalla precedente G14</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1</strong><strong>7</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G1</strong><strong>7</strong></p>
+<p>piano di interpolazione XY</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1</strong><strong>8</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G1</strong><strong>8</strong></p>
+<p>piano di interpolazione ZX</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1</strong><strong>9</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G1</strong><strong>9</strong></p>
+<p>piano di interpolazione YZ</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G52</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G52 {X, Y, Z}</strong></p>
+<p> traslazione assoluta rispetto allo zero macchina</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G5</strong><strong>3</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G53</strong>:</p>
+<p>cancellazione dello spostamento origine; ripristina la posizione iniziale degli assi XY.</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G54</strong></p>
+<p><strong>G55</strong></p>
+<p><strong>G56</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G54, </strong>	<strong>G54.1, </strong>	<strong>G54.2, </strong>	<strong>G54.3</strong></p>
+<p>		<strong>G55,</strong> 	<strong>G55.1, </strong>	<strong>G55.2, </strong>	<strong>G55.3</strong></p>
+<p>		<strong>G56:</strong>, 	<strong>G56.1, </strong>	<strong>G56.2, </strong>	<strong>G56.3</strong></p>
+<p>spostamento dell’origine per gli assi XY; assume i valori predefiniti come nuova posizione iniziale degli assi XY;</p>
+<p>se il valore predefinito Z &#232; diverso da 0, modifica la posizione iniziale per l’asse Z;</p>
+<p>il valore predefinito H modifica lo spessore materiale (zam = Ram +H) e di conseguenza la posizione iniziale Z  (zpi = preset utensile – zam)</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G58</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G58 X0</strong>: specchiatura rispetto all’asse X</p>
+<p>		<strong>G58 Y0</strong>: specchiatura rispetto all’asse Y</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G59</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G59</strong><strong> {X, Y, H, A, B}</strong></p>
+<p>spostamento relativo dell’origine per l’asse indicato; </p>
+<p>un valore H modifica lo spessore materiale  (zam = zam +H) e di conseguenza la posizione iniziale Z  (zpi = preset utensile – zam)</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G73</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G73 D</strong></p>
+<p> rotazione angolare nel piano XY; D indica i gradi e i millesimi di grado</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G80</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G80</strong></p>
+<p> annullamento cicli fissi</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G81</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G81 {R, Z}</strong></p>
+<p><strong>	</strong><strong>	</strong><strong>{X, Y}</strong></p>
+<p><strong>	</strong><strong>	</strong><strong>……</strong></p>
+<p><strong>	</strong><strong>	</strong><strong>G80</strong></p>
+<p> ciclo fisso di foratura in unica passata (R &#232; il piano di ritorno in coordinate assolute, Z la profondit&#224; finale del foro)</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G83</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G83 {R, Z, Q}</strong></p>
+<p><strong>	</strong><strong>	</strong><strong>{X, Y}</strong></p>
+<p><strong>	</strong><strong>	</strong><strong>……</strong></p>
+<p><strong>	</strong><strong>	</strong><strong>G80</strong></p>
+<p>ciclo fisso di foratura in pi&#249; passate (R &#232; il piano di ritorno in coordinate assolute, Z la profondit&#224; finale del foro, Q l&#39;incremento ad ogni passata positivo)</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G90</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G90</strong></p>
+<p>programmazione in coordinate assolute</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G9</strong><strong>1</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G9</strong><strong>1</strong></p>
+<p>programmazione in coordinate relative</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G114</strong></p>
+</td>
+<td><p>Sintassi:		<strong>G1</strong><strong>1</strong><strong>4 D1 X… Y…</strong></p>
+<p>Esegue la  tastatura nel punto XY indicato e salva la variazione Z secondo l’indice D (da 1 a 20).</p>
+<p>La tastatura viene eseguita secondo i parametri del tastatore e considera il valore dello <strong>spessore materiale.</strong></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G115</strong></p>
+</td>
+<td><p>Sintassi: 	<strong>G</strong><strong>1</strong><strong>15 D1</strong></p>
+<p>Abilita la variazione della quota Z in relazione ai dati memorizzati secondo l’indice D.</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><strong>Comandi di tastatura (disponibili in base al tipo di macchina, agli accessori montati e alla versione firmware. Verificare preventivamente con il fornitore della macchina)</strong></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G120</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G121</strong><strong> </strong><strong>XYZ… P {F}</strong></p>
+<p>Movimento in tastatura con dispositivo tastatore a contatto elettrico. Viene effettuato un movimento di ricerca contatto dalla posizione corrente a quella indicata nel comando. Se il contatto &#232; rilevato, viene effettuato un movimento di ritorno al punto di partenza, in caso contrario viene generato un errore.</p>
+<p>Il parametro P&gt;=0 indica la posizione a cui salvare la tastatura acquisita e da cui poterla richiamare</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G121</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G121</strong><strong> </strong><strong>PR{Q}</strong></p>
+<p>Movimento di tastatura foro. La posizione di partenza deve essere gi&#224; all’interno del foro ad una quota Z adeguata ad un buon contatto. La macchina effettua movimenti di ricerca contatto lungo X e lungo Y, effettuando se necessario pi&#249; ripetizioni della misura al fine di raggiungere la precisione richiesta.</p>
+<p>Il parametro P&gt;=0 indica la posizione a cui salvare la posizione del centro acquisita e da cui poterla richiamare</p>
+<p>Il parametro R&gt;0 indica il raggio di massima ricerca del contatto, oltre il quale viene generato un errore</p>
+<p>Il parametro facoltativo Q, 0&lt;Q&lt;R, indica il raggio di avvicinamento in rapido ai bordi del foro. Pu&#242; essere utilizzato per velocizzare la tastatura di fori molto grandi</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G122</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G122 ZPRQ</strong></p>
+<p>Movimento di tastatura cilindo. La posizione di partenza deve essere all’incirca al centro del cilindro da tastare, ad una quota Z di sicurezza che consenta movimenti sopra il pezzo. La macchina effettua movimenti di ricerca contatto lungo X e lungo Y, effettuando se necessario pi&#249; ripetizioni della misura al fine di raggiungere la precisione richiesta.</p>
+<p>Il parametro P&gt;=0 indica la posizione a cui salvare la posizione del centro acquisita e da cui poterla richiamare</p>
+<p>Il parametro R&gt;(raggio teorico cilindro) indica il raggio di partenza di ricerca del contatto</p>
+<p>Il parametro Q, 0&lt;=Q&lt;R indica il raggio di massima ricerca del contatto e oltre il quale viene generato un errore</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G123</strong></p>
+</td>
+<td><p>Comando analogo a G120 ma dedicato al tastatore 3D Exagon</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G124/G125</strong></p>
+</td>
+<td><p>Comando analogo a G120 ma dedicato al calibro lineare, utilizzabile per tastatura Z</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G951</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G951</strong></p>
+<p> incrementa il conteggio pezzi</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1001</strong></p>
+</td>
+<td><p>Sintassi :	<strong>G1001 {X,Y,Z,A,B,H}</strong></p>
+<p> comando non standard ISO per la gestione delle posizioni iniziali di lavorazione. Il comando G1001 deve essere messo all’inizio del file iso. I parametri X, Y, Z, A, B e H sono opzionali. Quando viene caricata una lavorazione che contiene questo comando, Skipper informa l’operatore visualizzando i parametri X, Y, Z, A, B e H</p>
+</td>
+</tr>
+</table>
+<h3 id="funzioni-miscellanee">Funzioni Miscellanee</h3>
+<table>
+<tr>
+<td><p><strong>M00 {D}</strong></p>
+</td>
+<td><p><em>arresto programma; crea una pausa durante la lavorazione. </em></p>
+<p><em>D sono i millisecondi di pausa, se specificati.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M02</strong></p>
+</td>
+<td><p><em> fine programma</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M03</strong><strong> / </strong><strong>M0</strong><strong>4</strong></p>
+</td>
+<td><p><em>avvio mandrino con rotazione oraria</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M05</strong></p>
+</td>
+<td><p><em>arresto rotazione mandrino</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>CAMBIO UTENSILE</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M06</strong><strong> T</strong></p>
+</td>
+<td><p><em>cambio utensile</em></p>
+<p>In macchine multimandrino il comando T0 M6 effettua il sollvamento di tutti i mandrini</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M06.1 T</strong></p>
+</td>
+<td><p><em>Solo per macchine con </em><em>multimandrino</em><em> pneumatico, effettua il sollevamento anticipato del mandrino se la torretta indicata con T &#232; diversa dalla torretta corrente</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M06.2 T</strong></p>
+</td>
+<td><p><em>Solo per macchine con </em><em>multimandrino</em><em> pneumatico, effettua la selezione e l’abbassamento della torretta indicata senza sollevare le altre pneumatiche mandrini.</em></p>
+<p><em>Funzione utilizzabile per velocizzare il cambio utensile dove si pu&#242; operare con i mandrini abbassati senza rischio di collisione</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>NEBULIZZAZIONE</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M07</strong></p>
+</td>
+<td><p><em>erogazione refrigerante 1</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M08</strong></p>
+</td>
+<td><p><em>erogazione refrigerante 2</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M09</strong></p>
+</td>
+<td><p><em>arresto erogazione refrigerante 1</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M</strong><strong>10</strong></p>
+</td>
+<td><p><em>arresto erogazione refrigerante </em><em>2</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>SINCRONISMO DIAMANTATURA STELLE</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M20 RCS{W}</strong></p>
+</td>
+<td><p><em>Avvia rotazione sincrona CV (</em><em>diamantatrice</em><em>) o WU (</em><em>minidia</em><em>), se indicato flag W nel comando, per lavorazione di diamantatura stelle veloce. R specifica il numero di colpi per rotazione della testa (2R = numero di punte della stella); C &#232; l’angolo di rotazione della stella, S la velocit&#224; di rotazione</em><em> in giri/min</em><em> desiderata per l’asse V o U</em><em>. Il comando abbassa la pneumatica dell’accessorio</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M21</strong></p>
+</td>
+<td><p><em>Arresto rotazione sincrona avviata con M20. Effettua home dell’asse C o W, alza la pneumatica dell’accessorio</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>SINCRONISMO DIAMANTATURA</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M22</strong><strong> </strong><strong>{U}</strong></p>
+</td>
+<td><p><em>Predispone la macchina all’esecuzione di un percorso con interpolazione sincrona della </em><em>diamantatrice</em><em> ai movimenti XYZ. Abbassa la pneumatica dell’accessorio, effettua homing della </em><em>diamantatrice</em><em> (asse V o asse U)</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M23</strong></p>
+</td>
+<td><p><em>Termina l’esecuzione di un percorso con interpolazione sincrona della </em><em>diamantratice</em><em>. Alza la pneumatica dell’accessorio ed effettua homing dell’asse</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>OSCILLAZIONE Z MANDRINO</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M24 AF</strong></p>
+</td>
+<td><p><em>Avvia funzione di oscillazione della posizione Z mandrino attorno alla quota di lavorazione. A indica l’ampiezza del movimento in mm, F la frequenza di oscillazione in Hz</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M25</strong></p>
+</td>
+<td><p><em>Arresta oscillazione Z mandrino</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>CONTROLLO INTEGRITA’ LAMA – </em><em><strong>refererence</strong></em><em><strong> CHK_SOGLIA_COPPIA_RAGGIUNTA</strong></em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M40</strong></p>
+</td>
+<td><p><em>Azzera variabile di controllo integrit&#224; lama</em><em>. Variabile azzerata anche a inizio ciclo e ad ogni cambio gruppo mandrino</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M41</strong><strong> {D}</strong></p>
+</td>
+<td><p><em>Effettua test sulla variabile di controllo integrit&#224; lama. Se variabile a zero segnala allarme integrit&#224; lama, altrimenti controlla il segnale di coppia lama per il tempo in </em><em>ms</em><em> specificato. Se il segnale si attiva durante il controllo genera allarme integrit&#224; cinghia</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>ACCESSORI OFF</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M50</strong></p>
+</td>
+<td><p><em>spegne gli accessori alla fine della lavorazione (bit 0 </em><em>outb</em><em>)</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>ON/OFF ACCESSORI</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M60</strong></p>
+</td>
+<td><p><em>forza a 0 la porta di uscita UA1</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M6</strong><strong>1</strong></p>
+</td>
+<td><p><em>forza a 1 la porta di uscita UA1</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M62</strong></p>
+</td>
+<td><p><em>forza a 0 bit 4 di out1</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M6</strong><strong>3</strong></p>
+</td>
+<td><p><em>forza a 1 bit 4 di out1</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M6</strong><strong>4</strong></p>
+</td>
+<td><p><em>forza a 0 bit 4 di </em><em>outb</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M6</strong><strong>5</strong></p>
+</td>
+<td><p><em>forza a 1 bit 4 di </em><em>outb</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M</strong><strong>7</strong><strong>0</strong></p>
+</td>
+<td><p><em>forza a 0 la porta di uscita UA2</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M71</strong></p>
+</td>
+<td><p><em>forza a 1 la porta di uscita UA2</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M</strong><strong>8</strong><strong>0</strong></p>
+</td>
+<td><p><em>forza a 0 la porta di uscita UA3</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M81</strong></p>
+</td>
+<td><p><em>forza a 1 la porta di uscita UA3</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M90</strong></p>
+</td>
+<td><p><em>attende un cambiamento di stato sulla porta di ingresso. </em></p>
+<p><em>L’operazione pu&#242; essere interrotta solo da un comando di stop</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M9</strong><strong>1</strong></p>
+</td>
+<td><p><em>come M90, ma con segnale invertito</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M95</strong><strong> </strong><strong>BC</strong></p>
+</td>
+<td><p><em>annulla eventuali giri degli assi B o C o di entrambi</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em><strong>RICHIAMO DATI TASTATURA</strong></em><em><strong>:</strong></em><em><strong> i valori Z salvati nelle tastature sono sempre riferiti al piano Z0 (Zo-</strong></em><em><strong>zam</strong></em><em><strong>), quindi il valore di </strong></em><em><strong>zam</strong></em><em><strong> impostato in fase di acquisizione non ha effetto sul dato rilevato</strong></em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M120 P</strong></p>
+</td>
+<td><p><em>Invalida punto di tastatura indicizzato da P&gt;=0. Utile per assicurare che una tastatura successiva venga effettivamente eseguita prima del suo utilizzo. In caso contrario infatti verr&#224; generato un errore</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M121 PQ{R}</strong></p>
+</td>
+<td><p><em>Allineamento pezzo da due punti di tastatura salvati in posizione P e Q. I punti acquisiti precedentemente devono essere di tipo centro, ovvero centro foro o centro cilindro. In base all’angolo misurato tra i due centri viene calcolato l’allineamento del percorso di lavorazione. Se il flag R viene specificato, il comando imposta una correzione relativa dell’origine pari allo scostamento misurato del centro P dalla sua posizione teorica. In caso contrario viene impostata l’origine sulla posizione misurata del centro P.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M123 P [XYZ] {IJKH}</strong></p>
+</td>
+<td><p><em>Modifica l’origine corrente utilizzando il punto di tastatura </em><em>Pt</em><em> salvato in posizione P. Modifica solamente le coordinate dell’origine specificate dai rispettivi flag (X, Y, Z o una combinazione di questi). Tramite i </em><em>parametri IJK facoltativi &#232; possibile rimappare le coordinate:</em></p>
+<p><em>I: specifica la coordinata di </em><em>Pt</em><em> da utilizzare come X</em></p>
+<p><em>J: specifica la coordinata di </em><em>Pt</em><em> da utilizzare come Y</em></p>
+<p><em>K: specifica la coordinata di </em><em>Pt</em><em> da utilizzare come Z</em></p>
+<p><em>IJK possono assumere i seguenti valori: &#177;1 per X, &#177;2 per Y, &#177;3 per Z. Se di segno negativo la coordinata viene invertita di segno</em><em>. Il valore H opzionale e considerato solo in presenza di Z, viene sommato come offset aggiuntivo alla </em><em>zam</em><em>.</em></p>
+<p><em>Es: M123 P5 X I3 </em><em> utilizza la coordinata Z (I3) del punto di tastatura 5 (P5) e impostala come valore X dell’origine corrente</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M123.</strong><strong>1</strong><strong> P [XYZ] {IJKH}</strong></p>
+</td>
+<td><p><em>C</em><em>ome M123, ma i valori vengono sommati all’origine corrente (offset di coordinate)</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M124 PQ [XY]</strong></p>
+</td>
+<td><p><em>Modifica le coordinate riportate (X, Y o entrambe) dell’origine corrente impostandole alla media tra i punti di tastatura salvati in posizione P e in posizione Q</em></p>
+<p><em>Es. M124 Y P1 Q2 </em><em> la coordinata Y dell’origine viene impostata a (</em><em>Pt</em><em>[P].</em><em>Y+Pt</em><em>[Q].Y)/2</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M125 PQ{R}</strong></p>
+</td>
+<td><p><em>Imposta un piano inclinato per due o tre punti di tastatura, salvati nelle posizioni P, Q e R. Se solo le posizioni P e Q sono indicate crea un piano lungo X o lungo Y a seconda che i punti </em><em>Pt</em><em>[P] e </em><em>Pt</em><em>[Q] siano allineati in X o Y; genera errore se i punti non sono allineati in una delle due direzioni. Se invece anche R &#232; indicato crea un piano per tre punti.</em></p>
+<p><em>NB. I valori Z dei punti di tastatura nel calcolo del piano vengono scorporati del valore della </em><em>zam</em><em> corrente. In questo modo il piano inclinato fornisce una correzione Z applicata alla </em><em>zam</em><em>! Pertanto variazioni di </em><em>zam</em><em> che precedono M125 NON HANNO EFFETTO SULLA QUOTA DI LAVORAZIONE, che invece pu&#242; essere variata con G59 H, inserito dopo M125</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M126</strong></p>
+</td>
+<td><p><em>Annulla piano inclinato</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M127</strong></p>
+</td>
+<td><p><em>Annulla </em><em>zam</em><em>: </em><em>zam</em><em>0</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M128 XY{ZH}PQ</strong></p>
+</td>
+<td><p><em>Calcolo automatico della rotazione gruppo mandrino F5 da due punti di tastatura salvati nelle posizioni P e Q. La funzione calcola i parametri TCP, ruotando il percorso utensile rispetto la posizione XY indicata nel comando (e la quota Z, se specificata, altrimenti posta a 0). Il valore H facoltativo &#232; un offset Z applicato a tutta la lavorazione. Il comando effettua anche la rotazione di B (asse di rotazione gruppo mandrino) all’angolo risultante dall’elaborazione.</em></p>
+<p><em>NB. I valori Z dei punti di tastatura nel calcolo del piano vengono scorporati del valore della </em><em>zam</em><em> corrente. Pertanto variazioni di </em><em>zam</em><em> che precedono M</em><em>128</em><em> NON HANNO EFFETTO SULLA QUOTA DI LAVORAZIONE, che invece pu&#242; essere variata con G59 H, inserito dopo M125</em><em> o utilizzando il parametro H del comando stesso.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M</strong><strong>128 XY{ZH}B</strong></p>
+</td>
+<td><p><em>C</em><em>ome comando precedente, ma l’angolo di rotazione viene indicato esplicitamente (non utilizza tastature)</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em><strong>SOTTOPRAMMI M200</strong></em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M200</strong><strong>/200.1/200.2</strong></p>
+<p><strong>… 200.9</strong></p>
+</td>
+<td><p><em>Sottoprogrammi personalizzabili. E’ possibile programmare questi comandi per l’esecuzione di cicli di carico/scarico o l’esecuzione in generale di operazioni complesse</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>CAMBIO ANELLI AUTOMATICO</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M205</strong></p>
+</td>
+<td><p><em>cambio anello; esegue il prelievo dell’anello lavorato, il suo deposito, il prelievo di un nuovo anello</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>LAVORAZIONE TUBO</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M206</strong></p>
+</td>
+<td><p><em>cambio tubo in avanti</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M20</strong><strong>7</strong></p>
+</td>
+<td><p><em>cambio tubo indietro</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>TRASCINA LASTRA</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M208</strong><strong> Y</strong></p>
+</td>
+<td><p><em>trascina lastra; Y &#232; la distanza di trascinamento</em><em>. G56 la posizione XYZ del foro di inserimento</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M209 Y</strong></p>
+</td>
+<td><p><em>trascina lastra con sistema a rulli; Y &#232; la distanza di trascinamento</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>SATINATRICE</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M210</strong></p>
+</td>
+<td><p><em>satinatrice on</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M21</strong><strong>1</strong></p>
+</td>
+<td><p><em>satinatrice off</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>TAVOLA ROTANTE PNEUMATICA</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M212</strong></p>
+</td>
+<td><p><em>avanzamento tavola rotante</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M213</strong></p>
+</td>
+<td><p><em>controllo pedale e avanzamento tavola rotante</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M214 {D}</strong></p>
+</td>
+<td><p><em>apre morsa su tavola rotante; D &#232; il numero della morsa</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M216 {D}</strong></p>
+</td>
+<td><p><em>chiude morsa su tavola rotante; D &#232; il numero della morsa</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>TAVOLA ROTANTE TRS</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M21</strong><strong>7</strong></p>
+</td>
+<td><p><em>attesa consenso per la rotazione tavola</em></p>
+<ol>
+<li class="level-0"><em>controlla la posizione a 0 degli assi Y e Z; </em></li>
+</ol>
+<ol>
+<li class="level-0"><em>eventuale allarme </em><em>ALLARME</em><em> ASSI YZ POSIZIONE #0;</em></li>
+</ol>
+<ol>
+<li class="level-0"><em>attende il segnale su porta  IAX &amp; 0x08.</em></li>
+</ol>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>TASTATURA</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M218 {Z}</strong></p>
+</td>
+<td><p><em>discesa asse Z su sensore di preset; Z &#232; la quota limite di discesa</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M222</strong></p>
+</td>
+<td><p><em>campionamento materiale nelle posizioni 1 e 2 (vedi </em><a href="#">Punto da rilevare</a><em>)</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M223</strong></p>
+</td>
+<td><p><em>campionamento materiale nelle posizioni 3 e 4 (vedi </em><a href="#">Punto da rilevare</a><em>)</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M224</strong><strong> P1/2/3/4</strong></p>
+</td>
+<td><p><em>assegna lo spessore materiale H in relazione al punto P</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M231 {Z}</strong></p>
+</td>
+<td><p><em>limite di tastatura; Z &#232; la quota  limite di discesa</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M232 {Z}</strong></p>
+</td>
+<td><p><em>tastatura; Z &#232; la quota  limite di discesa</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M233 {X, Y}</strong></p>
+</td>
+<td><p><em>mappatura; XY &#232; la posizione di mappatura</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>UP/DOWN TASTATORE</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M250</strong></p>
+</td>
+<td><p><em>tastatore up</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M25</strong><strong>1</strong></p>
+</td>
+<td><p><em>tastatore down</em><em>. Non seleziona n&#233; offset n&#233; preset</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M2</strong><strong>72</strong></p>
+</td>
+<td><p><em>tastatore down</em><em>, selezione di offset e preset</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M2</strong><strong>73</strong></p>
+</td>
+<td><p><em>tastatore</em><em> up, clear offset e preset</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>UP/DOWN </em><em>CALIBRO LINEARE</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M250</strong><strong>.1</strong></p>
+</td>
+<td><p><em>calibro</em><em> up</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M25</strong><strong>1.1</strong></p>
+</td>
+<td><p><em>calibro</em><em> down</em><em>. Non seleziona n&#233; offset n&#233; preset</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M2</strong><strong>70</strong></p>
+</td>
+<td><p><em>calibro</em><em> down</em><em>, selezione di offset e preset, invio a Skipper del comando \270, utilizzato anche per il processo di calibrazione lente </em><em>PigrecoGold</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M2</strong><strong>71</strong></p>
+</td>
+<td><p><em>calibro</em><em> </em><em>up, clear offset e preset, invio a Skipper del comando \271, utilizzato anche per il processo di calibrazione lente </em><em>PigrecoGold</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>TASTATURA</em><em> </em><em>PERCORSO DA BATCH SKIPPER</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M252</strong></p>
+</td>
+<td><p><em>attiva la tastatura meccanica</em><em> sulle posizioni finali dei movimenti G1 che seguono</em></p>
+<p><em>Le quote acquisite vengono inviate a skipper per la modifica del percorso di lavorazione</em><em>, la tastatura viene effettuata utilizzando le quote di svincolo e massima discesa indicate nei parametri dell’accessorio tastatore. Quote di rapido e  limite sono assolute e scorporate della </em><em>zam</em><em>, la Z di sicurezza &#232; invece usata come svincolo dal punto di contatto individuato</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M</strong><strong>252.1 Z</strong></p>
+</td>
+<td><p><em>C</em><em>ome M252 ma la quota di massima discesa viene specificata direttamente nel comando</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M25</strong><strong>4 {ZDF}</strong></p>
+</td>
+<td><p><em>attiva la tastatura</em><em> percorso</em><em> con calibro lineare</em><em> sulle posizioni finali dei movimenti G1 che seguono, gli svincoli vengono effettuati alla quota costante specificata nei parametri dell’accessorio calibro</em></p>
+<p><em>Z, se specificata &#232; la quota </em><em>iso</em><em> di massima discesa; D &#232; la compressione del calibro da </em><em>ottenere</em><em> (default 4mm); F la velocit&#224; di movimento</em><em>.</em></p>
+<p><em>Se durante la tastatura la compressione del calibro supera 8mm o scende sotto 1mm, viene effettuato un movimento Z per riportare la compressione al valore impostato</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M2</strong><strong>64 {ZDF}</strong></p>
+</td>
+<td><p><em>attiva la tastatura con calibro lineare senza svincolo</em><em>. Agisce come M254 ma utilizza i valori Z del percorso nei movimenti in rapido G0</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M2</strong><strong>65 {ZDF}</strong></p>
+</td>
+<td><p><em>attiva la tastatura con calibro lineare </em><em>con inseguimento Z. Agisce come M264 ma durante l’acquisizione delle quote effettua un movimento in Z continuo volto a mantenere la compressione del calibro al valore impostato. Utile per la tastatura di oggetti con ampia variazione Z</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>SENSORE A FORCELLA</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M26</strong><strong>0</strong></p>
+</td>
+<td><p><em>s</em><em>ensore a forcella up</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M261</strong></p>
+</td>
+<td><p><em>ricerca della posizione sensore</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M262</strong></p>
+</td>
+<td><p><em> applica l’offset calcolato</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>RIPRISTINO ASSI</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M299</strong></p>
+</td>
+<td><p><em>attesa consenso da plc di sicurezza con eventuale ripristino della posizione assi</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M300 {D}</strong></p>
+</td>
+<td><p><em>movimentazione morse RST; D &#232; il codice di movimento</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><em>LAVORAZIONE LISTELLI</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M302</strong></p>
+</td>
+<td><p><em>carico listelli</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>CONTROLLO MORSE</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M311</strong></p>
+</td>
+<td><p><em>muove carro destro in posizione di carico</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M312</strong></p>
+</td>
+<td><p><em>muove carro destro in posizione di lavoro</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M313</strong></p>
+</td>
+<td><p><em>muove carro sinistro in posizione di carico</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M314</strong></p>
+</td>
+<td><p><em>muove carro sinistro in posizione di lavoro</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>ALLINEAMENTO LASTRA</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M400</strong></p>
+</td>
+<td><p><em>annulla i dati di allineamento lastra</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M401</strong></p>
+</td>
+<td><p><em>esegue l’allineamento della lastra 1</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M40</strong><strong>2</strong></p>
+</td>
+<td><p><em>esegue l’allineamento della lastra 2</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M40</strong><strong>3</strong></p>
+</td>
+<td><p><em>esegue l’allineamento della lastra 3</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>MAPPATURA LASTRA</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M500</strong></p>
+</td>
+<td><p><em>annulla la mappatura lastra</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M501</strong></p>
+</td>
+<td><p><em>applica la mappatura lastra</em></p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>NUOVA INTESTATRICE F9</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M2500</strong></p>
+</td>
+<td><p><em>muove carro destro e sinistro in posizione di carico</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M2501</strong></p>
+</td>
+<td><p><em>muove carro destro in posizione di lavoro</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M250</strong><strong>2</strong></p>
+</td>
+<td><p><em>muove carro destro in posizione di carico</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M250</strong><strong>3</strong></p>
+</td>
+<td><p><em>muove carro sinistro in posizione di lavoro</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>M250</strong><strong>4</strong></p>
+</td>
+<td><p><em>muove carro sinistro in posizione di carico</em></p>
+</td>
+</tr>
+</table>
+<h2 id="sottoprogrammi"><br>Sottoprogrammi</h2>
+<p>La funzionalit&#224; dei sottoprogrammi &#232; riservata ad un personale esperto o al servizio di assistenza FARO. Di seguito sono descritte alcune funzionalit&#224; avanzate utili alla personalizzazione dei sottoprogrammi.</p>
+<h3 id="test-di-un-parametro-e-modifica-del-flusso-del-sottoprogramma">Test di un parametro e modifica del flusso del sottoprogramma</h3>
+<p>Nei firmware pi&#249; recenti sono disponibili 10 parametri personalizzabili e persistenti nella memoria flash. A ciascun parametro &#232; associato un indice compreso tra 0 e 9, un nome e il tipo di dato rappresentato (numerico, booleano, opzione). Il valore assegnato ai parametri pu&#242; essere testato all’interno di un sottoprogramma e in base a questo variarne l’esecuzione. Indipendentemente dal tipo di dato rappresentato il valore di un parametro &#232; sempre numerico: nel caso booleano sar&#224; “TRUE” se diverso da 0, “FALSE” se uguale a 0; nel caso opzione sar&#224; “SI” se diverso da 0, “NO” se uguale a 0.</p>
+<p>Per testare il valore di un parametro all’interno di un sottoprogramma si utilizza la funzione <em>#TST Px</em><em> </em>con x posto all’indice del parametro a cui fare accesso. Il comando copia il valore del parametro in una variabile interna testabile con le istruzioni di flusso:</p>
+<table>
+<tr>
+<td><p><strong>Funzione di flusso</strong></p>
+</td>
+<td><p><strong>Condizione</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>#IF</p>
+<p>#IFNOT</p>
+<p>#ELSEIF</p>
+<p>#ELSEIFNOT</p>
+</td>
+<td><p>EQ</p>
+</td>
+<td><p>Il precedente test ha dato un risultato = 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; “=0”, “FALSE” o “NO”</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>NE</p>
+</td>
+<td><p>Il precedente test ha dato un risultato ≠ 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; “≠0”, “TRUE” o “SI”</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>GT</p>
+</td>
+<td><p>Il precedente test ha dato un risultato &gt; 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; “&gt;0”, “TRUE” o “SI”</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>GE</p>
+</td>
+<td><p>Il precedente test ha dato un risultato ≥ 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; “≥0”, sempre verificata per tipo di dato booleano e opzione</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>LT</p>
+</td>
+<td><p>Il precedente test ha dato un risultato &lt; 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; “&lt;0” , mai verificata per tipo di dato booleano e opzione</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>LE</p>
+</td>
+<td><p>Il precedente test ha dato un risultato ≤ 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; “≤0”, “FALSE” o “NO”</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="footer">SKIPPER++</div>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>SKIPPER++</title>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+<body>
+<h1>SKIPPER++</h1>
+<ul class="toc">
+<li><a href="000-skipperqt.html#skipperqt">SkipperQt</a><ul>
+<li><a href="000-skipperqt.html#modificare-i-parametri-del-cn">Modificare i parametri del CN</a><ul>
+<li><a href="000-skipperqt.html#salvare-i-parametri-nella-memoria-del-cn">Salvare i parametri nella memoria del CN</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#eseguire-una-lavorazione">Eseguire una lavorazione</a><ul>
+<li><a href="000-skipperqt.html#operazioni-preliminari-all-invio">Operazioni preliminari all’invio</a></li>
+<li><a href="000-skipperqt.html#inviare-una-lavorazione">Inviare una lavorazione</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#assi">Assi</a><ul>
+<li><a href="000-skipperqt.html#posizione-iniziale-assi">Posizione iniziale assi</a></li>
+<li><a href="000-skipperqt.html#posizioni-iniziali-predefinite">Posizioni iniziali predefinite</a></li>
+<li><a href="000-skipperqt.html#posizioni-iniziali-aggiuntive">Posizioni iniziali aggiuntive</a></li>
+<li><a href="000-skipperqt.html#impostazione-dell-origine-per-gli-assi-xy">Impostazione dell’origine per gli assi XY</a></li>
+<li><a href="000-skipperqt.html#assi-di-rotazione">Assi di rotazione</a></li>
+<li><a href="000-skipperqt.html#velocita-degli-assi">Velocit&#224; degli assi</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#gruppo-mandrino">Gruppo mandrino</a><ul>
+<li><a href="000-skipperqt.html#fresa">Fresa</a></li>
+<li><a href="000-skipperqt.html#cambio-utensili-automatico">Cambio utensili automatico</a></li>
+<li><a href="000-skipperqt.html#multi-mandrino">Multi-mandrino</a></li>
+<li><a href="000-skipperqt.html#diamantatrice">Diamantatrice</a></li>
+<li><a href="000-skipperqt.html#diamantatrice-cambio-utensile">Diamantatrice cambio utensile</a></li>
+<li><a href="000-skipperqt.html#preset-utensile">Preset utensile</a></li>
+<li><a href="000-skipperqt.html#preset-automatico-dell-utensile">Preset  automatico dell’utensile</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#utilita">Utilit&#224;</a><ul>
+<li><a href="000-skipperqt.html#batch-delle-lavorazioni">Batch delle lavorazioni</a><ul>
+<li><a href="000-skipperqt.html#creare-una-lista-di-lavorazioni">Creare una lista di lavorazioni</a></li>
+<li><a href="000-skipperqt.html#selezionare-una-lavorazione">Selezionare una lavorazione</a></li>
+<li><a href="000-skipperqt.html#cancellare-una-lavorazione">Cancellare una lavorazione</a></li>
+<li><a href="000-skipperqt.html#cambiare-l-ordine-delle-lavorazioni">Cambiare l’ordine delle lavorazioni</a></li>
+<li><a href="000-skipperqt.html#salvare-una-lista-di-lavorazioni">Salvare una lista di lavorazioni</a></li>
+<li><a href="000-skipperqt.html#aprire-una-lista-di-lavorazioni">Aprire una lista di lavorazioni</a></li>
+<li><a href="000-skipperqt.html#aggiungere-alla-lista-un-file-batch-esistente">Aggiungere alla lista un file batch esistente</a></li>
+<li><a href="000-skipperqt.html#modificare-il-nome-della-lavorazione">Modificare il nome della lavorazione</a></li>
+<li><a href="000-skipperqt.html#espandere-una-lavorazione">Espandere una lavorazione</a></li>
+<li><a href="000-skipperqt.html#modificare-la-posizione-iniziale-xy">Modificare la posizione iniziale XY</a></li>
+<li><a href="000-skipperqt.html#modificare-la-posizione-iniziale-xy-da-altre-posizioni-iniziali">Modificare la posizione iniziale XY da “altre posizioni iniziali”</a></li>
+<li><a href="000-skipperqt.html#aggiungere-uno-spostamento-y">Aggiungere uno spostamento Y</a></li>
+<li><a href="000-skipperqt.html#modificare-lo-spessore-del-materiale-h">Modificare lo spessore del materiale H</a></li>
+<li><a href="000-skipperqt.html#ripetere-la-lavorazione">Ripetere la lavorazione</a></li>
+<li><a href="000-skipperqt.html#riprendere-la-lavorazione-da-una-ripetizione-diversa-dalla-prima">Riprendere la lavorazione da una ripetizione diversa dalla prima</a></li>
+<li><a href="000-skipperqt.html#allineamento-della-lastra">Allineamento della lastra</a></li>
+<li><a href="000-skipperqt.html#modifica-dello-spessore-h-calcolato-dall-allineamento-lastra">Modifica dello spessore H calcolato dall’allineamento lastra</a></li>
+<li><a href="000-skipperqt.html#sospendere-una-lavorazione">Sospendere una lavorazione</a></li>
+<li><a href="000-skipperqt.html#eseguire-un-batch">Eseguire un batch</a></li>
+<li><a href="000-skipperqt.html#interrompere-un-batch">Interrompere un batch</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#mdi-manual-data-input">MDI (Manual Data Input)</a></li>
+<li><a href="000-skipperqt.html#lavorazione-ripetuta">Lavorazione ripetuta</a></li>
+<li><a href="000-skipperqt.html#ripetizioni-nel-piano-xy">Ripetizioni nel piano XY</a></li>
+<li><a href="000-skipperqt.html#allineamento-lastra">Allineamento lastra</a></li>
+<li><a href="000-skipperqt.html#mappatura-lastra">Mappatura lastra</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#script">Script</a><ul>
+<li><a href="000-skipperqt.html#panoramica-sul-linguaggio">Panoramica sul linguaggio</a></li>
+<li><a href="000-skipperqt.html#struttura-e-stile-del-linguaggio">Struttura e stile del linguaggio</a></li>
+<li><a href="000-skipperqt.html#estensioni-specifiche-per-skipper">Estensioni specifiche per Skipper</a></li>
+<li><a href="000-skipperqt.html#commenti">Commenti</a></li>
+<li><a href="000-skipperqt.html#buone-pratiche">Buone pratiche</a></li>
+<li><a href="000-skipperqt.html#gestione-delle-variabili">Gestione delle variabili</a><ul>
+<li><a href="000-skipperqt.html#dichiarazione-e-assegnazione">Dichiarazione e assegnazione</a></li>
+<li><a href="000-skipperqt.html#tipi-di-dati-supportati">Tipi di dati supportati</a></li>
+<li><a href="000-skipperqt.html#riassegnazione">Riassegnazione</a></li>
+<li><a href="000-skipperqt.html#ambito-delle-variabili">Ambito delle variabili</a></li>
+<li><a href="000-skipperqt.html#convenzioni-consigliate">Convenzioni consigliate</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#operatori-ed-espressioni">Operatori ed espressioni</a><ul>
+<li><a href="000-skipperqt.html#operatori-aritmetici">Operatori aritmetici</a></li>
+<li><a href="000-skipperqt.html#operatori-di-confronto">Operatori di confronto</a></li>
+<li><a href="000-skipperqt.html#operatori-logici">Operatori logici</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#operatori-di-assegnazione">Operatori di assegnazione</a><ul>
+<li><a href="000-skipperqt.html#concatenazione-di-stringhe">Concatenazione di stringhe</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#strutture-di-controllo">Strutture di controllo</a><ul>
+<li><a href="000-skipperqt.html#condizionali">Condizionali</a></li>
+<li><a href="000-skipperqt.html#cicli">Cicli</a></li>
+<li><a href="000-skipperqt.html#comandi-di-controllo-del-flusso">Comandi di controllo del flusso</a><ul>
+<li><a href="000-skipperqt.html#break">break</a></li>
+<li><a href="000-skipperqt.html#continue">continue</a></li>
+<li><a href="000-skipperqt.html#switch">Switch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#funzioni">Funzioni</a><ul>
+<li><a href="000-skipperqt.html#dichiarazione-di-una-funzione">Dichiarazione di una funzione</a></li>
+<li><a href="000-skipperqt.html#uso-di-funzioni-per-organizzare-la-logica">Uso di funzioni per organizzare la logica</a></li>
+<li><a href="000-skipperqt.html#funzioni-come-comandi-specifici">Funzioni come comandi specifici</a></li>
+<li><a href="000-skipperqt.html#scope-delle-variabili-all-interno-delle-funzioni">Scope delle variabili all’interno delle funzioni</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#parametri-macchina-e-comandi-specifici">Parametri macchina e comandi specifici</a><ul>
+<li><a href="000-skipperqt.html#come-accedere-e-modificare-i-parametri-macchina">Come accedere e modificare i parametri macchina</a></li>
+<li><a href="000-skipperqt.html#struttura-dei-namespace">Struttura dei namespace</a></li>
+<li><a href="000-skipperqt.html#accesso-ai-parametri">Accesso ai parametri</a></li>
+<li><a href="000-skipperqt.html#modifica-dei-parametri">Modifica dei parametri</a></li>
+<li><a href="000-skipperqt.html#variabili-di-stato">Variabili di stato</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#elenco-parametri-supportati">Elenco parametri supportati</a><ul>
+<li><a href="000-skipperqt.html#machine-parameters-axis">Machine.Parameters.Axis</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-blade">Machine.Parameters.Blade</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-feedrate">Machine.Parameters.Feedrate</a><ul>
+<li><a href="000-skipperqt.html#machine-parameters-feedrate-cut">Machine.Parameters.Feedrate.Cut</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-feedrate-rapid">Machine.Parameters.Feedrate.Rapid</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#machine-parameters-g54-g55-g56">Machine.Parameters.G54[]-G55[]-G56[]</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-kinematics">Machine.Parameters.Kinematics</a><ul>
+<li><a href="000-skipperqt.html#machine-parameters-kinematics-feedratemodulation">Machine.Parameters.Kinematics.FeedrateModulation</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#machine-parameters-lensclamp">Machine.Parameters.LensClamp</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-multi">Machine.Parameters.Multi</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-multispindle-t1-t2-t3-t4">Machine.Parameters.MultiSpindle.T1/T2/T3/T4</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-origin">Machine.Parameters.Origin</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-presetsensor">Machine.Parameters.PresetSensor</a><ul>
+<li><a href="000-skipperqt.html#machine-parameters-presetsensor-position">Machine.Parameters.PresetSensor.Position</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-presetsensor-lastmeasure">Machine.Parameters.PresetSensor.lastMeasure</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#machine-parameters-probe3d">Machine.Parameters.Probe3D</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-lineargauge">Machine.Parameters.LinearGauge</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-lineargauge-automaticpreset-qt">Machine.Parameters.LinearGauge.AutomaticPreset [Qt]</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-lensgauge">Machine.Parameters.LensGauge</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-settings">Machine.Parameters.Settings</a><ul>
+<li><a href="000-skipperqt.html#machine-parameters-settings-startupfeedrateoverride">Machine.Parameters.Settings.startupFeedrateOverride</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#machine-parameters-spindletilting">Machine.Parameters.SpindleTilting</a></li>
+<li><a href="000-skipperqt.html#machine-parameters-vision">Machine.Parameters.Vision</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#elenco-variabili-di-stato">Elenco variabili di stato</a><ul>
+<li><a href="000-skipperqt.html#machine-status-feedrateoverride">Machine.Status.feedrateOverride</a></li>
+<li><a href="000-skipperqt.html#machine-status-axis">Machine.Status.Axis</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#elenco-variabili-informative">Elenco variabili informative</a><ul>
+<li><a href="000-skipperqt.html#machine-info-serialnumber">Machine.Info.serialNumber</a></li>
+<li><a href="000-skipperqt.html#machine-info-controlboardtype">Machine.Info.controlBoardType</a></li>
+<li><a href="000-skipperqt.html#machine-info-firmwareversion">Machine.Info.firmwareVersion</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#elenco-funzioni-di-controllo-macchina">Elenco funzioni di controllo macchina</a><ul>
+<li><a href="000-skipperqt.html#machine-functions-start-int-timeout">Machine.Functions.Start(int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-waitruncomplete-int-timeout">Machine.Funtions.WaitRunComplete(int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-jog-int-timeout">Machine.Funtions.Jog(int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-pause-int-timeout">Machine.Funtions.Pause(int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-home-int-timeout">Machine.Funtions.Home(int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-moveabsolute-string-position-int-timeout">Machine.Funtions.MoveAbsolute(string position, int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-saveparameters">Machine.Funtions.SaveParameters()</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-restart-int-timeout">Machine.Funtions.Restart(int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-waitconnectionlost-int-timeout">Machine.Funtions.WaitConnectionLost(int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-waitconnection-int-timeout">Machine.Funtions.WaitConnection(int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-presettool-int-toolnumber-int-timeout">Machine.Funtions.PresetTool(int toolNumber, int timeout)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-getprobingpoint-int-index">Machine.Funtions.GetProbingPoint(int index)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-getvisionpoint-int-index">Machine.Funtions.GetVisionPoint(int index)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-cleariso">Machine.Funtions. ClearIso()</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-loadfile-string-filepath">Machine.Funtions.LoadFile(string filePath)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-loadstring-string-filecontent">Machine.Funtions.LoadString(string fileContent)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-loadfirmware-string-filepath">Machine.Funtions.LoadFirmware(string filePath)</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-backup">Machine.Funtions.Backup()</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-saveallonpc">Machine.Funtions. SaveAllOnPc ()</a></li>
+<li><a href="000-skipperqt.html#machine-funtions-saveparametersonpc">Machine.Funtions.SaveParametersOnPc()</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#controllo-della-batch-in-esecuzione">Controllo della Batch in esecuzione</a><ul>
+<li><a href="000-skipperqt.html#batch-update">Batch.Update()</a></li>
+<li><a href="000-skipperqt.html#batch-getitembyline-integer-linenumber-dep">Batch.GetItemByLine(integer lineNumber) [Dep]</a></li>
+<li><a href="000-skipperqt.html#batch-getitembyindex-integer-itemindex">Batch.GetItemByIndex(integer itemIndex)</a></li>
+<li><a href="000-skipperqt.html#batch-getitembyname-string-itemname">Batch.GetItemByName(string itemName)</a></li>
+<li><a href="000-skipperqt.html#batch-stop">Batch.Stop()</a></li>
+<li><a href="000-skipperqt.html#batch-schedulenextitem-batchitem-nextitem-qt">Batch.ScheduleNextItem(BatchItem nextItem) [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-insertitem-string-filepath-qt">Batch.InsertItem(string filePath) [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-insertitem-string-filepath-batchitem-parentitem-qt">Batch.InsertItem(string filePath, BatchItem parentItem) [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-insertitem-integer-targetindex-string-filepath-qt">Batch.InsertItem(integer targetIndex,string filePath) [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-removeitem-integer-targetindex-qt">Batch. RemoveItem(integer targetIndex) [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-clearrepetitions-qt">Batch. ClearRepetitions() [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-thisline">Batch.thisLine</a></li>
+<li><a href="000-skipperqt.html#variabili-globali-nella-batch-in-esecuzione">Variabili globali nella Batch in esecuzione</a><ul>
+<li><a href="000-skipperqt.html#batch-addvariable-string-variablename-type-value-qt">Batch.AddVariable(string variableName, type value) [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-readvariable-string-variablename-type-defaultvalue-qt">Batch.ReadVariable(string variableName, type defaultValue) [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-removevariable-string-variablename-qt">Batch.RemoveVariable(string variableName) [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-clearvariables-qt">Batch.ClearVariables() [Qt]</a></li>
+<li><a href="000-skipperqt.html#batch-getvariablenames-qt">Batch.GetVariableNames () [Qt]</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#proprieta-e-funzioni-di-un-elemento-batch-batchitem">Propriet&#224; e funzioni di un elemento batch BatchItem</a><ul>
+<li><a href="000-skipperqt.html#sendparameters">SendParameters()</a></li>
+<li><a href="000-skipperqt.html#enable-bool-enable">Enable(bool enable)</a></li>
+<li><a href="000-skipperqt.html#getline">GetLine()</a></li>
+<li><a href="000-skipperqt.html#getindex">GetIndex()</a></li>
+<li><a href="000-skipperqt.html#getname-qt">GetName() [Qt]</a></li>
+<li><a href="000-skipperqt.html#getparent-qt">GetParent() [Qt]</a></li>
+<li><a href="000-skipperqt.html#getchild-integer-subitemindex-qt">GetChild(integer subItemIndex) [Qt]</a></li>
+<li><a href="000-skipperqt.html#getsibling-integer-relativeindex-qt">GetSibling(integer relativeIndex) [Qt]</a></li>
+<li><a href="000-skipperqt.html#getchildcount-qt">GetChildCount() [Qt]</a></li>
+<li><a href="000-skipperqt.html#currentrepetition-qt">currentRepetition [Qt]</a></li>
+<li><a href="000-skipperqt.html#repetitions-qt">repetitions [Qt]</a></li>
+<li><a href="000-skipperqt.html#mapindex">mapIndex</a></li>
+<li><a href="000-skipperqt.html#positionx">positionX</a></li>
+<li><a href="000-skipperqt.html#positiony">positionY</a></li>
+<li><a href="000-skipperqt.html#originindex">originIndex</a></li>
+<li><a href="000-skipperqt.html#deltay">deltaY</a></li>
+<li><a href="000-skipperqt.html#zam">zam</a></li>
+<li><a href="000-skipperqt.html#dh">dH</a></li>
+<li><a href="000-skipperqt.html#numofrepx">numOfRepX</a></li>
+<li><a href="000-skipperqt.html#numofrepy">numOfRepY</a></li>
+<li><a href="000-skipperqt.html#toolintegritycheck">toolIntegrityCheck</a></li>
+<li><a href="000-skipperqt.html#plateintegritycheck">plateIntegrityCheck</a></li>
+<li><a href="000-skipperqt.html#platealignmentindex">plateAlignmentIndex</a></li>
+<li><a href="000-skipperqt.html#runevery">runEvery</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#proprieta-e-funzioni-di-un-elemento-batch-batchscript">Propriet&#224; e funzioni di un elemento batch BatchScript</a><ul>
+<li><a href="000-skipperqt.html#maskstopfrommachine-bool-mask">MaskStopFromMachine(bool mask)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#funzionalita-di-accesso-e-controllo-di-pigrecogold">Funzionalit&#224; di accesso e controllo di PigrecoGold</a><ul>
+<li><a href="000-skipperqt.html#pigrecogold-lens-savedirectfile">PigrecoGold.Lens.SaveDirectFile()</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#funzionalita-di-accesso-e-controllo-di-skipper">Funzionalit&#224; di accesso e controllo di Skipper</a><ul>
+<li><a href="000-skipperqt.html#skipper-getinstallationfolder">Skipper.GetInstallationFolder()</a></li>
+<li><a href="000-skipperqt.html#skipper-gettempfilename-string-basename-string-extension">Skipper.GetTempFileName(string baseName, string extension)</a></li>
+<li><a href="000-skipperqt.html#skipper-getdirectfilename">Skipper.GetDirectFileName()</a></li>
+<li><a href="000-skipperqt.html#skipper-deletedirectfile">Skipper.DeleteDirectFile()</a></li>
+<li><a href="000-skipperqt.html#skipper-log-string-message">Skipper.Log(string message)</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#utilita-di-sistema">Utilit&#224; di sistema</a><ul>
+<li><a href="000-skipperqt.html#system-getcurrenttime">System.GetCurrentTime()</a></li>
+<li><a href="000-skipperqt.html#system-getcurrenttimeformat-string-format">System.GetCurrentTimeFormat(string format)</a></li>
+<li><a href="000-skipperqt.html#system-sleep-int-sleeptimems">System.Sleep(int sleepTimeMs)</a></li>
+<li><a href="000-skipperqt.html#system-file-append-string-filepath-string-text">System.File.Append(string filePath, string text)</a></li>
+<li><a href="000-skipperqt.html#system-file-appendline-string-filepath-string-text">System.File.AppendLine(string filePath, string text)</a></li>
+<li><a href="000-skipperqt.html#system-file-delete-string-filepath">System.File.Delete(string filePath)</a></li>
+<li><a href="000-skipperqt.html#system-clipboard-copy-string-value">System.Clipboard.Copy(string value)</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#messaggi-popup">Messaggi popup</a><ul>
+<li><a href="000-skipperqt.html#messagebox-show-string-message">MessageBox.Show(string message)</a></li>
+<li><a href="000-skipperqt.html#messagebox-show-string-message-string-title">MessageBox.Show(string message, string title)</a></li>
+<li><a href="000-skipperqt.html#messagebox-show-string-message-string-title-int-options">MessageBox.Show(string message, string title, int options)</a></li>
+<li><a href="000-skipperqt.html#messagebox-show-object-parameters">MessageBox.Show(object parameters)</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#funzioni-matematiche">Funzioni matematiche</a><ul>
+<li><a href="000-skipperqt.html#math-rad-x">Math.rad(x)</a></li>
+<li><a href="000-skipperqt.html#math-deg-x">Math.deg(x)</a></li>
+<li><a href="000-skipperqt.html#math-sin-x">Math.sin(x)</a></li>
+<li><a href="000-skipperqt.html#math-sind-x">Math.sind(x)</a></li>
+<li><a href="000-skipperqt.html#math-cos-x">Math.cos(x)</a></li>
+<li><a href="000-skipperqt.html#math-cosd-x">Math.cosd(x)</a></li>
+<li><a href="000-skipperqt.html#math-tan-x">Math.tan(x)</a></li>
+<li><a href="000-skipperqt.html#math-tand-x">Math.tand(x)</a></li>
+<li><a href="000-skipperqt.html#math-atan-x">Math.atan(x)</a></li>
+<li><a href="000-skipperqt.html#math-atand-x">Math.atand(x)</a></li>
+<li><a href="000-skipperqt.html#math-atan2-y-x">Math.atan2(y, x)</a></li>
+<li><a href="000-skipperqt.html#math-atan2d-y-x">Math.atan2d(y, x)</a></li>
+<li><a href="000-skipperqt.html#math-pow-b-e">Math.pow(b, e)</a></li>
+<li><a href="000-skipperqt.html#math-sqrt-x">Math.sqrt(x)</a></li>
+<li><a href="000-skipperqt.html#math-exp-x">Math.exp(x)</a></li>
+<li><a href="000-skipperqt.html#math-log-x">Math.log(x)</a></li>
+<li><a href="000-skipperqt.html#math-log10-x">Math.log10(x)</a></li>
+<li><a href="000-skipperqt.html#math-log2-x">Math.log2(x)</a></li>
+<li><a href="000-skipperqt.html#math-abs-x">Math.abs(x)</a></li>
+<li><a href="000-skipperqt.html#math-sign-x">Math.sign(x)</a></li>
+<li><a href="000-skipperqt.html#math-round-x">Math.round(x)</a></li>
+<li><a href="000-skipperqt.html#math-floor-x">Math.floor(x)</a></li>
+<li><a href="000-skipperqt.html#math-ceil-x">Math.ceil(x)</a></li>
+<li><a href="000-skipperqt.html#math-trunc-x">Math.trunc(x)</a></li>
+<li><a href="000-skipperqt.html#math-tofixed-x-numdec">Math.toFixed(x,numDec)</a></li>
+<li><a href="000-skipperqt.html#costanti">Costanti</a><ul>
+<li><a href="000-skipperqt.html#math-pi">Math.PI</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#tipi-di-dato-specifici">Tipi di dato specifici</a><ul>
+<li><a href="000-skipperqt.html#point">Point</a></li>
+<li><a href="000-skipperqt.html#visiondata">VisionData</a></li>
+<li><a href="000-skipperqt.html#probepoint">ProbePoint</a></li>
+<li><a href="000-skipperqt.html#visionpoint">VisionPoint</a></li>
+<li><a href="000-skipperqt.html#accessori">ACCESSORI</a><ul>
+<li><a href="000-skipperqt.html#tastatore">Tastatore</a></li>
+<li><a href="000-skipperqt.html#satinatrice">Satinatrice</a></li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#controlli">CONTROLLI</a><ul>
+<li><a href="000-skipperqt.html#pannello-di-controllo">Pannello di controllo</a></li>
+<li><a href="000-skipperqt.html#controllo-allarmi">Controllo allarmi</a></li>
+<li><a href="000-skipperqt.html#controllo-sequenze">Controllo sequenze</a></li>
+<li><a href="000-skipperqt.html#controllo-parametri">Controllo parametri</a></li>
+<li><a href="000-skipperqt.html#controllo-di-io">Controllo di IO</a></li>
+<li><a href="000-skipperqt.html#opzioni-cn">Opzioni CN</a></li>
+<li><a href="000-skipperqt.html#configurazione-cn">Configurazione CN</a></li>
+<li><a href="000-skipperqt.html#configurazione-assi">Configurazione assi</a></li>
+<li><a href="000-skipperqt.html#connessione-al-cn">Connessione al CN</a></li>
+<li><a href="000-skipperqt.html#report-dal-cn">Report dal CN</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="000-skipperqt.html#plugin">Plugin</a><ul>
+<li><a href="000-skipperqt.html#caricatore-robot-yumi">Caricatore robot Yumi</a><ul>
+<li><a href="000-skipperqt.html#ricette-robot">Ricette robot</a></li>
+<li><a href="000-skipperqt.html#archivio-ricette">Archivio ricette</a></li>
+<li><a href="000-skipperqt.html#creazione-ricetta">Creazione ricetta</a></li>
+<li><a href="000-skipperqt.html#modifica-di-una-ricetta">Modifica di una ricetta</a></li>
+<li><a href="000-skipperqt.html#cancellazione-di-una-ricetta">Cancellazione di una ricetta</a></li>
+<li><a href="000-skipperqt.html#caricamento-di-una-ricetta">Caricamento di una ricetta</a></li>
+<li><a href="000-skipperqt.html#parametri-modificabili">Parametri modificabili</a></li>
+<li><a href="000-skipperqt.html#interfaccia-grafica">Interfaccia grafica</a><ul>
+<li><a href="000-skipperqt.html#controllo-del-ciclo">Controllo del ciclo</a></li>
+<li><a href="000-skipperqt.html#contatore-pezzi">Contatore pezzi</a></li>
+<li><a href="000-skipperqt.html#log-degli-eventi-robot">Log degli eventi Robot</a></li>
+<li><a href="000-skipperqt.html#pannello-impostazioni">Pannello Impostazioni</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="001-macchinacnc.html#macchina-cnc">Macchina CNC</a><ul>
+<li><a href="001-macchinacnc.html#messaggi-di-allarme">Messaggi di allarme</a><ul>
+<li><a href="001-macchinacnc.html#allarmi-di-sicurezza">Allarmi di sicurezza</a></li>
+<li><a href="001-macchinacnc.html#allarmi-edm">Allarmi EDM</a></li>
+<li><a href="001-macchinacnc.html#allarmi-movimento-assi">Allarmi movimento assi</a></li>
+<li><a href="001-macchinacnc.html#allarmi-sottoprogrammi">Allarmi sottoprogrammi</a></li>
+<li><a href="001-macchinacnc.html#allarmi-memoria-flash">Allarmi memoria flash</a></li>
+<li><a href="001-macchinacnc.html#allarmi-in-lavorazione">Allarmi in lavorazione</a></li>
+<li><a href="001-macchinacnc.html#allarmi-preset-utensile">Allarmi preset utensile</a></li>
+<li><a href="001-macchinacnc.html#allarmi-elettromandrino">Allarmi elettromandrino</a></li>
+<li><a href="001-macchinacnc.html#allarmi-dispositivi-pneumatici">Allarmi dispositivi pneumatici</a></li>
+<li><a href="001-macchinacnc.html#allarmi-controllo-temperatura">Allarmi controllo temperatura</a></li>
+<li><a href="001-macchinacnc.html#allarmi-accessorio-cambio-utensile">Allarmi accessorio cambio utensile</a></li>
+<li><a href="001-macchinacnc.html#allarmi-accessorio-carica-lastra">Allarmi accessorio carica lastra</a></li>
+<li><a href="001-macchinacnc.html#allarmi-funzione-allineamento-lastra">Allarmi funzione allineamento lastra</a></li>
+<li><a href="001-macchinacnc.html#allarmi-accessorio-cambio-anelli">Allarmi accessorio cambio anelli</a></li>
+</ul>
+</li>
+<li><a href="001-macchinacnc.html#elenco-dei-comandi-iso">Elenco dei Comandi ISO</a><ul>
+<li><a href="001-macchinacnc.html#funzioni-preparatorie">Funzioni Preparatorie</a></li>
+<li><a href="001-macchinacnc.html#funzioni-miscellanee">Funzioni Miscellanee</a></li>
+</ul>
+</li>
+<li><a href="001-macchinacnc.html#sottoprogrammi">Sottoprogrammi</a><ul>
+<li><a href="001-macchinacnc.html#test-di-un-parametro-e-modifica-del-flusso-del-sottoprogramma">Test di un parametro e modifica del flusso del sottoprogramma</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</body>
+</html>
