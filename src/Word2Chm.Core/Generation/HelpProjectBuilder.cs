@@ -60,6 +60,17 @@ public sealed class HelpProjectBuilder
                     current = CreatePage(heading, document.Pages.Count, options, usedIds, ref nextId);
                     document.Pages.Add(current);
                 }
+                else if (!string.IsNullOrEmpty(heading.Symbol))
+                {
+                    // A Help 1 context ID resolves to a topic file, never to an anchor, so a
+                    // symbol on a sub-heading cannot be honoured. Report it instead of
+                    // dropping it without a trace.
+                    document.Warnings.Add(
+                        $"Il simbolo '{heading.Symbol}' è dichiarato su \"{heading.Title}\" " +
+                        $"(livello {heading.Level}) e non compare nell'header .h: gli ID di contesto " +
+                        $"puntano a una pagina, non a un'ancora. Sposta il marcatore su un titolo di " +
+                        $"livello {options.PageLevel}.");
+                }
 
                 heading.Anchor = slugger.Slug(heading.Title);
                 var target = (current!, heading.Anchor);

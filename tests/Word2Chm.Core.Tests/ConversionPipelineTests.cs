@@ -132,14 +132,18 @@ public sealed class ConversionPipelineTests : IDisposable
     }
 
     [Fact]
-    public void HhkKeepsPlainAndSubKeywordEntries()
+    public void HhkEmitsEachKeywordOnceAndLinksTheParent()
     {
         var result = RunPipeline();
         var hhk = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhk"));
 
-        // The keyword has both a plain target and a "hardware" sub-keyword; both must survive.
-        Assert.Equal(2, CountOccurrences(hhk, "name=\"Name\" value=\"requisiti\""));
+        // A keyword must appear exactly once as a node; duplicating it as a sibling
+        // leaf produces a CHM that hh.exe refuses to open.
+        Assert.Equal(1, CountOccurrences(hhk, "name=\"Name\" value=\"requisiti\""));
         Assert.Contains("name=\"Name\" value=\"hardware\"", hhk);
+
+        // The "requisiti" node is itself a link, so the plain target is not lost.
+        Assert.Contains("name=\"Local\" value=\"001-requisiti.html#requisiti\"", hhk);
     }
 
     private static int CountOccurrences(string haystack, string needle)
@@ -195,6 +199,51 @@ public sealed class ConversionPipelineTests : IDisposable
         var installPage = File.ReadAllText(Path.Combine(result.OutputDirectory, result.Document.Pages[2].FileName));
 
         Assert.Contains("<h1 id=\"installazione\">Installazione</h1>", installPage);
+    }
+
+    [Fact]
+    public void EncodesAccentedCharactersAsEntitiesInProjectFiles()
+    {
+        var result = RunPipeline();
+        var directory = result.OutputDirectory;
+
+        // Raw UTF-8 in .hhc/.hhk makes hhc.exe produce a CHM that will not open, so
+        // these files must stay pure ASCII.
+        Assert.True(IsPureAscii(File.ReadAllText(Path.Combine(directory, "guida.hhc"))));
+        Assert.True(IsPureAscii(File.ReadAllText(Path.Combine(directory, "guida.hhk"))));
+        Assert.True(IsPureAscii(File.ReadAllText(Path.Combine(directory, "guida.hhp"))));
+    }
+
+    private static bool IsPureAscii(string text) => text.All(ch => ch <= 127);
+
+    [Fact]
+    public void RecognizesHeadingsFromLocalizedStyleNames()
+    {
+        // Regression: a document whose heading style is "Titolo1" (Italian Word) and
+        // carries no outline level used to produce no pages, an empty .h and a broken
+        // table of contents, and the resulting CHM would not open.
+        var path = Path.Combine(_workDirectory, "localizzato.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateLocalizedSample());
+
+        var result = new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "loc-out"),
+            Build = new BuildOptions { DefaultContextId = 1000 },
+            Compile = new CompileOptions(),
+        });
+
+        Assert.Single(result.Document.Pages);
+        Assert.Equal("Capitolo primo", result.Document.Pages[0].Title);
+        Assert.Equal("IDH_PRIMO", result.Document.Pages[0].Symbol);
+
+        var header = File.ReadAllText(result.HeaderPath!);
+        Assert.Contains("#define IDH_PRIMO", header);
+
+        // IDH_SEZIONE sits on a level-2 heading: a Help 1 context ID resolves to a topic
+        // file, so it cannot be honoured and must be reported rather than dropped.
+        Assert.DoesNotContain("IDH_SEZIONE", header);
+        Assert.Contains(result.Document.Warnings, w => w.Contains("IDH_SEZIONE"));
     }
 
     [Fact]

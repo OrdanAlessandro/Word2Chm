@@ -45,6 +45,7 @@ internal static class DocxFixture
 
             body.Append(Heading("Installazione {#IDH_INSTALLAZIONE}", 1));
             body.Append(Heading("Procedura {#IDH_PROCEDURA}", 2));
+            body.Append(Heading("Configurazione città predefinita", 3));
             body.Append(TextParagraph(Run("Aprire il file "), Run("setup", bold: true), Run(" ed eseguire.")));
             body.Append(ImageParagraph(main, 320, 200));
             body.Append(CodeParagraph("dotnet build -c Release"));
@@ -63,6 +64,51 @@ internal static class DocxFixture
 
     private static Paragraph Heading(string text, int level) => new(
         new ParagraphProperties(new ParagraphStyleId { Val = "Heading" + level }),
+        new Run(new Text(text)));
+
+    /// <summary>
+    /// A document authored by an Italian Word: the heading style has a localised id
+    /// ("Titolo1") and no explicit outline level, which is the shape that used to
+    /// yield zero headings, an empty C++ header and a broken table of contents.
+    /// </summary>
+    public static byte[] CreateLocalizedSample()
+    {
+        using var stream = new MemoryStream();
+        using (var document = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var main = document.AddMainDocumentPart();
+            var stylesPart = main.AddNewPart<StyleDefinitionsPart>();
+
+            var body = new Body();
+            main.Document = new Document(body);
+
+            var styles = new Styles();
+            for (var level = 1; level <= 3; level++)
+            {
+                styles.Append(new Style(
+                    new StyleName { Val = "Titolo " + level },
+                    new BasedOn { Val = "Normal" })
+                {
+                    Type = StyleValues.Paragraph,
+                    StyleId = "Titolo" + level,
+                });
+            }
+
+            stylesPart.Styles = styles;
+            stylesPart.Styles.Save();
+
+            body.Append(LocalizedHeading("Capitolo primo {#IDH_PRIMO}", "Titolo1"));
+            body.Append(TextParagraph(Run("Testo del capitolo.")));
+            body.Append(LocalizedHeading("Sezione {#IDH_SEZIONE}", "Titolo2"));
+
+            main.Document.Save();
+        }
+
+        return stream.ToArray();
+    }
+
+    private static Paragraph LocalizedHeading(string text, string styleId) => new(
+        new ParagraphProperties(new ParagraphStyleId { Val = styleId }),
         new Run(new Text(text)));
 
     private static Paragraph TextParagraph(params Run[] runs)

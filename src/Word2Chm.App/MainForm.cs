@@ -289,6 +289,12 @@ internal sealed class MainForm : Form
         var withIds = result.Document.Pages.Count(p => p.Symbol is not null);
         AppendLog($"ID di contesto definiti: {withIds}");
         AppendLog($"Voci di indice: {result.Document.IndexEntries.Count}");
+
+        foreach (var warning in result.Document.Warnings)
+        {
+            AppendLog("AVVISO: " + warning);
+        }
+
         AppendLog("File generati:");
         foreach (var file in result.GeneratedFiles)
         {

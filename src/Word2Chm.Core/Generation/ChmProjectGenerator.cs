@@ -82,12 +82,7 @@ public static class ChmProjectGenerator
     public static string GenerateHhc(HelpDocument document)
     {
         var builder = new StringBuilder();
-        builder.AppendLine("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">");
-        builder.AppendLine("<HTML>");
-        builder.AppendLine("<BODY>");
-        builder.AppendLine("<OBJECT type=\"text/site properties\">");
-        builder.AppendLine("<param name=\"Window Styles\" value=\"0x23520\">");
-        builder.AppendLine("</OBJECT>");
+        WriteSiteProperties(builder);
         builder.AppendLine("<UL>");
 
         foreach (var node in document.Toc)
@@ -128,63 +123,66 @@ public static class ChmProjectGenerator
     public static string GenerateHhk(HelpDocument document)
     {
         var builder = new StringBuilder();
-        builder.AppendLine("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">");
-        builder.AppendLine("<HTML>");
-        builder.AppendLine("<BODY>");
-        builder.AppendLine("<OBJECT type=\"text/site properties\">");
-        builder.AppendLine("<param name=\"Window Styles\" value=\"0x23520\">");
-        builder.AppendLine("</OBJECT>");
+        WriteSiteProperties(builder);
         builder.AppendLine("<UL>");
 
-        // Group entries by primary keyword, then nest the sub-keywords.
+        // HTML Help's index expects a keyword to appear once as a parent; repeated
+        // keywords as sibling leaves make hh.exe fail with the "not enough memory"
+        // error, so every keyword is emitted exactly once and duplicate targets are
+        // collapsed.
         var groups = document.IndexEntries
             .GroupBy(e => e.Keyword, StringComparer.CurrentCultureIgnoreCase)
             .OrderBy(g => g.Key, StringComparer.CurrentCultureIgnoreCase);
 
         foreach (var group in groups)
         {
-            var entries = group.ToList();
-            var plain = entries.Where(e => string.IsNullOrEmpty(e.SubKeyword)).ToList();
-            var withSub = entries.Where(e => !string.IsNullOrEmpty(e.SubKeyword)).ToList();
+            var subKeywords = group
+                .Where(e => !string.IsNullOrEmpty(e.SubKeyword))
+                .GroupBy(e => e.SubKeyword!, StringComparer.CurrentCultureIgnoreCase)
+                .OrderBy(g => g.Key, StringComparer.CurrentCultureIgnoreCase)
+                .ToList();
 
-            if (withSub.Count == 0)
+            var plainTargets = group
+                .Where(e => string.IsNullOrEmpty(e.SubKeyword))
+                .Select(e => (e.FileName, e.Anchor))
+                .Distinct()
+                .ToList();
+
+            // The parent node is itself a link when the keyword has a plain target.
+            var primary = plainTargets.FirstOrDefault();
+            builder.AppendLine("  <LI> <OBJECT type=\"text/sitemap\">");
+            builder.AppendLine($"    <param name=\"Name\" value=\"{Escape(group.Key)}\">");
+            if (primary.FileName is not null)
             {
-                // A keyword with several plain targets becomes a parent with one leaf each.
-                if (entries.Count > 1)
+                builder.AppendLine($"    <param name=\"Local\" value=\"{Escape(Local(primary.FileName, primary.Anchor))}\">");
+            }
+
+            builder.AppendLine("  </OBJECT>");
+
+            if (subKeywords.Count == 0)
+            {
+                // Extra plain targets become unnamed child links; with a single target
+                // the parent link above already covers it.
+                var extra = plainTargets.Skip(1).ToList();
+                if (extra.Count > 0)
                 {
-                    builder.AppendLine("  <LI> <OBJECT type=\"text/sitemap\">");
-                    builder.AppendLine($"    <param name=\"Name\" value=\"{Escape(group.Key)}\">");
-                    builder.AppendLine("  </OBJECT>");
                     builder.AppendLine("  <UL>");
-                    foreach (var entry in entries)
+                    foreach (var target in extra)
                     {
-                        AppendIndexLeaf(builder, entry.FileName, entry.Anchor);
+                        AppendIndexLeaf(builder, target.FileName, target.Anchor);
                     }
 
                     builder.AppendLine("  </UL>");
-                }
-                else
-                {
-                    AppendIndexLeaf(builder, entries[0].FileName, entries[0].Anchor, group.Key);
                 }
 
                 continue;
             }
 
-            builder.AppendLine("  <LI> <OBJECT type=\"text/sitemap\">");
-            builder.AppendLine($"    <param name=\"Name\" value=\"{Escape(group.Key)}\">");
-            builder.AppendLine("  </OBJECT>");
             builder.AppendLine("  <UL>");
-
-            // Plain targets sit alongside the sub-keywords so no entry is dropped.
-            foreach (var entry in plain)
+            foreach (var sub in subKeywords)
             {
-                AppendIndexLeaf(builder, entry.FileName, entry.Anchor, group.Key);
-            }
-
-            foreach (var entry in withSub)
-            {
-                AppendIndexLeaf(builder, entry.FileName, entry.Anchor, entry.SubKeyword!);
+                var target = sub.Select(e => (e.FileName, e.Anchor)).First();
+                AppendIndexLeaf(builder, target.FileName, target.Anchor, sub.Key);
             }
 
             builder.AppendLine("  </UL>");
@@ -196,16 +194,28 @@ public static class ChmProjectGenerator
         return builder.ToString();
     }
 
+    private static void WriteSiteProperties(StringBuilder builder)
+    {
+        builder.AppendLine("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">");
+        builder.AppendLine("<HTML>");
+        builder.AppendLine("<BODY>");
+        builder.AppendLine("<OBJECT type=\"text/site properties\">");
+        builder.AppendLine("<param name=\"Window Styles\" value=\"0x23520\">");
+        builder.AppendLine("</OBJECT>");
+    }
+
+    private static string Local(string fileName, string? anchor) =>
+        string.IsNullOrEmpty(anchor) ? fileName : fileName + "#" + anchor;
+
     private static void AppendIndexLeaf(StringBuilder builder, string fileName, string? anchor, string? name = null)
     {
-        var local = fileName + (string.IsNullOrEmpty(anchor) ? string.Empty : "#" + anchor);
         builder.AppendLine("    <LI> <OBJECT type=\"text/sitemap\">");
         if (name is not null)
         {
             builder.AppendLine($"      <param name=\"Name\" value=\"{Escape(name)}\">");
         }
 
-        builder.AppendLine($"      <param name=\"Local\" value=\"{Escape(local)}\">");
+        builder.AppendLine($"      <param name=\"Local\" value=\"{Escape(Local(fileName, anchor))}\">");
         builder.AppendLine("    </OBJECT>");
     }
 
@@ -284,9 +294,44 @@ public static class ChmProjectGenerator
         ["ko"] = "0x412 Korean (Korea)",
     };
 
-    private static string Escape(string value) => value
-        .Replace("&", "&amp;")
-        .Replace("\"", "&quot;")
-        .Replace("<", "&lt;")
-        .Replace(">", "&gt;");
+    private static string Escape(string value)
+    {
+        // hhc.exe reads .hhc/.hhk as ANSI and mishandles raw UTF-8, which can leave a
+        // CHM that compiles but refuses to open. Emitting non-ASCII characters as
+        // numeric HTML entities keeps these files pure ASCII and still renders the
+        // accented text correctly in the viewer.
+        var builder = new StringBuilder(value.Length);
+
+        foreach (var ch in value)
+        {
+            switch (ch)
+            {
+                case '&':
+                    builder.Append("&amp;");
+                    break;
+                case '"':
+                    builder.Append("&quot;");
+                    break;
+                case '<':
+                    builder.Append("&lt;");
+                    break;
+                case '>':
+                    builder.Append("&gt;");
+                    break;
+                default:
+                    if (ch > 127)
+                    {
+                        builder.Append("&#").Append((int)ch).Append(';');
+                    }
+                    else
+                    {
+                        builder.Append(ch);
+                    }
+
+                    break;
+            }
+        }
+
+        return builder.ToString();
+    }
 }

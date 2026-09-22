@@ -87,8 +87,11 @@ public sealed class DocxParser
     {
         var props = paragraph.ParagraphProperties;
         var styleId = props?.ParagraphStyleId?.Val?.Value;
+        var styleName = !string.IsNullOrEmpty(styleId) && styleMap.TryGetValue(styleId!, out var known)
+            ? known.Name
+            : null;
         var outline = ResolveOutlineLevel(props, styleId, styleMap);
-        var headingLevel = ResolveHeadingLevel(styleId, outline);
+        var headingLevel = ResolveHeadingLevel(styleId, styleName, outline);
         var bookmarks = paragraph.Descendants<BookmarkStart>().ToList();
 
         if (headingLevel > 0)
@@ -615,11 +618,18 @@ public sealed class DocxParser
 
     // ---------------------------------------------------------------- styles / numbering
 
-    private static int ResolveHeadingLevel(string? styleId, int outlineLevel)
+    private static int ResolveHeadingLevel(string? styleId, string? styleName, int outlineLevel)
     {
-        if (!string.IsNullOrEmpty(styleId))
+        // The style id is normally "Heading1"; the displayed name may be localised
+        // ("Titolo 1", "Título 1", "Überschrift 1"), so both are accepted.
+        foreach (var candidate in new[] { styleId, styleName })
         {
-            var match = StyleHeadingRegex.Match(styleId);
+            if (string.IsNullOrEmpty(candidate))
+            {
+                continue;
+            }
+
+            var match = StyleHeadingRegex.Match(candidate);
             if (match.Success)
             {
                 return int.Parse(match.Groups["level"].Value, CultureInfo.InvariantCulture);
@@ -700,7 +710,11 @@ public sealed class DocxParser
 
             var outline = style.StyleParagraphProperties?.OutlineLevel?.Val?.Value ?? -1;
             var font = style.StyleRunProperties?.RunFonts?.Ascii?.Value;
-            map[id!] = new StyleInfo(outline, font, style.Type?.Value);
+
+            // Word localises the displayed name ("Titolo 1" in an Italian document) while
+            // the style id usually stays "Heading1". Both are checked so a document
+            // authored in any language still produces headings.
+            map[id!] = new StyleInfo(outline, font, style.Type?.Value, style.StyleName?.Val?.Value);
         }
 
         return map;
@@ -821,7 +835,7 @@ public sealed class DocxParser
             (int)Math.Round(extent.Cy.Value / emuPerPixel));
     }
 
-    private sealed record StyleInfo(int OutlineLevel, string? FontName, StyleValues? Type);
+    private sealed record StyleInfo(int OutlineLevel, string? FontName, StyleValues? Type, string? Name);
 
     private sealed record NumberingLevel(int Level, bool Ordered);
 }

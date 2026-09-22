@@ -28,6 +28,13 @@ public sealed class HelpDocument
 
     /// <summary>File name of the page shown when the CHM opens without a context ID.</summary>
     public string? DefaultTopicFileName => Pages.Count > 0 ? Pages[0].FileName : null;
+
+    /// <summary>
+    /// Non-fatal problems found while building the project, such as a context ID
+    /// declared on a heading that does not start a page. Surfacing these avoids the
+    /// silent disappearance of identifiers the user expects to find in the header.
+    /// </summary>
+    public List<string> Warnings { get; } = new();
 }
 
 /// <summary>A single HTML output file, anchored to a Help 1 context ID.</summary>
