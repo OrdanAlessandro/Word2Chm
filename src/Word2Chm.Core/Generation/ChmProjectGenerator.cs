@@ -46,7 +46,12 @@ public static class ChmProjectGenerator
         builder.AppendLine("Main=\"" + document.Title + "\",\"" + names.HhcFile + "\",\"" +
                            (document.IndexEntries.Count > 0 ? names.HhkFile : string.Empty) + "\",\"" +
                            (document.DefaultTopicFileName ?? "index.html") +
-                           "\",,,,,,,,,0x23520,,0x384e,,,,,,,,0");
+                           "\",\"\"" +
+                           // Field 5 is the second topic, then five empty fields lead to
+                           // WindowStyles at index 9 and NavigationPaneStyle at index 11.
+                           // Any extra comma shifts WindowStyles onto the window-rect field,
+                           // which makes the viewer fail with "not enough memory".
+                           ",,,,,0x23520,,0x384e,,,,,,,,0");
         builder.AppendLine();
         builder.AppendLine("[FILES]");
         foreach (var file in files)

@@ -1,3 +1,4 @@
+using System.Text;
 using Word2Chm.Core;
 using Word2Chm.Core.Compilation;
 using Word2Chm.Core.Generation;
@@ -98,6 +99,55 @@ public sealed class ConversionPipelineTests : IDisposable
         Assert.Contains("[ALIAS]", hhp);
         Assert.Contains("IDH_INSTALLAZIONE=002-installazione.html", hhp);
         Assert.Contains("#define IDH_INSTALLAZIONE", hhp);
+    }
+
+    /// <summary>
+    /// The viewer reads the [WINDOWS] value positionally, so WindowStyles must stay at
+    /// field 9. A stray comma moves it onto the window-rect field and the CHM then fails
+    /// to open with "There is not enough memory available for this task".
+    /// </summary>
+    [Fact]
+    public void HhpKeepsWindowsFieldsAligned()
+    {
+        var result = RunPipeline();
+        var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+
+        var line = hhp.Split('\n')
+            .SkipWhile(l => !l.Trim().Equals("[WINDOWS]", StringComparison.Ordinal))
+            .Skip(1)
+            .First(l => l.Contains('='));
+        var fields = SplitWindowsFields(line[(line.IndexOf('=') + 1)..]);
+
+        Assert.Equal("0x23520", fields[9]);
+        Assert.Empty(fields[12]);
+    }
+
+    /// <summary>Splits a [WINDOWS] value on commas that sit outside double quotes.</summary>
+    private static string[] SplitWindowsFields(string value)
+    {
+        var fields = new List<string>();
+        var current = new StringBuilder();
+        var quoted = false;
+        foreach (var ch in value)
+        {
+            if (ch == '"')
+            {
+                quoted = !quoted;
+                current.Append(ch);
+            }
+            else if (ch == ',' && !quoted)
+            {
+                fields.Add(current.ToString());
+                current.Clear();
+            }
+            else
+            {
+                current.Append(ch);
+            }
+        }
+
+        fields.Add(current.ToString());
+        return fields.ToArray();
     }
 
     [Fact]

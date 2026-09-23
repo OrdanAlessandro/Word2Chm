@@ -51,6 +51,12 @@ si filtrano con `grep -v NETSDK1188`.
   vanno ASCII puri. `hhc.exe` li legge come ANSI, quindi i caratteri UTF-8
   (apostrofi tipografici, trattini lunghi) vanno emessi come entità numeriche.
   In HTML lo fa `HtmlGenerator.ToAsciiSafe`.
+- **Riga `[WINDOWS]` del `.hhp`**: i campi sono posizionali e il viewer li legge
+  senza margini di errore. `WindowStyles` deve restare al campo 9 e
+  `NavigationPaneStyle` all'11; una virgola in piu' sposta `0x23520` sul campo
+  della geometria della finestra e il CHM non si apre piu' ("There is not enough
+  memory available for this task"), pur compilando senza errori. Il test
+  `HhpKeepsWindowsFieldsAligned` blinda l'allineamento.
 - **Campi XE**: Word spezza l'istruzione di un campo su più run
   (` XE "` + parola chiave + `" `), spesso annidata in un campo `HYPERLINK`.
   Vanno concatenati i `FieldCode` tra `fldChar begin/end`; leggere un solo run
