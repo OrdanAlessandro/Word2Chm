@@ -211,13 +211,23 @@ public static class ChmProjectGenerator
         return builder.ToString();
     }
 
+    /// <summary>
+    /// Style bits for the navigation pane, read as Win32 tree-view styles. TVS_HASBUTTONS (1)
+    /// draws the +/- boxes, TVS_HASLINES (2) the connecting lines and TVS_LINESATROOT (4) the
+    /// lines down to the root items. The previous value 0x23520 cleared all three and set
+    /// TVS_CHECKBOXES (0x100), which is exactly the reported symptom: check boxes and no
+    /// expand buttons. 0x27 keeps the three tree bits and TVS_SHOWSELALWAYS (0x20), matching
+    /// the value real help projects use.
+    /// </summary>
+    private const string SiteWindowStyles = "0x27";
+
     private static void WriteSiteProperties(StringBuilder builder)
     {
         builder.AppendLine("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">");
         builder.AppendLine("<HTML>");
         builder.AppendLine("<BODY>");
         builder.AppendLine("<OBJECT type=\"text/site properties\">");
-        builder.AppendLine("<param name=\"Window Styles\" value=\"0x23520\">");
+        builder.AppendLine("<param name=\"Window Styles\" value=\"" + SiteWindowStyles + "\">");
         builder.AppendLine("</OBJECT>");
     }
 
