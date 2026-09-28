@@ -2,6 +2,7 @@
 Compatibility=1.1 or later
 Compiled file=SkipperQt_IT.chm
 Contents file=SkipperQt_IT.hhc
+Index file=SkipperQt_IT.hhk
 Default topic=000-skipperqt.html
 Title=SKIPPER++
 Language=0x410 Italian (Italy)
@@ -10,13 +11,17 @@ Full-text search=Yes
 Default Window=Main
 
 [WINDOWS]
-Main="SKIPPER++","SkipperQt_IT.hhc","","000-skipperqt.html",,,,,,,,,0x23520,,0x384e,,,,,,,,0
+Main="SKIPPER++","SkipperQt_IT.hhc","SkipperQt_IT.hhk","000-skipperqt.html","",,,,,0x23520,,0x384e,,,,,,,,0
 
 [FILES]
 000-skipperqt.html
 001-macchinacnc.html
 index.html
 help.css
+000-skipperqt-modificare-i-parametri-del-cn-id.html
+000-skipperqt-eseguire-una-lavorazione-id.html
+000-skipperqt-assi-id.html
+SkipperQt_IT.hhk
 assets/image8.png
 assets/image9.png
 assets/image10.png
@@ -83,7 +88,13 @@ assets/image95.png
 assets/image96.png
 
 [ALIAS]
+IDH_EDIT_PARAMETERS=000-skipperqt-modificare-i-parametri-del-cn-id.html
+IDH_START_JOB=000-skipperqt-eseguire-una-lavorazione-id.html
+IDH_AXES=000-skipperqt-assi-id.html
 
 [MAP]
+#define IDH_EDIT_PARAMETERS 1000
+#define IDH_START_JOB 1001
+#define IDH_AXES 1002
 
 [INFOTYPES]
