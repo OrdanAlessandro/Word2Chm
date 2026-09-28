@@ -62,6 +62,37 @@ internal static class DocxFixture
         return stream.ToArray();
     }
 
+    /// <summary>
+    /// A document whose second-level heading carries no text of its own, the shape Word
+    /// produces when every heading level is numbered as a chapter. The empty heading is a
+    /// structural label and must not become a one-line topic of its own.
+    /// </summary>
+    public static byte[] CreateHeadingOnlySample()
+    {
+        using var stream = new MemoryStream();
+        using (var document = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var main = document.AddMainDocumentPart();
+            var stylesPart = main.AddNewPart<StyleDefinitionsPart>();
+
+            var body = new Body();
+            main.Document = new Document(body);
+
+            stylesPart.Styles = BuildStyles();
+            stylesPart.Styles.Save();
+
+            body.Append(Heading("Capitolo {#IDH_CAPITOLO}", 1));
+            body.Append(TextParagraph(Run("Testo del capitolo.")));
+            body.Append(Heading("Sezione vuota", 2));
+            body.Append(Heading("Sezione piena", 2));
+            body.Append(TextParagraph(Run("Testo della sezione.")));
+
+            main.Document.Save();
+        }
+
+        return stream.ToArray();
+    }
+
     private static Paragraph Heading(string text, int level) => new(
         new ParagraphProperties(new ParagraphStyleId { Val = "Heading" + level }),
         new Run(new Text(text)));

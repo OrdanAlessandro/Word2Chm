@@ -9,8 +9,12 @@ public sealed class BuildOptions
     /// <summary>Base numeric value for auto-assigned context IDs.</summary>
     public int DefaultContextId { get; set; } = 1000;
 
-    /// <summary>Heading level that starts a new HTML page.</summary>
-    public int PageLevel { get; set; } = 1;
+    /// <summary>
+    /// Heading level that starts a new HTML page. Three keeps each topic short enough to
+    /// read on screen; at one, a whole chapter lands on a single page and the navigation
+    /// pane becomes the only way to move around inside it.
+    /// </summary>
+    public int PageLevel { get; set; } = 3;
 
     /// <summary>Deepest heading level included in the table of contents.</summary>
     public int MaxTocLevel { get; set; } = 6;
@@ -51,16 +55,37 @@ public sealed class HelpProjectBuilder
 
         HelpPage? current = null;
 
+        // Chain of headings seen since the last page break, used to build breadcrumbs.
+        var headingStack = new List<(int Level, string Title, string? Local)>();
+
         foreach (var block in parsed.Blocks)
         {
             if (block is HeadingBlock heading)
             {
-                if (heading.Level <= options.PageLevel || current is null)
+                while (headingStack.Count > 0 && headingStack[^1].Level >= heading.Level)
+                {
+                    headingStack.RemoveAt(headingStack.Count - 1);
+                }
+
+                var isPageStart = heading.Level <= options.PageLevel || current is null;
+                if (isPageStart)
                 {
                     current = CreatePage(heading, document.Pages.Count, options, usedIds, ref nextId);
+                    SetAncestors(current, headingStack.Select(h => (h.Title, h.Local)).ToList());
                     document.Pages.Add(current);
+
+                    heading.Anchor = slugger.Slug(heading.Title);
+                    var pageTarget = (current, heading.Anchor);
+                    headingTargets[block] = pageTarget;
+                    RegisterBookmarks(block, pageTarget);
+                    tocBuilder.Add(heading.Level, heading.Title, current.FileName + "#" + heading.Anchor);
+                    RegisterIndexKeywords(block, heading.IndexKeywords, pendingIndexEntries);
+                    headingStack.Add((heading.Level, heading.Title, current.FileName + "#" + heading.Anchor));
+                    current.Blocks.Add(block);
+                    continue;
                 }
-                else if (!string.IsNullOrEmpty(heading.Symbol))
+
+                if (!string.IsNullOrEmpty(heading.Symbol))
                 {
                     // A Help 1 context ID resolves to a topic file, and the compiler does not
                     // accept an anchor in that file name, so a marker on a sub-heading is
@@ -83,16 +108,18 @@ public sealed class HelpProjectBuilder
                     RegisterBookmarks(block, aliasTarget);
                     tocBuilder.Add(heading.Level, heading.Title, current.FileName + "#" + heading.Anchor);
                     RegisterIndexKeywords(block, heading.IndexKeywords, pendingIndexEntries);
+                    headingStack.Add((heading.Level, heading.Title, anchorTarget));
                     current.Blocks.Add(block);
                     continue;
                 }
 
                 heading.Anchor = slugger.Slug(heading.Title);
-                var target = (current!, heading.Anchor);
+                var target = (current, heading.Anchor);
                 headingTargets[block] = target;
                 RegisterBookmarks(block, target);
                 tocBuilder.Add(heading.Level, heading.Title, current.FileName + "#" + heading.Anchor);
                 RegisterIndexKeywords(block, heading.IndexKeywords, pendingIndexEntries);
+                headingStack.Add((heading.Level, heading.Title, current.FileName + "#" + heading.Anchor));
                 current.Blocks.Add(block);
                 continue;
             }
@@ -116,6 +143,13 @@ public sealed class HelpProjectBuilder
         }
 
         tocBuilder.Apply(document);
+
+        // Pages that hold nothing but their own heading are structural labels ("Assi",
+        // "Utilita"): Word numbers every heading level 1-3 as a chapter, so without this
+        // the menu fills with one-line pages. They are demoted to the parent page, which
+        // keeps the heading as an anchor there, while an explicit context ID or index
+        // keyword still forces a real page because something links to it by name.
+        CollapseContentlessPages(document, headingTargets);
 
         foreach (var (keyword, block) in pendingIndexEntries)
         {
@@ -146,6 +180,123 @@ public sealed class HelpProjectBuilder
         }
 
         return document;
+    }
+
+    /// <summary>
+    /// Demotes pages whose only block is their own heading into the nearest preceding page
+    /// that has content. The heading stays in the output as an anchor, so links and the
+    /// table of contents keep working, but the menu no longer lists one-line pages.
+    /// Pages that must stay reachable on their own - because a context ID, an index keyword
+    /// or a bookmark names them - are left untouched.
+    /// </summary>
+    private static void CollapseContentlessPages(
+        HelpDocument document,
+        Dictionary<DocumentBlock, (HelpPage Page, string Anchor)> headingTargets)
+    {
+        var survivors = new HashSet<HelpPage>();
+        for (var i = 0; i < document.Pages.Count; i++)
+        {
+            var page = document.Pages[i];
+            var onlyHeading = page.Blocks.Count == 1 && page.Blocks[0] is HeadingBlock;
+            var hasKeyword = page.Blocks.Count == 1 &&
+                             page.Blocks[0] is HeadingBlock { IndexKeywords.Count: > 0 };
+            if (i == 0 || !onlyHeading || hasKeyword || page.Symbol is not null)
+            {
+                survivors.Add(page);
+            }
+        }
+
+        var moved = new Dictionary<string, string>(StringComparer.Ordinal);
+        var collapsed = new List<(HelpPage Page, HelpPage Parent, DocumentBlock Block)>();
+        for (var i = 0; i < document.Pages.Count; i++)
+        {
+            var page = document.Pages[i];
+            if (survivors.Contains(page))
+            {
+                continue;
+            }
+
+            HelpPage? parent = null;
+            for (var j = i - 1; j >= 0; j--)
+            {
+                if (survivors.Contains(document.Pages[j]))
+                {
+                    parent = document.Pages[j];
+                    break;
+                }
+            }
+
+            if (parent is null)
+            {
+                continue;
+            }
+
+            var block = page.Blocks[0];
+            parent.Blocks.Add(block);
+            collapsed.Add((page, parent, block));
+            moved[page.FileName] = parent.FileName;
+        }
+
+        foreach (var (page, parent, block) in collapsed)
+        {
+            document.Pages.Remove(page);
+
+            if (headingTargets.Remove(block, out var target))
+            {
+                headingTargets[block] = (parent, target.Anchor);
+            }
+
+            // Anything that resolved to the removed page must follow the heading.
+            if (block is HeadingBlock heading && heading.Anchor is not null)
+            {
+                foreach (var name in block.Bookmarks)
+                {
+                    document.BookmarkTargets[name] = new BookmarkTarget(parent.FileName, heading.Anchor);
+                }
+            }
+        }
+
+        if (moved.Count == 0)
+        {
+            return;
+        }
+
+        // Table of contents entries and breadcrumbs still name the removed files.
+        foreach (var node in document.Toc)
+        {
+            RemapTocNode(node, moved);
+        }
+
+        foreach (var page in document.Pages)
+        {
+            for (var i = 0; i < page.Ancestors.Count; i++)
+            {
+                var (title, local) = page.Ancestors[i];
+                page.Ancestors[i] = (title, RemapLocal(local, moved));
+            }
+        }
+    }
+
+    private static void RemapTocNode(TocNode node, Dictionary<string, string> moved)
+    {
+        node.Local = RemapLocal(node.Local, moved);
+        foreach (var child in node.Children)
+        {
+            RemapTocNode(child, moved);
+        }
+    }
+
+    private static string? RemapLocal(string? local, Dictionary<string, string> moved)
+    {
+        if (string.IsNullOrEmpty(local))
+        {
+            return local;
+        }
+
+        var separator = local.IndexOf('#');
+        var file = separator < 0 ? local : local[..separator];
+        var anchor = separator < 0 ? string.Empty : local[separator..];
+        return moved.TryGetValue(file, out var replacement) ? replacement + anchor : local;
     }
 
     private void RegisterBookmarks(DocumentBlock block, (HelpPage Page, string Anchor) target)
@@ -199,6 +350,17 @@ public sealed class HelpProjectBuilder
         }
 
         return page;
+    }
+
+    /// <summary>
+    /// Records the heading chain that leads to a page, so the skin can render a breadcrumb.
+    /// Ancestors are kept as a stack of the headings seen since the last page break.
+    /// </summary>
+    private static void SetAncestors(
+        HelpPage page,
+        IReadOnlyList<(string Title, string? Local)> stack)
+    {
+        page.Ancestors.AddRange(stack);
     }
 
     private static HelpPage CreateImplicitPage(HelpDocument document)

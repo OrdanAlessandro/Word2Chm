@@ -56,6 +56,12 @@ public sealed class HelpPage
     /// <summary>Heading level that opened this page (1 for "Heading 1").</summary>
     public int Level { get; set; } = 1;
 
+    /// <summary>
+    /// Headings above this page, outermost first. Used for the breadcrumb of the skin;
+    /// a Heading 1 page therefore has no ancestors.
+    /// </summary>
+    public List<(string Title, string? Local)> Ancestors { get; } = new();
+
     /// <summary>Anchor generated for this page's own heading.</summary>
     public string? Anchor { get; set; }
 
