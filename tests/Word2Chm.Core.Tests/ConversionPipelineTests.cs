@@ -30,7 +30,11 @@ public sealed class ConversionPipelineTests : IDisposable
         return path;
     }
 
-    private ConversionResult RunPipeline(string? hhcPath = null, string? baseName = null)
+    private ConversionResult RunPipeline(
+        string? hhcPath = null,
+        string? baseName = null,
+        string? templateDirectory = null,
+        int pageLevel = 1)
     {
         var pipeline = new ConversionPipeline();
         return pipeline.Run(new ConversionOptions
@@ -38,9 +42,46 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = WriteSampleDocx(),
             OutputDirectory = Path.Combine(_workDirectory, "out"),
             BaseName = baseName,
-            Build = new BuildOptions { DefaultContextId = 1000 },
+            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = pageLevel },
+            TemplateDirectory = templateDirectory,
             Compile = new CompileOptions { HhcPath = hhcPath },
         });
+    }
+
+    /// <summary>Runs the pipeline over a document whose headings carry no body text.</summary>
+    private ConversionResult RunHeadingOnlyPipeline(int pageLevel)
+    {
+        var path = Path.Combine(_workDirectory, "vuoto.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateHeadingOnlySample());
+
+        return new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "out-vuoto"),
+            BaseName = "guida",
+            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = pageLevel },
+            Compile = new CompileOptions { HhcPath = null },
+        });
+    }
+
+    /// <summary>Writes the fixedtop skin into the test directory and returns its folder.</summary>
+    private string WriteTemplate()
+    {
+        var directory = Path.Combine(_workDirectory, "skin");
+        Directory.CreateDirectory(directory);
+
+        File.WriteAllText(Path.Combine(directory, "fixedtop.htm"),
+            "\uFEFF<html><head><link href=\"winchm_template_style.css\" rel=\"stylesheet\">" +
+            "<script src=\"winchm_template_script.js\"></script></head><body>" +
+            "<div id=\"top\"><img src=\"btn_prev_n.gif\"><img src=\"btn_next_n.gif\"></div>" +
+            "<div id=\"nav\">($navigation$)</div><div id=\"title\">($title$)</div>" +
+            "<div id=\"content\">($content$)</div><div id=\"footer\">($footer$)</div></body></html>");
+        File.WriteAllText(Path.Combine(directory, "winchm_template_style.css"), "body{}");
+        File.WriteAllText(Path.Combine(directory, "winchm_template_script.js"), "//");
+        File.WriteAllBytes(Path.Combine(directory, "btn_prev_n.gif"), new byte[] { 0x47, 0x49, 0x46 });
+        File.WriteAllBytes(Path.Combine(directory, "btn_next_n.gif"), new byte[] { 0x47, 0x49, 0x46 });
+
+        return directory;
     }
 
     [Fact]
@@ -280,7 +321,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "loc-out"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000 },
+            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
             Compile = new CompileOptions(),
         });
 
@@ -385,5 +426,158 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = Path.Combine(_workDirectory, "missing.docx"),
             OutputDirectory = Path.Combine(_workDirectory, "out"),
         }));
+    }
+
+    /// <summary>
+    /// The navigation pane is a Win32 tree view, so "Window Styles" carries tree-view bits:
+    /// TVS_HASBUTTONS (1) draws the +/- boxes, TVS_HASLINES (2) the connecting lines and
+    /// TVS_LINESATROOT (4) the lines to the root items. The value 0x23520 cleared all three
+    /// and set TVS_CHECKBOXES (0x100), which is the reported symptom.
+    /// </summary>
+    [Fact]
+    public void HhcEnablesTreeLinesInsteadOfCheckBoxes()
+    {
+        var result = RunPipeline();
+        var hhc = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhc"));
+
+        var match = System.Text.RegularExpressions.Regex.Match(
+            hhc, "<param name=\"Window Styles\" value=\"(0x[0-9a-fA-F]+)\">");
+        Assert.True(match.Success, "Window Styles non impostato in .hhc");
+
+        const int hasButtons = 0x1, hasLines = 0x2, linesAtRoot = 0x4, checkBoxes = 0x100;
+        var styles = Convert.ToInt32(match.Groups[1].Value, 16);
+        Assert.True((styles & hasButtons) != 0, $"TVS_HASBUTTONS mancante: {styles:X}");
+        Assert.True((styles & hasLines) != 0, $"TVS_HASLINES mancante: {styles:X}");
+        Assert.True((styles & linesAtRoot) != 0, $"TVS_LINESATROOT mancante: {styles:X}");
+        Assert.True((styles & checkBoxes) == 0, $"TVS_CHECKBOXES impostato: {styles:X}");
+    }
+
+    [Fact]
+    public void WrapsPagesInTemplateAndCopiesItsAssets()
+    {
+        var templateDirectory = WriteTemplate();
+        var result = RunPipeline(templateDirectory: templateDirectory);
+
+        var page = File.ReadAllText(Path.Combine(result.OutputDirectory, "001-requisiti.html"));
+
+        // Placeholders are gone and the page content sits inside the skin.
+        Assert.DoesNotContain("($title$)", page);
+        Assert.DoesNotContain("($content$)", page);
+        Assert.Contains("winchm_template_top", page.Replace("id=\"top\"", "id=\"winchm_template_top\""));
+        Assert.Contains("Requisiti", page);
+
+        // The skin assets end up next to the topics and are declared in [FILES],
+        // otherwise the buttons are missing from the compiled CHM.
+        foreach (var name in new[]
+                 {
+                     "winchm_template_style.css", "winchm_template_script.js",
+                     "btn_prev_n.gif", "btn_next_n.gif",
+                 })
+        {
+            Assert.True(File.Exists(Path.Combine(result.OutputDirectory, name)), $"{name} mancante");
+            Assert.Contains(name, File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp")));
+        }
+
+        // The project stylesheet is still linked, or tables and code lose their formatting.
+        Assert.Contains("help.css", page);
+    }
+
+    [Fact]
+    public void TemplateButtonsLinkNeighbouringPages()
+    {
+        var result = RunPipeline(templateDirectory: WriteTemplate());
+        var pages = result.Document.Pages;
+
+        var first = File.ReadAllText(Path.Combine(result.OutputDirectory, pages[0].FileName));
+        var second = File.ReadAllText(Path.Combine(result.OutputDirectory, pages[1].FileName));
+
+        // The first page has no previous topic, the second links both ways.
+        Assert.DoesNotContain($"<a href=\"\"><img src=\"btn_prev_n.gif\">", first);
+        Assert.Contains($"btn_next_n.gif", first);
+        Assert.Contains($"href=\"{pages[0].FileName}\"", second);
+        Assert.Contains($"href=\"{pages[2].FileName}\"", second);
+    }
+
+    [Fact]
+    public void BreadcrumbLinksAncestorHeadings()
+    {
+        // With pages split at level 2, "Procedura" is a topic under "Installazione", so its
+        // page carries a trail that links back to the parent heading.
+        var result = RunPipeline(templateDirectory: WriteTemplate(), pageLevel: 2);
+
+        var page = result.Document.Pages.Single(p => p.Title == "Procedura");
+        Assert.Single(page.Ancestors);
+        Assert.Equal("Installazione", page.Ancestors[0].Title);
+
+        var html = File.ReadAllText(Path.Combine(result.OutputDirectory, page.FileName));
+        Assert.Contains("href=\"" + page.Ancestors[0].Local + "\"", html);
+        Assert.Contains("Installazione", html);
+    }
+
+    /// <summary>
+    /// A heading that carries no text of its own is a structural label, not a topic. Demoting
+    /// it keeps the menu free of one-line pages while its heading stays as an anchor on the
+    /// parent page, so nothing that links to it breaks.
+    /// </summary>
+    [Fact]
+    public void DemotesHeadingOnlyPagesIntoTheirParent()
+    {
+        var result = RunHeadingOnlyPipeline(pageLevel: 2);
+
+        Assert.DoesNotContain(result.Document.Pages, p => p.Title == "Sezione vuota");
+        Assert.Contains(result.Document.Pages, p => p.Title == "Sezione piena");
+
+        // The demoted heading still appears in the output, as an anchor of the parent page.
+        var parent = result.Document.Pages.Single(p => p.Title == "Capitolo");
+        var html = File.ReadAllText(Path.Combine(result.OutputDirectory, parent.FileName));
+        Assert.Contains("id=\"sezione-vuota\"", html);
+
+        // ...and the table of contents keeps pointing at a file that exists.
+        var hhc = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhc"));
+        Assert.Contains(parent.FileName + "#sezione-vuota", hhc);
+    }
+
+    [Fact]
+    public void KeepsPageForHeadingCarryingAContextId()
+    {
+        // A context ID is a promise to the C++ header and the [ALIAS] section, so the page
+        // must survive even when the heading has no body text.
+        var result = RunHeadingOnlyPipeline(pageLevel: 2);
+        Assert.Contains(result.Document.Pages, p => p.Symbol == "IDH_CAPITOLO");
+        Assert.NotNull(result.Document.Pages.Single(p => p.Symbol == "IDH_CAPITOLO").Blocks);
+    }
+
+    [Fact]
+    public void DoesNotLinkToRemovedPagesAfterDemotion()
+    {
+        var result = RunHeadingOnlyPipeline(pageLevel: 2);
+        var existing = result.Document.Pages.Select(p => p.FileName).ToHashSet(StringComparer.Ordinal);
+
+        var hhc = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhc"));
+        foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(
+                     hhc, "<param name=\"Local\" value=\"([^\"]+)\""))
+        {
+            var file = match.Groups[1].Value.Split('#')[0];
+            Assert.True(existing.Contains(file), $"il sommario punta a un file rimosso: {file}");
+        }
+
+        foreach (var page in result.Document.Pages)
+        {
+            var html = File.ReadAllText(Path.Combine(result.OutputDirectory, page.FileName));
+            foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(
+                         html, "href=\"([^\"]+)\""))
+            {
+                var href = match.Groups[1].Value;
+                if (href.StartsWith("http", StringComparison.OrdinalIgnoreCase) || href.StartsWith('#'))
+                {
+                    continue;
+                }
+
+                var file = href.Split('#')[0];
+                Assert.True(string.IsNullOrEmpty(file) || existing.Contains(file) ||
+                            File.Exists(Path.Combine(result.OutputDirectory, file)),
+                    $"collegamento rotto in {page.FileName}: {href}");
+            }
+        }
     }
 }

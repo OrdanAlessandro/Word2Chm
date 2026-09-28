@@ -13,6 +13,7 @@ internal sealed class MainForm : Form
     private readonly TextBox _baseName = new();
     private readonly NumericUpDown _startContextId = new();
     private readonly NumericUpDown _pageLevel = new();
+    private readonly TextBox _templateDirectory = new();
     private readonly TextBox _hhcPath = new();
     private readonly CheckBox _compileChm = new();
     private readonly CheckBox _openOutput = new();
@@ -39,7 +40,7 @@ internal sealed class MainForm : Form
         {
             Dock = DockStyle.Fill,
             ColumnCount = 3,
-            RowCount = 9,
+            RowCount = 10,
             Padding = new Padding(12),
         };
         root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
@@ -82,6 +83,13 @@ internal sealed class MainForm : Form
         _pageLevel.Maximum = 6;
         _pageLevel.Width = 120;
         root.Controls.Add(_pageLevel, 1, row++);
+
+        // WinCHM skin.
+        root.Controls.Add(Label("Template (skin):"), 0, row);
+        _templateDirectory.Dock = DockStyle.Fill;
+        root.Controls.Add(_templateDirectory, 1, row);
+        var browseTemplate = Button("Sfoglia...", BrowseTemplate);
+        root.Controls.Add(browseTemplate, 2, row++);
 
         // hhc.exe.
         root.Controls.Add(Label("hhc.exe:"), 0, row);
@@ -163,6 +171,7 @@ internal sealed class MainForm : Form
         _outputDirectory.Text = settings.OutputDirectory ?? string.Empty;
         _startContextId.Value = Math.Clamp(settings.StartContextId, 1, 65535);
         _pageLevel.Value = Math.Clamp(settings.PageLevel, 1, 6);
+        _templateDirectory.Text = settings.TemplateDirectory ?? DefaultTemplateDirectory() ?? string.Empty;
         _hhcPath.Text = settings.HhcPath ?? HhcLocator.Locate() ?? string.Empty;
 
         if (string.IsNullOrEmpty(_hhcPath.Text))
@@ -177,6 +186,7 @@ internal sealed class MainForm : Form
         OutputDirectory = _outputDirectory.Text,
         StartContextId = (int)_startContextId.Value,
         PageLevel = (int)_pageLevel.Value,
+        TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
         HhcPath = _hhcPath.Text,
     }.Save();
 
@@ -214,6 +224,43 @@ internal sealed class MainForm : Form
         }
     }
 
+    private void BrowseTemplate()
+    {
+        using var dialog = new FolderBrowserDialog
+        {
+            Description = "Seleziona la cartella del template (contiene fixedtop.htm)",
+            SelectedPath = Directory.Exists(_templateDirectory.Text) ? _templateDirectory.Text : string.Empty,
+        };
+
+        if (dialog.ShowDialog(this) == DialogResult.OK)
+        {
+            _templateDirectory.Text = dialog.SelectedPath;
+        }
+    }
+
+    /// <summary>
+    /// Looks for the bundled skin next to the executable, then in the repository layout used
+    /// during development, so the template works without a manual selection.
+    /// </summary>
+    private static string? DefaultTemplateDirectory()
+    {
+        var candidates = new[]
+        {
+            Path.Combine(AppContext.BaseDirectory, "template", "fixedtop"),
+            Path.Combine(AppContext.BaseDirectory, "template"),
+        };
+
+        foreach (var candidate in candidates)
+        {
+            if (File.Exists(Path.Combine(candidate, WinChmTemplate.TemplateFileName)))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
     private void DetectHhc()
     {
         var found = HhcLocator.Locate(_hhcPath.Text);
@@ -249,6 +296,7 @@ internal sealed class MainForm : Form
                 DefaultContextId = (int)_startContextId.Value,
                 PageLevel = (int)_pageLevel.Value,
             },
+            TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
             Compile = new CompileOptions
             {
                 HhcPath = _compileChm.Checked ? _hhcPath.Text.Trim() : null,
@@ -390,7 +438,8 @@ internal sealed class AppSettings
     public string? OutputDirectory { get; set; }
     public string? HhcPath { get; set; }
     public int StartContextId { get; set; } = 1000;
-    public int PageLevel { get; set; } = 1;
+    public int PageLevel { get; set; } = 3;
+    public string? TemplateDirectory { get; set; }
 
     public static AppSettings Load()
     {

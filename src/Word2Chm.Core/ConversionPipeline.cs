@@ -21,6 +21,12 @@ public sealed class ConversionOptions
 
     /// <summary>Relative path stamped into the generated header comment.</summary>
     public string? ChmRelativePath { get; init; }
+
+    /// <summary>
+    /// Directory holding the WinCHM skin (fixedtop.htm and its css/js/gif). When set and
+    /// the template file exists, every topic is wrapped in the skin.
+    /// </summary>
+    public string? TemplateDirectory { get; init; }
 }
 
 public sealed class ConversionResult
@@ -71,6 +77,10 @@ public sealed class ConversionPipeline
         File.WriteAllText(cssPath, CssGenerator.Generate());
         generated.Add(cssPath);
 
+        // WinCHM skin: the template plus its stylesheet, script and button images.
+        var templateFiles = new List<string>();
+        var template = LoadTemplate(options.TemplateDirectory, outputDirectory, generated, templateFiles);
+
         // Assets.
         foreach (var image in parsed.Images)
         {
@@ -79,11 +89,17 @@ public sealed class ConversionPipeline
             generated.Add(imagePath);
         }
 
-        // Pages plus a landing page that hosts the table of contents.
-        foreach (var page in document.Pages)
+        // Pages plus a landing page that hosts the table of contents. Previous/next links
+        // follow the table-of-contents order so the reader can page through the help.
+        var order = FlattenPages(document);
+        for (var index = 0; index < order.Count; index++)
         {
+            var page = order[index];
+            var previous = index > 0 ? order[index - 1].FileName : null;
+            var next = index + 1 < order.Count ? order[index + 1].FileName : null;
+
             var pagePath = Path.Combine(outputDirectory, page.FileName);
-            File.WriteAllText(pagePath, _html.GeneratePage(page, document, CssGenerator.FileName));
+            File.WriteAllText(pagePath, _html.GeneratePage(page, document, CssGenerator.FileName, template, previous, next));
             generated.Add(pagePath);
         }
 
@@ -114,6 +130,7 @@ public sealed class ConversionPipeline
             .Concat(anchorFiles)
             .Concat(hasIndex ? new[] { names.HhkFile } : Array.Empty<string>())
             .Concat(parsed.Images.Select(i => "assets/" + i.FileName))
+            .Concat(templateFiles)
             .ToList();
 
         var hhpPath = Path.Combine(outputDirectory, names.HhpFile);
@@ -152,5 +169,88 @@ public sealed class ConversionPipeline
             HeaderPath = headerPath,
             ChmPath = compilation.Success ? chmPath : null,
         };
+    }
+
+    /// <summary>Depth-first page order, matching the order the table of contents is walked.</summary>
+    private static List<HelpPage> FlattenPages(HelpDocument document)
+    {
+        var byFile = document.Pages.ToDictionary(p => p.FileName, StringComparer.Ordinal);
+        var ordered = new List<HelpPage>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+
+        void Visit(TocNode node)
+        {
+            if (!string.IsNullOrEmpty(node.Local) && seen.Add(node.Local))
+            {
+                var file = node.Local.Split('#')[0];
+                if (byFile.TryGetValue(file, out var page))
+                {
+                    ordered.Add(page);
+                }
+            }
+
+            foreach (var child in node.Children)
+            {
+                Visit(child);
+            }
+        }
+
+        foreach (var node in document.Toc)
+        {
+            Visit(node);
+        }
+
+        // Pages never reached through the table of contents keep their document order.
+        foreach (var page in document.Pages)
+        {
+            if (seen.Add(page.FileName))
+            {
+                ordered.Add(page);
+            }
+        }
+
+        return ordered;
+    }
+
+    /// <summary>
+    /// Reads the skin and copies it into the output next to the topics. Returns null when no
+    /// template directory was given, so the built-in layout stays available.
+    /// </summary>
+    private static string? LoadTemplate(
+        string? templateDirectory,
+        string outputDirectory,
+        List<string> generated,
+        List<string> templateFiles)
+    {
+        if (string.IsNullOrWhiteSpace(templateDirectory))
+        {
+            return null;
+        }
+
+        var templatePath = Path.Combine(templateDirectory, WinChmTemplate.TemplateFileName);
+        if (!File.Exists(templatePath))
+        {
+            return null;
+        }
+
+        var source = WinChmTemplate.ReadTemplate(templatePath);
+        foreach (var name in new[]
+                 {
+                     WinChmTemplate.StyleFileName,
+                     WinChmTemplate.ScriptFileName,
+                 }.Concat(WinChmTemplate.ImageFileNames))
+        {
+            var from = Path.Combine(templateDirectory, name);
+            if (!File.Exists(from))
+            {
+                continue;
+            }
+
+            File.Copy(from, Path.Combine(outputDirectory, name), overwrite: true);
+            generated.Add(Path.Combine(outputDirectory, name));
+            templateFiles.Add(name);
+        }
+
+        return source;
     }
 }

@@ -17,4 +17,9 @@
     <ProjectReference Include="..\Word2Chm.Core\Word2Chm.Core.csproj" />
   </ItemGroup>
 
+  <!-- Bundle the WinCHM skin next to the executable so it is found without a manual path. -->
+  <ItemGroup>
+    <None Include="..\..\template\fixedtop\**\*" Link="template\fixedtop\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

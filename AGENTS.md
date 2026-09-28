@@ -63,5 +63,26 @@ si filtrano con `grep -v NETSDK1188`.
   produce zero voci di indice.
 - **File di indice**: `.hhk` va dichiarato sia come `Index file=` sia nella lista
   `[FILES]` del `.hhp`, altrimenti le parole chiave non entrano nel CHM.
+- **`Window Styles` del `.hhc`**: il riquadro di navigazione è una tree view
+  Win32, quindi il valore va letto come stile `TVS_*`. Servono `TVS_HASBUTTONS`
+  (0x1), `TVS_HASLINES` (0x2) e `TVS_LINESATROOT` (0x4); `TVS_CHECKBOXES` (0x100)
+  va lasciato spento. Il vecchio valore `0x23520` azzerava i primi tre e accendeva
+  quello delle caselle: nel CHM comparivano checkbox e nessun pulsante `+`.
+  Il valore corretto è `0x27`, come nei progetti reali. Il test
+  `HhcEnablesTreeLinesInsteadOfCheckBoxes` blinda i quattro bit.
+- **Suddivisione in pagine**: `BuildOptions.PageLevel` (default 3) è il livello di
+  titolo che apre una nuova pagina. A 1 un intero capitolo finisce in un'unica
+  pagina HTML lunghissima; a 3 ogni argomento ha la sua pagina. Un titolo che non
+  ha testo proprio (etichetta di sezione, forma tipica di Word quando numera ogni
+  livello come capitolo) non diventa una pagina ma un'ancora della pagina padre
+  (`CollapseContentlessPages`), così il menu non si riempie di pagine di una riga;
+  resta invece una pagina se ha un ID di contesto, una voce di indice o un
+  segnalibro, perché qualcosa lo collega per nome.
+- **Template WinCHM**: con `ConversionOptions.TemplateDirectory` le pagine vengono
+  avvolte nello skin (`($title$)`, `($content$)`, `($navigation$)`, `($footer$)`,
+  pulsanti prev/next). Gli asset del template vanno copiati accanto ai topic e
+  aggiunti a `[FILES]`, altrimenti i pulsanti non compaiono nel CHM. Lo skin linka
+  solo il proprio CSS, quindi `help.css` viene iniettato a parte per non perdere la
+  formattazione di tabelle e codice.
 - I test costruiscono il `.docx` a runtime (`DocxFixture`), quindi non esistono
   fixture binarie da mantenere.

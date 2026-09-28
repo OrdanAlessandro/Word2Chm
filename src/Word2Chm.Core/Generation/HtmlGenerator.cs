@@ -37,30 +37,31 @@ public sealed class HtmlGenerator
         return ToAsciiSafe(builder.ToString());
     }
 
-    public string GeneratePage(HelpPage page, HelpDocument document, string cssPath)
+    public string GeneratePage(
+        HelpPage page,
+        HelpDocument document,
+        string cssPath,
+        string? template,
+        string? previousFile = null,
+        string? nextFile = null)
     {
         var builder = new StringBuilder();
-        builder.AppendLine("<!DOCTYPE html>");
-        builder.AppendLine("<html lang=\"" + WebUtility.HtmlEncode(document.Language) + "\">");
-        builder.AppendLine("<head>");
-        builder.AppendLine("<meta charset=\"utf-8\">");
-        builder.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
-        builder.AppendLine("<title>" + WebUtility.HtmlEncode(page.Title) + "</title>");
-        builder.AppendLine("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + CssFileName + "\">");
-        builder.AppendLine("</head>");
-        builder.AppendLine("<body>");
-        builder.AppendLine("<div class=\"page\">");
-
         foreach (var block in page.Blocks)
         {
             RenderBlock(builder, block, document, page);
         }
 
-        builder.AppendLine("</div>");
-        builder.AppendLine("<div class=\"footer\">" + WebUtility.HtmlEncode(document.Title) + "</div>");
-        builder.AppendLine("</body>");
-        builder.AppendLine("</html>");
-        return ToAsciiSafe(builder.ToString());
+        if (template is null)
+        {
+            builder.Insert(0, "<div class=\"page\">");
+            builder.AppendLine("</div>");
+            builder.AppendLine("<div class=\"footer\">" + WebUtility.HtmlEncode(document.Title) + "</div>");
+            return ToAsciiSafe(builder.ToString());
+        }
+
+        var navigation = WinChmTemplate.BuildNavigation(page.Ancestors);
+        var footer = WebUtility.HtmlEncode(document.Title) + " - " + WebUtility.HtmlEncode(page.Title);
+        return WinChmTemplate.Apply(template, page.Title, builder.ToString(), navigation, footer, previousFile, nextFile, cssPath);
     }
 
     public string GenerateIndexPage(HelpDocument document)
