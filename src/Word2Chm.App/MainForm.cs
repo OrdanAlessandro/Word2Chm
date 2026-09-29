@@ -429,16 +429,25 @@ internal sealed class MainForm : Form
 /// <summary>Small JSON-backed user settings store kept next to the executable.</summary>
 internal sealed class AppSettings
 {
+    /// <summary>
+    /// Version of the stored layout. Files written before <see cref="CurrentVersion"/> may
+    /// carry a <see cref="PageLevel"/> that only reflects the old default, so it is discarded
+    /// instead of silently pinning every conversion back to one big page.
+    /// </summary>
+    private const int CurrentVersion = 2;
+
     private static string FilePath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Word2Chm",
         "settings.json");
 
+    public int Version { get; set; }
+
     public string? DocxPath { get; set; }
     public string? OutputDirectory { get; set; }
     public string? HhcPath { get; set; }
     public int StartContextId { get; set; } = 1000;
-    public int PageLevel { get; set; } = 3;
+    public int PageLevel { get; set; } = BuildOptions.DefaultPageLevel;
     public string? TemplateDirectory { get; set; }
 
     public static AppSettings Load()
@@ -447,8 +456,16 @@ internal sealed class AppSettings
         {
             if (File.Exists(FilePath))
             {
-                return System.Text.Json.JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(FilePath))
-                       ?? new AppSettings();
+                var settings = System.Text.Json.JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(FilePath));
+                if (settings is not null)
+                {
+                    if (settings.Version < CurrentVersion)
+                    {
+                        settings.PageLevel = BuildOptions.DefaultPageLevel;
+                    }
+
+                    return settings;
+                }
             }
         }
         catch (Exception)
@@ -461,6 +478,7 @@ internal sealed class AppSettings
 
     public void Save()
     {
+        Version = CurrentVersion;
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);

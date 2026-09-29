@@ -1,0 +1,166 @@
+<div class="page"><h3 id="allarmi-edm">Allarmi EDM</h3>
+<table>
+<tr>
+<td><p><em><strong>E1</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su valvola di emergenza</p>
+<p><em>(azione) controllare</em><em> il</em><em> funzionamento </em><em>del </em><em>sistema valvola-pressostato EMERGENZA. L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: il pressostato dovrebbe spegnersi entro 1 sec dall&#39;accensione della valvola ed accendersi entro 1 sec dallo spegnimento della stessa. Il problema pu&#242; presentarsi per un malfunzionamento del pressostato o</em><em> per una sua mal taratura, oppure in caso di malfunzionamento della valvola.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E2</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su valvola selettore modale</p>
+<p><em>(azione) controllare il funzionamento del sistema valvola-pressostato </em><em>SELETTORE MODALE. </em><em>L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: il pressostato dovrebbe spegnersi entro 1 sec dall&#39;accensione della valvola ed accendersi entro 1 sec dallo spegnimento della stessa. Il problema pu&#242; presentarsi per un malfunzionamento del pressostato o per una sua mal taratura, oppure in caso di malfunzionamento della valvola.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E3</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su blocco porta</p>
+<p><em>(azione) controllare funzionamento sistema valvola-cilindro blocco porta.  L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: il sensore sul cilindro dovrebbe spegnersi entro 1 sec dall&#39;accensione della valvola ed accendersi entro 1 sec dallo spegnimento della stessa. il problema pu&#242; presentarsi anche se la valvola non dovesse rispondere al comando elettrico del plc o se il sensore sul pistone &#232; mal posizionato.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E4</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su blocco porta sinistro</p>
+<p><em>(azione) vedasi E3</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E5</strong></em></p>
+</td>
+<td><p>(causa) Anomalia su blocco porta destro</p>
+<p><em>(azione) vedasi E3</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E6</strong></em></p>
+</td>
+<td><p>(causa) Anomalia pressostato bassa pressione (posizione 0&#176; su TRS)</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema valvola-pressostato LOW-P. </em><em>L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: </em><em>il pressostato dovrebbe spegnersi entro 2,5 sec dall&#39;accensione della valvola ed accendersi entro 2,5 sec dallo spegnimento della stessa. Con valvola HP spenta si deve avere la condizione di bassa pressione (pressostato acceso), viceversa con condizione di alta pressione (pressostato spento). Il problema pu&#242; presentarsi anche se la valvola non dovesse rispondere al comando elettrico del plc o se il regolatore di pressione dedicato (LOW-P) &#232; stato manomesso, portando la pressione in uscita ad un livello troppo elevato che non consente lo spegnimento del pressostato normalmente tarato a 3BAR. Nel caso si tratti di tavola rotante, la valvola HP0&#176; viene attivata non appena la tavola inizia la rotazione per portare in posizione di lavoro la morsa 0&#176;.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E7</strong></em></p>
+</td>
+<td><p>(causa) Anomalia pressostato bassa pressione posizione 180&#176; su TRS</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema valvola-pressostato LOW-P. </em><em>L&#39;errore &#232; causato da un malfunzionamento sul canale EDM: </em><em>il pressostato dovrebbe spegnersi entro 2,5 sec dall&#39;accensione della valvola ed accendersi entro 2,5 sec dallo spegnimento della stessa. Con valvola HP180 spenta si deve avere la condizione di bassa pressione (pressostato acceso), viceversa con condizione di alta pressione (pressostato spento). Il problema pu&#242; presentarsi anche se la valvola non dovesse rispondere al comando elettrico del plc o se il regolatore di pressione dedicato (LOW-P) &#232; stato manomesso, portando la pressione in uscita ad un livello troppo elevato che non consente lo spegnimento del pressostato normalmente tarato a 3BAR. Nel caso si tratti di tavola rotante, la valvola HP180&#176; viene attivata non appena la tavola inizia la rotazione per portare in posizione di lavoro la morsa </em><em>18</em><em>0&#176;.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E8</strong></em></p>
+</td>
+<td><p>(causa) Anomalia contattore inerziale</p>
+<p><em>(azione) </em><em>controllare funzionamento contatto NC del contattore C1 o K1. l&#39;errore implica un mancato cambio di stato del ritorno proveniente dal contatto normalmente chiuso del contattore, che dovrebbe essere alto quando la bobina dello stesso non &#232; comandata dal PLC e viceversa. in caso di errore il contattore potrebbe essere bloccato meccanicamente.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E9</strong></em></p>
+</td>
+<td><p>(causa) Anomalia contattore inerziale per controllo frenatura inverter</p>
+<p><em>(azione) </em><em>controllare funzionamento contatto NC del contattore C2 o K2. l&#39;errore implica un mancato cambio di stato del ritorno proveniente dal contatto normalmente chiuso del contattore, che dovrebbe essere alto quando la bobina dello stesso non &#232; comandata dal PLC e viceversa. in caso di errore il contattore potrebbe essere bloccato meccanicamente.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E10</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO inverter</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM degli inverter. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli inverter deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;inverter potrebbe essere spento o in fase di accensione. Nel caso di presenza di pi&#249; inverter, i canali EDM sono collegati in serie.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E11</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamenti non inerziali (XYZ su PLC in versione non ibrida)</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM degli assi non inerziali o degli assi X,Y,Z in caso di quadri con elettronica &quot;integrale&quot;. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione. il canale EDM dei vari azionamenti &#232; collegato in serie.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E12</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamento asse 4</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM dell&#39;asse n.4. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E13</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamento asse 6</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM dell&#39;asse n.6. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E14</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamenti inerziali (asse 7 su PLC in versione non ibrida)</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM degli assi inerziali o dell&#39;asse 7 in caso di quadri con elettronica &quot;integrale&quot;. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione. il canale EDM dei vari azionamenti &#232; collegato in serie.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E15</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamento asse 8</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM dell&#39;asse n.8. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione. questo asse viene depotenziato (vengono abbassati gli STO) quando &#232; in posizione di carico e le barriere vengono intruse (se non &#232; presente il robot).</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E16</strong></em></p>
+</td>
+<td><p>(causa) Anomalia EDM STO azionamento asse 9</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema EDM dell&#39;asse n.9. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione. questo asse viene depotenziato (vengono abbassati gli STO) quando &#232; in posizione di carico e le barriere vengono intruse (se non &#232; presente il robot). </em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E17</strong></em></p>
+</td>
+<td><p>(causa) Anomalia modulo IO, possibile corto circuito o discrepanza segnali di test</p>
+<p><em>(azione) </em><em>controllare lo stato dei moduli costituenti il PLC, l&#39;errore potrebbe essere dovuto a cortocircuiti sugli ingressi o sulle uscite oppure ad una discrepanza sui segnali di test. Il modulo, l&#39;ingresso o l&#39;uscita in errore &#232; identificabile grazie a dei led rossi su di esso.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E18</strong></em></p>
+</td>
+<td><p>(causa) Anomalia connessione Ethernet-IP manifold pneumatico</p>
+<p><em>(azione) </em><em>errore dovuto a mancanza di comunicazione Ethernet IP tra PLC e </em><em>manifold</em><em> pneumatico. Controllare stato alimentazione del </em><em>manifold</em><em> ed eventualmente riprogrammare indirizzo IP.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E19</strong></em></p>
+</td>
+<td><p>(causa) Anomalia pressostato bassa pressione</p>
+<p><em>(azione) </em><em>controllare funzionamento sistema valvola-pressostato LOW-P. L&#39;errore implica un malfunzionamento sul canale EDM, il pressostato dovrebbe infatti spegnersi entro 2,5sec dall&#39;accensione della valvola ed accendersi entro 2,5sec dallo spegnimento della stessa. con valvola HP spenta infatti, si deve avere la condizione di bassa pressione (pressostato acceso), viceversa condizione di alta pressione (pressostato spento). il problema pu&#242; presentarsi anche se la valvola non dovesse rispondere al comando elettrico del plc o se il regolatore di pressione dedicato (LOW-P) &#232; stato manomesso, portando la pressione in uscita ad un livello troppo elevato che non consente lo spegnimento del pressostato normalmente tarato a 3BAR.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E20</strong></em></p>
+</td>
+<td><p>(causa) Anomalia edm STO azionamento 5 asse</p>
+<p><em>(azione) controllare funzionamento sistema EDM dell&#39;asse n.5. Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E21</strong></em></p>
+</td>
+<td><p>(causa) edm STO azionamento 5 asse stepper </p>
+<p>(azione) controllare funzionamento sistema EDM dell&#39;asse n.5 con motore stepper (TRS drill screw). Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E22</strong></em></p>
+</td>
+<td><p>(causa) edm STO azionamento 6 asse stepper </p>
+<p>(azione) controllare funzionamento sistema EDM dell&#39;asse n.6 con motore stepper (TRS drill screw). Sui quadri con sicurezza integrata, il segnale EDM proveniente dagli azionamenti deve abbassarsi quando i due ingressi STO degli stessi vengono comandati dal PLC e viceversa. In caso di malfunzionamento potrebbe esserci un guasto sulla circuiteria interna al dispositivo o l&#39;azionamento potrebbe essere spento o in fase di accensione.</p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>E23</strong></em></p>
+</td>
+<td><p>(causa) errore pressostato bassa pressione &#8211; Valvola SM2 </p>
+<p>(azione) controllare funzionamento del sistema di controllo abbassamento di pressione. All&#39;accensione della valvola SM2, viene atteso lo spegnimento del pressostato lowP (stato di alta pressione morsa), viceversa allo spegnimento della valvola viene attesa l&#39;accensione del pressostato (mancanza aria su morsa).</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="footer">SKIPPER++</div>

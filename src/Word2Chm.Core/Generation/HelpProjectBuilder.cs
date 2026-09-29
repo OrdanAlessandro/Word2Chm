@@ -6,15 +6,22 @@ namespace Word2Chm.Core.Generation;
 
 public sealed class BuildOptions
 {
+    /// <summary>
+    /// Deepest heading level that opens a new page, shared by the core and the GUI so the
+    /// two can never disagree about the default.
+    /// </summary>
+    public const int DefaultPageLevel = 6;
+
     /// <summary>Base numeric value for auto-assigned context IDs.</summary>
     public int DefaultContextId { get; set; } = 1000;
 
     /// <summary>
-    /// Heading level that starts a new HTML page. Three keeps each topic short enough to
-    /// read on screen; at one, a whole chapter lands on a single page and the navigation
-    /// pane becomes the only way to move around inside it.
+    /// Deepest heading level that opens a new HTML page. It defaults to
+    /// <see cref="DefaultPageLevel"/> so every heading that appears in the table of
+    /// contents gets its own topic; the viewer would otherwise show a whole chapter as
+    /// one long page and the menu would be the only way to move inside it.
     /// </summary>
-    public int PageLevel { get; set; } = 3;
+    public int PageLevel { get; set; } = DefaultPageLevel;
 
     /// <summary>Deepest heading level included in the table of contents.</summary>
     public int MaxTocLevel { get; set; } = 6;
@@ -144,12 +151,18 @@ public sealed class HelpProjectBuilder
 
         tocBuilder.Apply(document);
 
+        // Headings that have children are section labels the menu expands, so their entry
+        // must keep pointing at a page of its own; demoting one would send its click into
+        // whichever page happens to precede it.
+        var localsWithChildren = new HashSet<string>(StringComparer.Ordinal);
+        CollectLocalsWithChildren(document.Toc, localsWithChildren);
+
         // Pages that hold nothing but their own heading are structural labels ("Assi",
         // "Utilita"): Word numbers every heading level 1-3 as a chapter, so without this
-        // the menu fills with one-line pages. They are demoted to the parent page, which
-        // keeps the heading as an anchor there, while an explicit context ID or index
-        // keyword still forces a real page because something links to it by name.
-        CollapseContentlessPages(document, headingTargets);
+        // the menu fills with one-line pages. A leaf label is demoted to the preceding
+        // page, which keeps the heading as an anchor there, while an explicit context ID
+        // or index keyword still forces a real page because something links to it by name.
+        CollapseContentlessPages(document, headingTargets, localsWithChildren);
 
         foreach (var (keyword, block) in pendingIndexEntries)
         {
@@ -186,12 +199,15 @@ public sealed class HelpProjectBuilder
     /// Demotes pages whose only block is their own heading into the nearest preceding page
     /// that has content. The heading stays in the output as an anchor, so links and the
     /// table of contents keep working, but the menu no longer lists one-line pages.
-    /// Pages that must stay reachable on their own - because a context ID, an index keyword
-    /// or a bookmark names them - are left untouched.
+    /// Pages that must stay reachable on their own are left untouched: the ones named by a
+    /// context ID, an index keyword or a bookmark, and the section labels that
+    /// <paramref name="localsWithChildren"/> lists, whose menu entry would otherwise open
+    /// an unrelated page.
     /// </summary>
     private static void CollapseContentlessPages(
         HelpDocument document,
-        Dictionary<DocumentBlock, (HelpPage Page, string Anchor)> headingTargets)
+        Dictionary<DocumentBlock, (HelpPage Page, string Anchor)> headingTargets,
+        HashSet<string> localsWithChildren)
     {
         var survivors = new HashSet<HelpPage>();
         for (var i = 0; i < document.Pages.Count; i++)
@@ -200,7 +216,10 @@ public sealed class HelpProjectBuilder
             var onlyHeading = page.Blocks.Count == 1 && page.Blocks[0] is HeadingBlock;
             var hasKeyword = page.Blocks.Count == 1 &&
                              page.Blocks[0] is HeadingBlock { IndexKeywords.Count: > 0 };
-            if (i == 0 || !onlyHeading || hasKeyword || page.Symbol is not null)
+            var isSectionLabel = page.Blocks is [HeadingBlock heading] &&
+                                 heading.Anchor is not null &&
+                                 localsWithChildren.Contains(page.FileName + "#" + heading.Anchor);
+            if (i == 0 || !onlyHeading || hasKeyword || page.Symbol is not null || isSectionLabel)
             {
                 survivors.Add(page);
             }
@@ -274,6 +293,23 @@ public sealed class HelpProjectBuilder
                 var (title, local) = page.Ancestors[i];
                 page.Ancestors[i] = (title, RemapLocal(local, moved));
             }
+        }
+    }
+
+    /// <summary>
+    /// Records the "file.htm#anchor" of every table-of-contents entry that has children,
+    /// i.e. every section label the menu expands.
+    /// </summary>
+    private static void CollectLocalsWithChildren(IEnumerable<TocNode> nodes, HashSet<string> into)
+    {
+        foreach (var node in nodes)
+        {
+            if (node.Children.Count > 0 && !string.IsNullOrEmpty(node.Local))
+            {
+                into.Add(node.Local);
+            }
+
+            CollectLocalsWithChildren(node.Children, into);
         }
     }
 

@@ -5,8 +5,8 @@
 #ifndef _SKIPPERQT_IT_H_
 #define _SKIPPERQT_IT_H_
 
-#define IDH_EDIT_PARAMETERS                      1000   // SkipperQt > Modificare i parametri del CN
-#define IDH_START_JOB                            1001   // SkipperQt > Eseguire una lavorazione
-#define IDH_AXES                                 1002   // SkipperQt > Assi
+#define IDH_EDIT_PARAMETERS                      1000   // Modificare i parametri del CN
+#define IDH_START_JOB                            1001   // Eseguire una lavorazione
+#define IDH_AXES                                 1002   // Assi
 
 #endif // _SKIPPERQT_IT_H_

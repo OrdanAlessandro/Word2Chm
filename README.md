@@ -59,17 +59,19 @@ var result = new ConversionPipeline().Run(new ConversionOptions
 {
     DocxPath = @"C:\docs\guida.docx",
     OutputDirectory = @"C:\docs\guida-chm",
-    Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 3 },
+    Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 6 },
     TemplateDirectory = @"C:\docs\template\fixedtop",   // opzionale
     Compile = new CompileOptions { HhcPath = @"C:\Program Files (x86)\HTML Help Workshop\hhc.exe" },
 });
 ```
 
-`PageLevel` è il livello di titolo che apre una nuova pagina HTML: con 3 ogni
-argomento ha la propria pagina navigabile; con 1 un intero capitolo finisce in
-un'unica pagina molto lunga. I titoli che non hanno testo proprio (etichette di
-sezione) non generano una pagina ma un'ancora della pagina padre, così il menu non
-si riempie di voci di una riga.
+`PageLevel` è il livello di titolo che apre una nuova pagina HTML. Il default 6
+significa "una pagina per ogni voce del sommario": ogni titolo che compare nel menu
+ha il proprio file, quindi il viewer non mostra più un capitolo intero come un unico
+documento lungo. Abbassandolo si accorpano i sottotitoli nella pagina del titolo
+superiore; con 1 un intero capitolo finisce in un'unica pagina. I titoli che non
+hanno testo proprio (etichette di sezione) non generano una pagina ma un'ancora
+della pagina padre, così il menu non si riempie di voci di una riga.
 
 `TemplateDirectory` è opzionale: se indicata, le pagine vengono avvolte nello skin
 WinCHM (`fixedtop.htm`) con menu di navigazione e pulsanti avanti/indietro. Nella

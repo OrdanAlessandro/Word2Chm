@@ -1,0 +1,92 @@
+<div class="page"><h3 id="cambio-utensili-automatico">Cambio utensili automatico</h3>
+<ol>
+<li class="level-0">Nell&#8217;albero delle <strong>Funzioni</strong>, fare doppio clic su &#8220;<strong>Gruppo mandrino</strong><strong>&#8221;;</strong></li>
+</ol>
+<ol>
+<li class="level-0">fare doppio clic su &#8220;<strong>C</strong><strong>ambio utensili automatico</strong>&#8221;;</li>
+</ol>
+<figure><img src="assets/image22.png" alt=""/></figure>
+<p><strong>la finestra di dialogo r</strong><strong>iassume i dati per il cambio automatico degli utensili.</strong></p>
+<p><strong>Il magazzino &#232; suddiviso in &#8220;torrette&#8221;, ognuna capace di contenere un cono portautensile. Le torrette sono individuate da sinistra a destra dai codici T1,T2,&#8230;, T10.</strong></p>
+<p>Per ogni torretta, sono memorizzate le informazioni di:</p>
+<ul>
+<li class="level-0"><strong>torretta corrente</strong><strong> C</strong>: indica se il cono montato sul mandrino appartiene a questa torretta;</li>
+</ul>
+<ul>
+<li class="level-0"><strong>torretta selezionata</strong><strong> S</strong>: indica che una successiva operazione di cambio utensile prelever&#224; il cono di questa torretta;</li>
+</ul>
+<ul>
+<li class="level-0"><strong>presenza cono nella torretta</strong><strong> P</strong>: indica se nella torretta &#232; presente un cono;</li>
+</ul>
+<ul>
+<li class="level-0"><strong>posizione XY della torretta</strong>: posizione assoluta della torretta. Tali informazioni sono di norma fornite dal costruttore.</li>
+</ul>
+<ul>
+<li class="level-0"><strong>preset</strong>: posizione Z=0 (di solito calcolato da un preset automatico); pu&#242; essere modificata dallo spessore del materiale H.</li>
+</ul>
+<ul>
+<li class="level-0"><strong>distanza XY di svincolo</strong>: distanza relativa alla posizione XY della torretta per il corretto inserimento ed estrazione del cono;</li>
+</ul>
+<ul>
+<li class="level-0"><strong>raggio utensile</strong>: raggio dell&#8217;utensile alloggiato nella torretta. E&#8217; utilizzato nel controllo delle velocit&#224; di avanzamento degli assi;</li>
+</ul>
+<ul>
+<li class="level-0"><strong>integrit&#224; utensile</strong><strong> I</strong>: indica che l&#8217;utensile non &#232; pi&#249; utilizzabile;</li>
+</ul>
+<ul>
+<li class="level-0"><strong>utensile gemello</strong><strong> G</strong>: indica quale utensile deve essere usato in alternativa.</li>
+</ul>
+<table>
+<tr>
+<td><figure><img src="assets/image23.png" alt=""/></figure>
+</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><p>indica la presenza del cono montato sul mandrino</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>sospende l&#39;uso del cambio utensile</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>numero di torrette nel magazzino utensili</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>quota Z per il deposito del cono</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>quota Z per il prelievo del cono</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>quota Z di svincolo</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>tempo di aggancio/sgancio del cono in millisecondi</p>
+</td>
+</tr>
+</table>
+<p>Importante</p>
+<p><strong>l&#8217;esecuzione del comando M6 comporta il calcolo della quota Z=0 del pezzo:</strong></p>
+<ul>
+<li class="level-0"><strong>se il cambio utensile &#232; abilitato, Zo = preset &#8211; lo spessore del materiale H;</strong></li>
+</ul>
+<ul>
+<li class="level-0">se il cambio utensile non &#232; abilitato, Zo = Z iniziale &#8211; lo spessore del materiale H;</li>
+</ul>
+<figure><img src="assets/image24.png" alt=""/></figure>
+<hr class="pagebreak">
+</div>
+<div class="footer">SKIPPER++</div>

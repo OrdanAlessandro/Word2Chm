@@ -93,6 +93,38 @@ internal static class DocxFixture
         return stream.ToArray();
     }
 
+    /// <summary>
+    /// A document whose second-level heading carries no text of its own but does expand
+    /// into sub-headings, the shape Word produces for a section label. The label must keep
+    /// a page of its own: the alternative, merging it into the preceding page, would send
+    /// its menu entry into the tail of an unrelated chapter.
+    /// </summary>
+    public static byte[] CreateSectionLabelSample()
+    {
+        using var stream = new MemoryStream();
+        using (var document = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var main = document.AddMainDocumentPart();
+            var stylesPart = main.AddNewPart<StyleDefinitionsPart>();
+
+            var body = new Body();
+            main.Document = new Document(body);
+
+            stylesPart.Styles = BuildStyles();
+            stylesPart.Styles.Save();
+
+            body.Append(Heading("Prima sezione", 2));
+            body.Append(TextParagraph(Run("Testo della prima sezione.")));
+            body.Append(Heading("Utensili", 2));
+            body.Append(Heading("Fresa", 3));
+            body.Append(TextParagraph(Run("Testo della fresa.")));
+
+            main.Document.Save();
+        }
+
+        return stream.ToArray();
+    }
+
     private static Paragraph Heading(string text, int level) => new(
         new ParagraphProperties(new ParagraphStyleId { Val = "Heading" + level }),
         new Run(new Text(text)));

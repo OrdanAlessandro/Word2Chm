@@ -2,6 +2,7 @@ using System.Text;
 using Word2Chm.Core;
 using Word2Chm.Core.Compilation;
 using Word2Chm.Core.Generation;
+using Word2Chm.Core.Model;
 
 namespace Word2Chm.Core.Tests;
 
@@ -34,15 +35,23 @@ public sealed class ConversionPipelineTests : IDisposable
         string? hhcPath = null,
         string? baseName = null,
         string? templateDirectory = null,
-        int pageLevel = 1)
+        int? pageLevel = null)
     {
         var pipeline = new ConversionPipeline();
+        var build = new BuildOptions { DefaultContextId = 1000 };
+        if (pageLevel is not null)
+        {
+            // Left unset otherwise, so the tests follow the production default instead of
+            // pinning a level that could drift away from it.
+            build.PageLevel = pageLevel.Value;
+        }
+
         return pipeline.Run(new ConversionOptions
         {
             DocxPath = WriteSampleDocx(),
             OutputDirectory = Path.Combine(_workDirectory, "out"),
             BaseName = baseName,
-            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = pageLevel },
+            Build = build,
             TemplateDirectory = templateDirectory,
             Compile = new CompileOptions { HhcPath = hhcPath },
         });
@@ -85,15 +94,16 @@ public sealed class ConversionPipelineTests : IDisposable
     }
 
     [Fact]
-    public void CreatesOnePagePerLevelOneHeading()
+    public void CreatesOnePagePerHeading()
     {
+        // The default page level splits every heading, not just the level-one ones, so the
+        // sample yields six topics in document order.
         var result = RunPipeline();
 
-        Assert.Equal(4, result.Document.Pages.Count);
-        Assert.Equal("Panoramica", result.Document.Pages[0].Title);
-        Assert.Equal("Requisiti", result.Document.Pages[1].Title);
-        Assert.Equal("Installazione", result.Document.Pages[2].Title);
-        Assert.Equal("Riferimenti", result.Document.Pages[3].Title);
+        Assert.Equal(6, result.Document.Pages.Count);
+        Assert.Equal(
+            new[] { "Panoramica", "Requisiti", "Installazione", "Procedura", "Configurazione città predefinita", "Riferimenti" },
+            result.Document.Pages.Select(p => p.Title));
     }
 
     [Fact]
@@ -102,7 +112,7 @@ public sealed class ConversionPipelineTests : IDisposable
         var result = RunPipeline();
 
         Assert.All(result.Document.Pages, page => Assert.DoesNotContain("{#", page.Title));
-        Assert.Equal("IDH_INSTALLAZIONE", result.Document.Pages[2].Symbol);
+        Assert.Equal("IDH_INSTALLAZIONE", result.Document.Pages.Single(p => p.Title == "Installazione").Symbol);
     }
 
     [Fact]
@@ -110,12 +120,12 @@ public sealed class ConversionPipelineTests : IDisposable
     {
         var result = RunPipeline();
 
-        Assert.Equal(1000, result.Document.Pages[0].ContextId);
-        Assert.Equal(1001, result.Document.Pages[1].ContextId);
-        Assert.Equal(1002, result.Document.Pages[2].ContextId);
+        Assert.Equal(1000, result.Document.Pages.Single(p => p.Title == "Panoramica").ContextId);
+        Assert.Equal(1001, result.Document.Pages.Single(p => p.Title == "Requisiti").ContextId);
+        Assert.Equal(1002, result.Document.Pages.Single(p => p.Title == "Installazione").ContextId);
 
-        // The fourth page declares {#IDH_RIFERIMENTI=5000}.
-        Assert.Equal(5000, result.Document.Pages[3].ContextId);
+        // The last page declares {#IDH_RIFERIMENTI=5000}.
+        Assert.Equal(5000, result.Document.Pages.Single(p => p.Title == "Riferimenti").ContextId);
     }
 
     [Fact]
@@ -273,12 +283,15 @@ public sealed class ConversionPipelineTests : IDisposable
     public void RendersTableAndListMarkup()
     {
         var result = RunPipeline();
-        var installPage = File.ReadAllText(Path.Combine(result.OutputDirectory, result.Document.Pages[2].FileName));
-        var requisitiPage = File.ReadAllText(Path.Combine(result.OutputDirectory, result.Document.Pages[1].FileName));
 
-        Assert.Contains("<table>", installPage);
-        Assert.Contains("<th>", installPage);
-        Assert.Contains("<hr class=\"pagebreak\">", installPage);
+        // The table and the page break sit under the level-three heading, which now has a
+        // topic of its own.
+        var configPage = ReadPage(result, "Configurazione città predefinita");
+        var requisitiPage = ReadPage(result, "Requisiti");
+
+        Assert.Contains("<table>", configPage);
+        Assert.Contains("<th>", configPage);
+        Assert.Contains("<hr class=\"pagebreak\">", configPage);
         Assert.Contains("<ol", requisitiPage); // numId 2 is the ordered list
         Assert.Contains("<ul", requisitiPage); // numId 1 is the bullet list
     }
@@ -287,9 +300,16 @@ public sealed class ConversionPipelineTests : IDisposable
     public void TrimsWhitespaceLeftByTheContextIdMarker()
     {
         var result = RunPipeline();
-        var installPage = File.ReadAllText(Path.Combine(result.OutputDirectory, result.Document.Pages[2].FileName));
+        var installPage = ReadPage(result, "Installazione");
 
         Assert.Contains("<h1 id=\"installazione\">Installazione</h1>", installPage);
+    }
+
+    /// <summary>Reads the generated HTML of the topic whose heading has this title.</summary>
+    private static string ReadPage(ConversionResult result, string title)
+    {
+        var page = result.Document.Pages.Single(p => p.Title == title);
+        return File.ReadAllText(Path.Combine(result.OutputDirectory, page.FileName));
     }
 
     [Fact]
@@ -390,6 +410,65 @@ public sealed class ConversionPipelineTests : IDisposable
         Assert.True(File.Exists(hhkPath));
         Assert.Contains("name=\"Name\" value=\"sezione\"", File.ReadAllText(hhkPath));
         Assert.Contains("guida.hhk", File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp")));
+    }
+
+    /// <summary>
+    /// The default page level must match the table of contents: every entry the menu shows
+    /// is a topic of its own. Sharing one page across several entries is what makes the
+    /// viewer display a whole chapter as a single long document.
+    /// </summary>
+    [Fact]
+    public void SplitsOnePagePerTableOfContentsEntryByDefault()
+    {
+        var result = RunPipeline();
+
+        var toc = new List<TocNode>();
+        Flatten(result.Document.Toc, toc);
+
+        Assert.Equal(toc.Count, result.Document.Pages.Count);
+        foreach (var group in toc.Where(n => n.Local is not null)
+                                 .GroupBy(n => n.Local!.Split('#')[0], StringComparer.Ordinal))
+        {
+            Assert.Single(group);
+        }
+    }
+
+    /// <summary>
+    /// A section label that expands into sub-headings keeps its own topic. Merging it into
+    /// the preceding page used to point its menu entry at the tail of an unrelated section.
+    /// </summary>
+    [Fact]
+    public void KeepsItsOwnPageForASectionLabelWithChildren()
+    {
+        var path = Path.Combine(_workDirectory, "contenitore.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateSectionLabelSample());
+
+        var result = new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "out-contenitore"),
+            BaseName = "guida",
+            Build = new BuildOptions { DefaultContextId = 1000 },
+            Compile = new CompileOptions { HhcPath = null },
+        });
+
+        var label = result.Document.Pages.Single(p => p.Title == "Utensili");
+
+        // The label page is not the page of the chapter that precedes it.
+        var first = result.Document.Pages.Single(p => p.Title == "Prima sezione");
+        Assert.NotEqual(first.FileName, label.FileName);
+
+        // ...and the child heading still has a page of its own.
+        Assert.Contains(result.Document.Pages, p => p.Title == "Fresa");
+    }
+
+    private static void Flatten(IEnumerable<TocNode> nodes, List<TocNode> into)
+    {
+        foreach (var node in nodes)
+        {
+            into.Add(node);
+            Flatten(node.Children, into);
+        }
     }
 
     [Fact]

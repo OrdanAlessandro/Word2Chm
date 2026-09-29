@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<BODY>
+<OBJECT type="text/site properties">
+<param name="Window Styles" value="0x27">
+</OBJECT>
+<UL>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Allineamento lastra">
+    <param name="Local" value="045-ripetizioninelpianoxy.html#ripetizioni-nel-piano-xy">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Assi di rotazione">
+    <param name="Local" value="010-impostazionedelloriginepergliassixy.html#impostazione-dell-origine-per-gli-assi-xy">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Batch delle lavorazioni">
+    <param name="Local" value="021-utilita.html#utilita">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Cambio utensili automatico">
+    <param name="Local" value="014-fresa.html#fresa">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Configurazione assi">
+    <param name="Local" value="246-configurazionecn.html#configurazione-cn">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Configurazione CN">
+    <param name="Local" value="245-opzionicn.html#opzioni-cn">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Connessione al CN">
+    <param name="Local" value="247-configurazioneassi.html#configurazione-assi">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Controllo allarmi">
+    <param name="Local" value="240-pannellodicontrollo.html#pannello-di-controllo">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Controllo di IO">
+    <param name="Local" value="243-controlloparametri.html#controllo-parametri">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Controllo parametri">
+    <param name="Local" value="242-controllosequenze.html#controllo-sequenze">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Controllo sequenze">
+    <param name="Local" value="241-controlloallarmi.html#controllo-allarmi">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Diamantatrice">
+    <param name="Local" value="016-multimandrino.html#multi-mandrino">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Diamantatrice cambio utensile">
+    <param name="Local" value="017-diamantatrice.html#diamantatrice">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Elenco dei Comandi ISO">
+    <param name="Local" value="279-allarmiaccessoriocambioanelli.html#allarmi-accessorio-cambio-anelli">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Eseguire una lavorazione">
+    <param name="Local" value="002-salvareiparametrinellamemoriadelcn.html#salvare-i-parametri-nella-memoria-del-cn">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Fresa">
+    <param name="Local" value="013-gruppomandrino.html#gruppo-mandrino">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Inviare una lavorazione">
+    <param name="Local" value="004-operazionipreliminariallinvio.html#operazioni-preliminari-all-invio">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Lavorazione ripetuta">
+    <param name="Local" value="043-mdimanualdatainput.html#mdi-manual-data-input">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Mappatura lastra">
+    <param name="Local" value="046-allineamentolastra.html#allineamento-lastra">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="MDI (Manual Data Input)">
+    <param name="Local" value="042-interrompereunbatch.html#interrompere-un-batch">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Modificare i parametri del CN">
+    <param name="Local" value="000-skipperqt.html#skipperqt">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Multi-mandrino">
+    <param name="Local" value="015-cambioutensiliautomatico.html#cambio-utensili-automatico">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Operazioni preliminari all&#8217;invio">
+    <param name="Local" value="003-eseguireunalavorazione.html#eseguire-una-lavorazione">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Opzioni CN">
+    <param name="Local" value="244-controllodiio.html#controllo-di-io">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Pannello di controllo">
+    <param name="Local" value="239-controlli.html#controlli">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Posizione iniziale assi">
+    <param name="Local" value="006-assi.html#assi">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Posizioni iniziali aggiuntive">
+    <param name="Local" value="008-posizioniinizialipredefinite.html#posizioni-iniziali-predefinite">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Posizioni iniziali predefinite">
+    <param name="Local" value="007-posizioneinizialeassi.html#posizione-iniziale-assi">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Preset  automatico dell&#8217;utensile">
+    <param name="Local" value="019-presetutensile.html#preset-utensile">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Preset utensile">
+    <param name="Local" value="018-diamantatricecambioutensile.html#diamantatrice-cambio-utensile">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Report dal CN">
+    <param name="Local" value="248-connessionealcn.html#connessione-al-cn">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Ricette robot">
+    <param name="Local" value="251-caricatorerobotyumi.html#caricatore-robot-yumi">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Ripetizioni nel piano XY">
+    <param name="Local" value="044-lavorazioneripetuta.html#lavorazione-ripetuta">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Salvare i parametri nella memoria del CN">
+    <param name="Local" value="001-modificareiparametridelcn.html#modificare-i-parametri-del-cn">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Satinatrice">
+    <param name="Local" value="237-tastatore.html#tastatore">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Sottoprogrammi">
+    <param name="Local" value="282-funzionimiscellanee.html#funzioni-miscellanee">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Tastatore">
+    <param name="Local" value="236-accessori.html#accessori">
+  </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Velocit&#224; degli assi">
+    <param name="Local" value="011-assidirotazione.html#assi-di-rotazione">
+  </OBJECT>
+</UL>
+</BODY>
+</HTML>

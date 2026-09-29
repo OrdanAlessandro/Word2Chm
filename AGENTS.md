@@ -70,13 +70,18 @@ si filtrano con `grep -v NETSDK1188`.
   quello delle caselle: nel CHM comparivano checkbox e nessun pulsante `+`.
   Il valore corretto è `0x27`, come nei progetti reali. Il test
   `HhcEnablesTreeLinesInsteadOfCheckBoxes` blinda i quattro bit.
-- **Suddivisione in pagine**: `BuildOptions.PageLevel` (default 3) è il livello di
-  titolo che apre una nuova pagina. A 1 un intero capitolo finisce in un'unica
-  pagina HTML lunghissima; a 3 ogni argomento ha la sua pagina. Un titolo che non
-  ha testo proprio (etichetta di sezione, forma tipica di Word quando numera ogni
-  livello come capitolo) non diventa una pagina ma un'ancora della pagina padre
-  (`CollapseContentlessPages`), così il menu non si riempie di pagine di una riga;
-  resta invece una pagina se ha un ID di contesto, una voce di indice o un
+- **Suddivisione in pagine**: `BuildOptions.PageLevel` (default 6, cioè
+  `DefaultPageLevel`) è il livello di titolo che apre una nuova pagina. Il default
+  punta a "una pagina per ogni voce del sommario": ogni titolo presente nel menu ha
+  il proprio file. Con 1 l'intero capitolo finisce in una sola pagina HTML lunghissima
+  e il menu resta l'unico modo per muoversi dentro. Attenzione: la GUI salvava
+  `PageLevel` in `settings.json`, quindi un valore 1 scritto da una build precedente
+  continuava a vincere sul nuovo default finché `AppSettings` non ha introdotto un
+  numero di versione che lo scarta.
+- **Un titolo che non ha testo proprio** (etichetta di sezione, forma tipica di Word
+  quando numera ogni livello come capitolo) non diventa una pagina ma un'ancora della
+  pagina padre (`CollapseContentlessPages`), così il menu non si riempie di pagine di
+  una riga; resta invece una pagina se ha un ID di contesto, una voce di indice o un
   segnalibro, perché qualcosa lo collega per nome.
 - **Template WinCHM**: con `ConversionOptions.TemplateDirectory` le pagine vengono
   avvolte nello skin (`($title$)`, `($content$)`, `($navigation$)`, `($footer$)`,

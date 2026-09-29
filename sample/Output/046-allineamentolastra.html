@@ -1,0 +1,163 @@
+<div class="page"><h3 id="allineamento-lastra">Allineamento lastra</h3>
+<p>L&#8217;allineamento della lastra rileva la posizione iniziale XY e Z da associare ad una successiva lavorazione, correggendo eventuali errori di posizionamento del materiale.</p>
+<p> Prima della lavorazione, Il CN deve rilevare la posizione XY di due fori presenti nella lastra e la quota Z di contatto.</p>
+<p>La posizione rilevata del primo foro diventa la nuova posizione iniziale XY per la successiva lavorazione.</p>
+<p>Dalla posizione rilevata del secondo foro, viene calcolata la rotazione da applicare alla lavorazione per compensare l&#8217;eventuale posizionamento errato della lastra.</p>
+<p>La quota Z di contatto corregge la posizione iniziale Z.</p>
+<p>Quanto sopra presuppone che le geometrie e le relative lavorazioni siano state create rispetto al centro del primo foro.</p>
+<ol>
+<li class="level-0">Nell&#8217;albero delle <strong>Funzioni</strong>, fare doppio clic su &#8220;<strong>Utilit&#224;&#8221;;</strong></li>
+</ol>
+<ol>
+<li class="level-0">fare doppio clic su &#8220;<strong>Allinea lastra</strong>&#8221;.</li>
+</ol>
+<table>
+<tr>
+<td><p><strong>Selezione della lastra</strong></p>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><p>lastra numero</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p><em>indica il numero della lastra(1-2-3)</em></p>
+</td>
+</tr>
+<tr>
+<td><p>posizione G del primo foro</p>
+</td>
+<td><p>G54</p>
+</td>
+<td><p><em>selezione della posizione predefinita G</em><em>. </em></p>
+<p><em>La G54 deve indicare la posizione assoluta XY del primo foro e la quota Z di abbassamento in rapido sul materiale.</em></p>
+</td>
+</tr>
+<tr>
+<td><p>distanza secondo foro</p>
+</td>
+<td><p>80</p>
+</td>
+<td><p><em>distanza in Y del secondo foro</em></p>
+</td>
+</tr>
+<tr>
+<td><p>distanza X punto di tastatura</p>
+</td>
+<td><p>-10.000</p>
+</td>
+<td><p><em>distanza in X del punto di tastatura H</em></p>
+</td>
+</tr>
+<tr>
+<td><p>distanza Y punto di tastatura</p>
+</td>
+<td><p>0.000</p>
+</td>
+<td><p><em>distanza in Y del punto di tastatura H</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>Posizione </strong><strong>del </strong><strong>primo foro</strong></p>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><p>X</p>
+</td>
+<td><p>0.000</p>
+</td>
+<td><p><em>posizione assoluta X del primo foro</em></p>
+</td>
+</tr>
+<tr>
+<td><p>Y</p>
+</td>
+<td><p>0.000</p>
+</td>
+<td><p><em>posizione assoluta Y del primo foro</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>Posizione </strong><strong>del </strong><strong>secondo foro</strong></p>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><p>X</p>
+</td>
+<td><p>0.000</p>
+</td>
+<td><p><em>posizione assoluta X del secondo foro</em></p>
+</td>
+</tr>
+<tr>
+<td><p>Y</p>
+</td>
+<td><p>0.000</p>
+</td>
+<td><p><em>posizione assoluta y del secondo foro</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>Posizione </strong><strong>di </strong><strong>tastatura</strong></p>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><p>X</p>
+</td>
+<td><p>0.000</p>
+</td>
+<td><p><em>posizione assoluta X del punto di tastatura H</em></p>
+</td>
+</tr>
+<tr>
+<td><p>Y</p>
+</td>
+<td><p>0.000</p>
+</td>
+<td><p><em>posizione assoluta Y del punto di tastatura H</em></p>
+</td>
+</tr>
+<tr>
+<td><p>Z</p>
+</td>
+<td><p>0.000</p>
+</td>
+<td><p><em>quota Z di abbassamento in rapido</em></p>
+</td>
+</tr>
+</table>
+<p>Per definire i dati di allineamento lastra:</p>
+<ol>
+<li class="level-0">selezionare una posizione predeterminata G54 (o G55 o G56) dove i valori XY indicano la posizione assoluta  del primo foro e Z la quota di abbassamento Z in rapido; </li>
+</ol>
+<ol>
+<li class="level-0">indicare la distanza in Y tra i due fori;</li>
+</ol>
+<ol>
+<li class="level-0">indicare la distanza in X e la distanza in Y tra il primo foro ed il punto di tastatura.</li>
+</ol>
+<p><strong>eseguire un allineamento</strong></p>
+<ol>
+<li class="level-0">selezionare la lastra;</li>
+</ol>
+<ol>
+<li class="level-0"><em>f</em><em>are clic sul pulsante </em><img src="assets/image47.png" alt=""/><em>; </em><em>n</em>ello stato di JOG, invia i dati della lastra selezionata e comanda l&#8217;esecuzione dell&#8217;allineamento.</li>
+</ol>
+<p><strong>creare un file cnc di allineamento</strong></p>
+<ol>
+<li class="level-0">selezionare la lastra;</li>
+</ol>
+<ol>
+<li class="level-0"><em>f</em><em>are clic sul pulsante </em> per creare un file contenente i dati della lastra selezionata e il comando iso di esecuzione dell&#8217;allineamento .</li>
+</ol>
+<hr class="pagebreak">
+</div>
+<div class="footer">SKIPPER++</div>

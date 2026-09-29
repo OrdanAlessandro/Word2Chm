@@ -1,0 +1,34 @@
+<div class="page"><h4 id="machine-parameters-axis">Machine.Parameters.Axis</h4>
+<p>Nel linguaggio di scripting di Skipper, il <strong>namespace</strong><strong> </strong><strong>Parameters.</strong><strong>Axis</strong> consente di accedere ai parametri degli assi. Ogni asse della macchina &#232; rappresentato da un proprio <strong>namespace</strong><strong> secondario</strong>, che contiene i parametri relativi a quel particolare asse.</p>
+<p>Ad esempio, l&#8217;offset di home dell&#8217;asse A pu&#242; essere ottenuta attraverso il namespace <strong>Axis.</strong><strong>A</strong><strong>.</strong><strong>homeOffset</strong></p>
+<p><strong>Sintassi di accesso:</strong></p>
+<p>// Imposta la 0 la posizione di offset di home dell&#8217;asse A</p>
+<p>Axis.A.homeOffset = 0;</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>homeOffset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset di home dell&#8217;asse</p>
+</td>
+</tr>
+<tr>
+<td><p>rotationOffset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione di home asse di rotazione, presente solo su assi di rotazione ABC&#8230;</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="footer">SKIPPER++</div>
