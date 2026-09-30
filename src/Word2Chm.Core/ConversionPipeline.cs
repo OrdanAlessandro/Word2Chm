@@ -180,10 +180,14 @@ public sealed class ConversionPipeline
 
         void Visit(TocNode node)
         {
-            if (!string.IsNullOrEmpty(node.Local) && seen.Add(node.Local))
+            // A table-of-contents entry may point at "page.html#anchor" while the page is
+            // keyed by "page.html", so the key used for de-duplication is the file name.
+            // Keying on the raw Local put every page in the order twice, which made the
+            // previous/next buttons jump backwards (the first page linked to the last).
+            if (!string.IsNullOrEmpty(node.Local))
             {
                 var file = node.Local.Split('#')[0];
-                if (byFile.TryGetValue(file, out var page))
+                if (seen.Add(file) && byFile.TryGetValue(file, out var page))
                 {
                     ordered.Add(page);
                 }

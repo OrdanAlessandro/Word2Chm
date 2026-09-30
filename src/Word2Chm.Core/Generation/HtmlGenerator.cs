@@ -46,8 +46,19 @@ public sealed class HtmlGenerator
         string? nextFile = null)
     {
         var builder = new StringBuilder();
-        foreach (var block in page.Blocks)
+        for (var index = 0; index < page.Blocks.Count; index++)
         {
+            var block = page.Blocks[index];
+
+            // The skin already shows the page title in its header, so repeating the heading
+            // that opened the page would print it twice. Only the first block is skipped, so
+            // a page that merely repeats the title further down keeps that occurrence.
+            if (template is not null && index == 0 && block is HeadingBlock { Anchor: not null } heading)
+            {
+                builder.Append("<span id=\"").Append(EscapeAttribute(heading.Anchor!)).AppendLine("\"></span>");
+                continue;
+            }
+
             RenderBlock(builder, block, document, page);
         }
 
@@ -55,12 +66,12 @@ public sealed class HtmlGenerator
         {
             builder.Insert(0, "<div class=\"page\">");
             builder.AppendLine("</div>");
-            builder.AppendLine("<div class=\"footer\">" + WebUtility.HtmlEncode(document.Title) + "</div>");
+            builder.AppendLine("<div class=\"footer\">" + WebUtility.HtmlEncode(document.Footer) + "</div>");
             return ToAsciiSafe(builder.ToString());
         }
 
         var navigation = WinChmTemplate.BuildNavigation(page.Ancestors);
-        var footer = WebUtility.HtmlEncode(document.Title) + " - " + WebUtility.HtmlEncode(page.Title);
+        var footer = document.Footer;
         return WinChmTemplate.Apply(template, page.Title, builder.ToString(), navigation, footer, previousFile, nextFile, cssPath);
     }
 

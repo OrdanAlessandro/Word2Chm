@@ -58,8 +58,34 @@ public sealed class DocxParser
             return result;
         }
 
+        // Consecutive list paragraphs are merged into a single block so that an ordered list
+        // keeps counting instead of restarting at 1 on every item. The run is also broken
+        // whenever the numbering definition changes, because two different lists must not
+        // share one counter.
+        var pending = new ListBlock();
+        int? pendingNumId = null;
         foreach (var element in body.ChildElements)
         {
+            if (element is Paragraph listParagraph &&
+                TryGetListInfo(listParagraph, styleMap, out var numId, out var level) &&
+                ExtractIndexKeywords(listParagraph).Count == 0 &&
+                !listParagraph.Descendants<BookmarkStart>().Any())
+            {
+                if (pendingNumId != numId)
+                {
+                    FlushList(result.Blocks, pending);
+                    pending = new ListBlock();
+                    pendingNumId = numId;
+                }
+
+                AddListItem(listParagraph, pending, numId, level, numberingMap, main, imageCache, orderedImages);
+                continue;
+            }
+
+            FlushList(result.Blocks, pending);
+            pending = new ListBlock();
+            pendingNumId = null;
+
             switch (element)
             {
                 case Paragraph paragraph:
@@ -70,6 +96,8 @@ public sealed class DocxParser
                     break;
             }
         }
+
+        FlushList(result.Blocks, pending);
 
         result.Images.AddRange(orderedImages);
         return result;
@@ -104,16 +132,6 @@ public sealed class DocxParser
             }
 
             return;
-        }
-
-        if (IsListParagraph(props))
-        {
-            var list = BuildList(paragraph, numberingMap, main, imageCache, orderedImages);
-            if (list is not null)
-            {
-                result.Blocks.Add(list);
-                return;
-            }
         }
 
         var indexKeywords = ExtractIndexKeywords(paragraph);
@@ -354,7 +372,14 @@ public sealed class DocxParser
                     nodes.Add(new TextInline { Text = "\t", Bold = format.Bold, Italic = format.Italic });
                     break;
                 case Drawing or Picture:
+                    // w:pict may wrap either a DrawingML blip or a VML imagedata, so both
+                    // resolvers are tried before giving up on the run.
                     var (fileName, size) = ResolveImage(run, main, imageCache, orderedImages);
+                    if (fileName is null && child.Descendants<DocumentFormat.OpenXml.Vml.ImageData>().FirstOrDefault() is { } pictureData)
+                    {
+                        (fileName, size) = ResolveVmlImage(pictureData, main, imageCache, orderedImages);
+                    }
+
                     if (fileName is not null)
                     {
                         imageFileName = fileName;
@@ -366,6 +391,32 @@ public sealed class DocxParser
                             Bold = format.Bold,
                             Italic = format.Italic,
                         });
+                    }
+
+                    break;
+                case RunProperties:
+                    break;
+                default:
+                    // VML pictures: Word wraps pasted and OLE-embedded images in w:object,
+                    // which references the image through v:imagedata rather than DrawingML's
+                    // a:blip. Ignoring them dropped those images from the output. The lookup
+                    // is scoped to the child: scanning the whole run would emit the image
+                    // once more for every sibling element.
+                    if (child.Descendants<DocumentFormat.OpenXml.Vml.ImageData>().FirstOrDefault() is { } vmlData)
+                    {
+                        var (vmlFile, vmlSize) = ResolveVmlImage(vmlData, main, imageCache, orderedImages);
+                        if (vmlFile is not null)
+                        {
+                            imageFileName = vmlFile;
+                            imageSize = vmlSize;
+                            nodes.Add(new TextInline
+                            {
+                                Text = string.Empty,
+                                ImageFileName = vmlFile,
+                                Bold = format.Bold,
+                                Italic = format.Italic,
+                            });
+                        }
                     }
 
                     break;
@@ -507,40 +558,71 @@ public sealed class DocxParser
 
     // ---------------------------------------------------------------- lists
 
-    private ListBlock? BuildList(
+    /// <summary>
+    /// Reports whether the paragraph is a genuine list item, i.e. it carries numbering and
+    /// is not a heading, which would otherwise start a page of its own.
+    /// </summary>
+    private static bool TryGetListInfo(
         Paragraph paragraph,
+        IReadOnlyDictionary<string, StyleInfo> styleMap,
+        out int? numId,
+        out int level)
+    {
+        var props = paragraph.ParagraphProperties;
+        numId = props?.NumberingProperties?.NumberingId?.Val?.Value;
+        level = props?.NumberingProperties?.NumberingLevelReference?.Val?.Value ?? 0;
+        if (numId is null)
+        {
+            return false;
+        }
+
+        var styleId = props?.ParagraphStyleId?.Val?.Value;
+        var styleName = !string.IsNullOrEmpty(styleId) && styleMap.TryGetValue(styleId!, out var known)
+            ? known.Name
+            : null;
+        return ResolveHeadingLevel(styleId, styleName, ResolveOutlineLevel(props, styleId, styleMap)) == 0;
+    }
+
+    private void AddListItem(
+        Paragraph paragraph,
+        ListBlock list,
+        int? numId,
+        int level,
         IReadOnlyDictionary<int, List<NumberingLevel>> numberingMap,
         MainDocumentPart main,
         Dictionary<string, ImageResource> imageCache,
         List<ImageResource> orderedImages)
     {
-        var props = paragraph.ParagraphProperties;
-        var numPr = props?.NumberingProperties;
-        var numId = numPr?.NumberingId?.Val?.Value;
-        var ilvl = numPr?.NumberingLevelReference?.Val?.Value ?? 0;
-
-        var ordered = true;
-        if (numId.HasValue && numberingMap.TryGetValue(numId.Value, out var levels))
+        if (list.Items.Count == 0)
         {
-            var level = levels.FirstOrDefault(l => l.Level == ilvl);
-            ordered = level?.Ordered ?? true;
+            var ordered = true;
+            if (numId.HasValue && numberingMap.TryGetValue(numId.Value, out var levels))
+            {
+                var numbering = levels.FirstOrDefault(l => l.Level == level);
+                ordered = numbering?.Ordered ?? true;
+            }
+
+            list.Ordered = ordered;
         }
 
         var inlines = BuildInlines(paragraph, main, imageCache, orderedImages, out _, out _);
         if (inlines.Count == 0)
         {
-            return null;
+            return;
         }
 
-        var list = new ListBlock { Ordered = ordered };
-        var item = new ModelListItem { Level = ilvl };
+        var item = new ModelListItem { Level = level };
         item.Inlines.AddRange(inlines);
         list.Items.Add(item);
-        return list;
     }
 
-    private static bool IsListParagraph(ParagraphProperties? props) =>
-        props?.NumberingProperties?.NumberingId?.Val?.Value is not null;
+    private static void FlushList(List<DocumentBlock> blocks, ListBlock list)
+    {
+        if (list.Items.Count > 0)
+        {
+            blocks.Add(list);
+        }
+    }
 
     /// <summary>
     /// A level is ordered unless it renders as a bullet or has no numbering at all.
@@ -876,6 +958,85 @@ public sealed class DocxParser
 
         var size = ReadExtent(run);
         return (resource.FileName, size);
+    }
+
+    /// <summary>
+    /// Resolves the image behind a VML <c>v:imagedata</c> element, the shape Word uses for
+    /// pasted and OLE-embedded pictures. The size falls back to the shape style because
+    /// VML carries it as a CSS style rather than as a DrawingML extent.
+    /// </summary>
+    private static (string? FileName, (int Width, int Height) Size) ResolveVmlImage(
+        DocumentFormat.OpenXml.Vml.ImageData data,
+        MainDocumentPart main,
+        Dictionary<string, ImageResource> cache,
+        List<ImageResource> ordered)
+    {
+        var relId = data.RelationshipId?.Value;
+        if (string.IsNullOrEmpty(relId))
+        {
+            return (null, (0, 0));
+        }
+
+        if (!cache.TryGetValue(relId!, out var resource))
+        {
+            if (main.GetPartById(relId!) is not ImagePart part)
+            {
+                return (null, (0, 0));
+            }
+
+            var fileName = Path.GetFileName(part.Uri.OriginalString);
+            using var buffer = new MemoryStream();
+            using (var content = part.GetStream())
+            {
+                content.CopyTo(buffer);
+            }
+
+            resource = new ImageResource
+            {
+                FileName = fileName,
+                Content = buffer.ToArray(),
+                ContentType = part.ContentType ?? "image/png",
+            };
+
+            cache[relId!] = resource;
+            ordered.Add(resource);
+        }
+
+        return (resource.FileName, ReadShapeSize(data));
+    }
+
+    private static (int Width, int Height) ReadShapeSize(DocumentFormat.OpenXml.Vml.ImageData data)
+    {
+        var shape = data.Ancestors<DocumentFormat.OpenXml.Vml.Shape>().FirstOrDefault();
+        var style = shape?.Style;
+        if (string.IsNullOrEmpty(style))
+        {
+            return (0, 0);
+        }
+
+        return (ReadStyleLength(style!, "width"), ReadStyleLength(style!, "height"));
+    }
+
+    private static int ReadStyleLength(string style, string property)
+    {
+        foreach (var declaration in style.Split(';', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var separator = declaration.IndexOf(':');
+            if (separator < 0 || !declaration.AsSpan(0, separator).Trim().Equals(property, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var value = declaration[(separator + 1)..].Trim();
+            var unit = value.EndsWith("pt", StringComparison.OrdinalIgnoreCase) ? 96.0 / 72.0 : 1.0;
+            var number = value.TrimEnd('p', 't', 'x', 'X', 'P', 'T');
+            if (double.TryParse(number, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed))
+            {
+                return (int)Math.Round(parsed * unit);
+            }
+        }
+
+        return 0;
     }
 
     private static (int Width, int Height) ReadExtent(Run run)

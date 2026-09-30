@@ -47,7 +47,7 @@ public static class WinChmTemplate
             .Replace("($title$)", WebUtility.HtmlEncode(title), StringComparison.Ordinal)
             .Replace("($content$)", content, StringComparison.Ordinal)
             .Replace("($navigation$)", navigation, StringComparison.Ordinal)
-            .Replace("($footer$)", footer, StringComparison.Ordinal);
+            .Replace("($footer$)", WebUtility.HtmlEncode(footer), StringComparison.Ordinal);
 
         result = result
             .Replace("<img src=\"btn_prev_n.gif\">", ButtonImage("btn_prev_n.gif", previousFile), StringComparison.Ordinal)

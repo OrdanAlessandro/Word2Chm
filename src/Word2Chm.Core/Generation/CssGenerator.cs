@@ -63,7 +63,9 @@ public static class CssGenerator
         }
 
         th, td {
-            border: 1px solid var(--border);
+            /* Word's "Grigliatabella" style draws 0.5pt black lines; the shared --border
+               token is a light grey, which made every table look washed out. */
+            border: 1px solid #000000;
             padding: 6px 10px;
             text-align: left;
             vertical-align: top;

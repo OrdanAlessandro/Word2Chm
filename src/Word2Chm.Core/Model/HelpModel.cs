@@ -17,6 +17,15 @@ public sealed class HelpDocument
     /// <summary>Base numeric value assigned to the first context ID.</summary>
     public int DefaultContextId { get; set; } = 1000;
 
+    /// <summary>
+    /// Text shown in the footer of every page. Kept on the document so the skin and the
+    /// built-in layout can share one value, configured from the application.
+    /// </summary>
+    public string Footer { get; set; } = DefaultFooter;
+
+    /// <summary>Footer used when the caller does not supply one.</summary>
+    public const string DefaultFooter = "© 2026 FARO srl. All rights reserved.";
+
     public List<HelpPage> Pages { get; } = new();
 
     public List<TocNode> Toc { get; } = new();

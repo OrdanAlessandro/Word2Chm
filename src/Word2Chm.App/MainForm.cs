@@ -3,6 +3,7 @@ using System.Text;
 using Word2Chm.Core;
 using Word2Chm.Core.Compilation;
 using Word2Chm.Core.Generation;
+using Word2Chm.Core.Model;
 
 namespace Word2Chm.App;
 
@@ -14,6 +15,7 @@ internal sealed class MainForm : Form
     private readonly NumericUpDown _startContextId = new();
     private readonly NumericUpDown _pageLevel = new();
     private readonly TextBox _templateDirectory = new();
+    private readonly TextBox _footer = new();
     private readonly TextBox _hhcPath = new();
     private readonly CheckBox _compileChm = new();
     private readonly CheckBox _openOutput = new();
@@ -40,7 +42,7 @@ internal sealed class MainForm : Form
         {
             Dock = DockStyle.Fill,
             ColumnCount = 3,
-            RowCount = 10,
+            RowCount = 11,
             Padding = new Padding(12),
         };
         root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
@@ -90,6 +92,13 @@ internal sealed class MainForm : Form
         root.Controls.Add(_templateDirectory, 1, row);
         var browseTemplate = Button("Sfoglia...", BrowseTemplate);
         root.Controls.Add(browseTemplate, 2, row++);
+
+        // Footer.
+        root.Controls.Add(Label("Piè di pagina:"), 0, row);
+        _footer.Dock = DockStyle.Fill;
+        root.Controls.Add(_footer, 1, row);
+        root.SetColumnSpan(_footer, 2);
+        row++;
 
         // hhc.exe.
         root.Controls.Add(Label("hhc.exe:"), 0, row);
@@ -142,6 +151,7 @@ internal sealed class MainForm : Form
         root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
         Controls.Add(root);
@@ -172,6 +182,7 @@ internal sealed class MainForm : Form
         _startContextId.Value = Math.Clamp(settings.StartContextId, 1, 65535);
         _pageLevel.Value = Math.Clamp(settings.PageLevel, 1, 6);
         _templateDirectory.Text = settings.TemplateDirectory ?? DefaultTemplateDirectory() ?? string.Empty;
+        _footer.Text = settings.Footer ?? HelpDocument.DefaultFooter;
         _hhcPath.Text = settings.HhcPath ?? HhcLocator.Locate() ?? string.Empty;
 
         if (string.IsNullOrEmpty(_hhcPath.Text))
@@ -187,6 +198,7 @@ internal sealed class MainForm : Form
         StartContextId = (int)_startContextId.Value,
         PageLevel = (int)_pageLevel.Value,
         TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
+        Footer = _footer.Text,
         HhcPath = _hhcPath.Text,
     }.Save();
 
@@ -295,6 +307,7 @@ internal sealed class MainForm : Form
             {
                 DefaultContextId = (int)_startContextId.Value,
                 PageLevel = (int)_pageLevel.Value,
+                Footer = string.IsNullOrWhiteSpace(_footer.Text) ? HelpDocument.DefaultFooter : _footer.Text.Trim(),
             },
             TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
             Compile = new CompileOptions
@@ -449,6 +462,12 @@ internal sealed class AppSettings
     public int StartContextId { get; set; } = 1000;
     public int PageLevel { get; set; } = BuildOptions.DefaultPageLevel;
     public string? TemplateDirectory { get; set; }
+
+    /// <summary>
+    /// Footer written to every topic. A file from before this setting existed has a null
+    /// value, so the default is applied on load rather than leaving a blank footer.
+    /// </summary>
+    public string? Footer { get; set; } = HelpDocument.DefaultFooter;
 
     public static AppSettings Load()
     {

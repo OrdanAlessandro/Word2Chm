@@ -113,6 +113,16 @@ public static class ChmProjectGenerator
         return builder.ToString();
     }
 
+    /// <summary>
+    /// Icon indices of the HTML Help default icon strip. Without an explicit ImageNumber
+    /// the viewer falls back to a question-mark page for every entry that has no children,
+    /// so the table of contents showed "?" on the sub-sections while the roots already had
+    /// their book. The pairs are closed/open, so the book and document icons are 1 and 11.
+    /// </summary>
+    private const int BookImageNumber = 1;
+
+    private const int DocumentImageNumber = 11;
+
     private static void AppendTocNode(StringBuilder builder, TocNode node, int depth)
     {
         var indent = new string(' ', depth * 2);
@@ -123,6 +133,7 @@ public static class ChmProjectGenerator
             builder.Append(indent).AppendLine($"  <param name=\"Local\" value=\"{Escape(node.Local)}\">");
         }
 
+        builder.Append(indent).AppendLine($"  <param name=\"ImageNumber\" value=\"{(node.Children.Count > 0 ? BookImageNumber : DocumentImageNumber)}\">");
         builder.Append(indent).AppendLine("</OBJECT>");
 
         if (node.Children.Count > 0)
@@ -174,6 +185,7 @@ public static class ChmProjectGenerator
                 builder.AppendLine($"    <param name=\"Local\" value=\"{Escape(Local(primary.FileName, primary.Anchor))}\">");
             }
 
+            builder.AppendLine($"    <param name=\"ImageNumber\" value=\"{(subKeywords.Count > 0 ? BookImageNumber : DocumentImageNumber)}\">");
             builder.AppendLine("  </OBJECT>");
 
             if (subKeywords.Count == 0)
@@ -243,6 +255,7 @@ public static class ChmProjectGenerator
         }
 
         builder.AppendLine($"      <param name=\"Local\" value=\"{Escape(Local(fileName, anchor))}\">");
+        builder.AppendLine($"      <param name=\"ImageNumber\" value=\"{DocumentImageNumber}\">");
         builder.AppendLine("    </OBJECT>");
     }
 

@@ -17,6 +17,10 @@ body {
 	height: auto;
 }
 
+#winchm_template_button img{
+	border: 0;
+}
+
 #winchm_template_top{
 	padding: 0px;
 	margin: 0px;

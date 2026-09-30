@@ -28,6 +28,9 @@ public sealed class BuildOptions
 
     public string Language { get; set; } = "it-IT";
 
+    /// <summary>Footer text written to every page; see <see cref="HelpDocument.DefaultFooter"/>.</summary>
+    public string Footer { get; set; } = HelpDocument.DefaultFooter;
+
     /// <summary>Optional external overrides, keyed by symbol name.</summary>
     public Dictionary<string, int> ContextIdOverrides { get; set; } = new(StringComparer.Ordinal);
 }
@@ -50,6 +53,7 @@ public sealed class HelpProjectBuilder
             Title = parsed.Title,
             Language = options.Language,
             DefaultContextId = options.DefaultContextId,
+            Footer = options.Footer,
         };
 
         var usedIds = new HashSet<int>();

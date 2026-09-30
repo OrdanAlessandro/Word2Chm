@@ -4,12 +4,21 @@ Contesto operativo per il repository Word2Chm.
 
 ## Ambiente
 
-Il .NET 8 SDK è installato in `/home/openhands/.dotnet` e non è nel `PATH`.
+Il .NET 8 SDK è installato in `/workspace/.dotnet` e non è nel `PATH`.
 `libicu` non è disponibile, quindi il runtime gira in invariant globalization:
 va impostato `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1`.
 
+Attenzione: l'ambiente viene azzerato periodicamente e `$HOME` non è stabile, quindi
+l'SDK va tenuto fuori da `$HOME` (in `/workspace/.dotnet`, che sopravvive al reset)
+e reinstallato con:
+
 ```bash
-export PATH="$HOME/.dotnet:$PATH"
+curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 8.0 --install-dir /workspace/.dotnet --no-path
+```
+
+```bash
+export PATH="/workspace/.dotnet:$PATH"
+export DOTNET_ROOT=/workspace/.dotnet
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 ```
 
@@ -90,4 +99,31 @@ si filtrano con `grep -v NETSDK1188`.
   solo il proprio CSS, quindi `help.css` viene iniettato a parte per non perdere la
   formattazione di tabelle e codice.
 - I test costruiscono il `.docx` a runtime (`DocxFixture`), quindi non esistono
-  fixture binarie da mantenere.
+  fixture binarie da mantenere. Il documento reale del cliente è `sample/SkipperQt_IT.docx`
+  (285 pagine, 96 media di cui 45 in VML): è la fixture di riferimento per le prove end-to-end.
+- **Elenchi**: paragrafi consecutivi con lo stesso `numId` vanno uniti in un unico
+  `ListBlock`, altrimenti ogni voce genera un `<ol>` separato e la numerazione riparte
+  da 1. Un cambio di `numId` chiude il blocco: liste diverse non devono condividere il
+  contatore. I paragrafi con campi `XE` o segnalibri restano fuori dal raggruppamento,
+  perché altrimenti perdono l'indice e le destinazioni dei link.
+- **Immagini VML**: oltre ad `a:blip` (DrawingML) vanno lette `v:imagedata` dentro
+  `w:object` e `w:pict` (immagini incollate e OLE); sono la maggioranza in `SkipperQt_IT.docx`.
+  La ricerca va fatta sull'ambito del *figlio* del run (`child.Descendants<...>`), non
+  dell'intero run: `RunProperties` cade nel ramo `default` e una scansione su `run`
+  emetteva la stessa immagine due volte.
+- **Titolo di pagina duplicato**: lo skin mostra `($title$)` nell'header, quindi il
+  primo blocco della pagina (l'`HeadingBlock` che l'ha aperta) va saltato e sostituito
+  con uno `<span id="...">` vuoto, perché sommario e indice continuano a linkare quell'ancora.
+  Si confronta la *posizione* (`index == 0`), non `page.Anchor`, che non è popolato.
+- **Icone del sommario**: senza `ImageNumber` esplicito hh.exe usa il punto interrogativo
+  per le foglie. `1` = libro/contenitore, `11` = documento/foglia (confermato da `.hhc`
+  reali Doxygen). Va emesso sia nel `.hhc` sia nel `.hhk` (anche per i nodi padre).
+- **Ordine prev/next**: `FlattenPages` deve deduplicare sulla chiave *file* (senza
+  `#anchor`). Usando `node.Local` grezzo ogni pagina entrava due volte nell'ordine
+  (570 voci per 285 pagine) e la prima pagina puntava all'ultima.
+- **Piè di pagina**: `BuildOptions.Footer` → `HelpDocument.Footer` (default
+  `HelpDocument.DefaultFooter`, `© 2026 FARO srl. All rights reserved.`), configurabile
+  dalla GUI e codificato in entità ASCII prima di finire nell'HTML.
+- **Bordi**: le tabelle usano `#000000` fisso (non `--border`, che è grigio chiaro) per
+  rispecchiare lo stile griglia di Word. Il CSS dello skin azzera il bordo delle `<img>`
+  dei pulsanti, che Internet Explorer (il motore del visualizzatore CHM) disegna sui link.
