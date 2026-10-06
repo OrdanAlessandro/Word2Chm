@@ -56,6 +56,21 @@ public sealed class ParagraphBlock : DocumentBlock
 public sealed class ListBlock : DocumentBlock
 {
     public bool Ordered { get; set; }
+
+    /// <summary>
+    /// First number of the list, taken from Word's numbering definition. The HTML carries it
+    /// as <c>start</c> because one Word list can be interrupted by body text and the parser
+    /// then emits it as several <c>&lt;ol&gt;</c> blocks: every block would otherwise restart
+    /// at 1.
+    /// </summary>
+    public int Start { get; set; } = 1;
+
+    /// <summary>
+    /// CSS <c>list-style-type</c> derived from Word's marker format, so a lettered or Roman
+    /// list keeps its own markers instead of falling back to the browser default.
+    /// </summary>
+    public string? MarkerFormat { get; set; }
+
     public List<ListItem> Items { get; } = new();
 }
 

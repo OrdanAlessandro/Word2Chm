@@ -125,6 +125,70 @@ internal static class DocxFixture
         return stream.ToArray();
     }
 
+    /// <summary>
+    /// Reproduces the two shapes Word emits that the parser used to get wrong: an ordered
+    /// list interrupted by body text (Word keeps counting under the same numId, so the
+    /// second run must continue at 3 instead of restarting at 1) and a bookmark written as
+    /// a direct child of the body, which is the target of a cross-reference written as a
+    /// hyperlink with an anchor.
+    /// </summary>
+    public static byte[] CreateResumedListSample()
+    {
+        using var stream = new MemoryStream();
+        using (var document = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var main = document.AddMainDocumentPart();
+            var stylesPart = main.AddNewPart<StyleDefinitionsPart>();
+
+            var numberingPart = main.AddNewPart<NumberingDefinitionsPart>();
+            numberingPart.Numbering = BuildNumbering();
+
+            var body = new Body();
+            main.Document = new Document(body);
+
+            var styles = new Styles();
+            for (var level = 1; level <= 3; level++)
+            {
+                styles.Append(new Style(
+                    new StyleName { Val = "Heading " + level },
+                    new BasedOn { Val = "Normal" })
+                {
+                    Type = StyleValues.Paragraph,
+                    StyleId = "Heading" + level,
+                });
+            }
+
+            stylesPart.Styles = styles;
+            stylesPart.Styles.Save();
+
+            body.Append(Heading("Primo capitolo {#IDH_PRIMO}", 1));
+            body.Append(ListParagraph(2, 0, "Primo passo"));
+            body.Append(ListParagraph(2, 0, "Secondo passo"));
+            body.Append(TextParagraph(Run("Testo che interrompe l'elenco.")));
+            body.Append(ListParagraph(2, 0, "Terzo passo"));
+
+            // A forward cross-reference: the link lives on the first page while the bookmark
+            // it targets is written before the second heading.
+            body.Append(new Paragraph(
+                new Run(new Text("Vedi il ") { Space = SpaceProcessingModeValues.Preserve }),
+                AnchorHyperlink("_Capitolo_due", "secondo capitolo"),
+                new Run(new Text("."))));
+
+            // Word writes the bookmark between the preceding paragraph and the heading it
+            // marks, so it is a sibling of the paragraphs rather than a child of one.
+            body.Append(new BookmarkStart { Id = "40", Name = "_Capitolo_due" });
+            body.Append(new BookmarkEnd { Id = "40" });
+            body.Append(Heading("Secondo capitolo {#IDH_SECONDO}", 1));
+
+            main.Document.Save();
+        }
+
+        return stream.ToArray();
+    }
+
+    private static Hyperlink AnchorHyperlink(string anchor, string text) =>
+        new(new Run(new Text(text))) { Anchor = anchor, History = true };
+
     private static Paragraph Heading(string text, int level) => new(
         new ParagraphProperties(new ParagraphStyleId { Val = "Heading" + level }),
         new Run(new Text(text)));

@@ -31,6 +31,12 @@ public sealed class DocxParser
         @"^(?:Heading|Titolo|Titre|Überschrift|Título|Titel|Rubrik|Otsikko|Nadpis|Nagłówek)\s*(?<level>[1-9])$",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    /// <summary>
+    /// Last number reached by each (numId, level) pair. Word counts a list across the whole
+    /// document, so a list resumed after body text keeps going instead of restarting at 1.
+    /// </summary>
+    private readonly Dictionary<(int NumId, int Level), int> _listCounters = new();
+
     public ParsedDocument Parse(string path)
     {
         using var stream = File.OpenRead(path);
@@ -40,6 +46,7 @@ public sealed class DocxParser
     public ParsedDocument Parse(Stream stream, string fallbackTitle = "Guida")
     {
         var result = new ParsedDocument();
+        _listCounters.Clear();
         var imageCache = new Dictionary<string, ImageResource>(StringComparer.Ordinal);
         var orderedImages = new List<ImageResource>();
 
@@ -64,8 +71,30 @@ public sealed class DocxParser
         // share one counter.
         var pending = new ListBlock();
         int? pendingNumId = null;
+
+        // Word often writes a bookmark as a direct child of the body, sitting between two
+        // paragraphs, so it never appears inside the paragraph it marks. Those names are the
+        // targets of the cross-references in the text and must be carried to the block that
+        // follows.
+        var pendingBookmarks = new List<string>();
         foreach (var element in body.ChildElements)
         {
+            if (element is BookmarkStart bodyBookmark)
+            {
+                var bodyName = bodyBookmark.Name?.Value;
+                if (!string.IsNullOrEmpty(bodyName) && !IsSyntheticBookmark(bodyName!))
+                {
+                    pendingBookmarks.Add(bodyName!);
+                }
+
+                continue;
+            }
+
+            if (element is BookmarkEnd)
+            {
+                continue;
+            }
+
             if (element is Paragraph listParagraph &&
                 TryGetListInfo(listParagraph, styleMap, out var numId, out var level) &&
                 ExtractIndexKeywords(listParagraph).Count == 0 &&
@@ -78,6 +107,12 @@ public sealed class DocxParser
                     pendingNumId = numId;
                 }
 
+                if (pendingBookmarks.Count > 0 && pending.Items.Count == 0)
+                {
+                    pending.Bookmarks.AddRange(pendingBookmarks);
+                    pendingBookmarks.Clear();
+                }
+
                 AddListItem(listParagraph, pending, numId, level, numberingMap, main, imageCache, orderedImages);
                 continue;
             }
@@ -86,6 +121,7 @@ public sealed class DocxParser
             pending = new ListBlock();
             pendingNumId = null;
 
+            var blocksBefore = result.Blocks.Count;
             switch (element)
             {
                 case Paragraph paragraph:
@@ -94,6 +130,12 @@ public sealed class DocxParser
                 case Table table:
                     result.Blocks.Add(ParseTable(table, main, numberingMap, styleMap, imageCache, orderedImages));
                     break;
+            }
+
+            if (pendingBookmarks.Count > 0 && result.Blocks.Count > blocksBefore)
+            {
+                result.Blocks[^1].Bookmarks.AddRange(pendingBookmarks);
+                pendingBookmarks.Clear();
             }
         }
 
@@ -217,12 +259,24 @@ public sealed class DocxParser
         foreach (var bookmark in bookmarks)
         {
             var name = bookmark.Name?.Value;
-            if (!string.IsNullOrEmpty(name) && !name!.StartsWith('_'))
+            if (string.IsNullOrEmpty(name) || IsSyntheticBookmark(name!))
             {
-                block.Bookmarks.Add(name);
+                continue;
             }
+
+            block.Bookmarks.Add(name!);
         }
     }
+
+    /// <summary>
+    /// Word creates bookmarks starting with an underscore for its own machinery (_Toc headings,
+    /// _GoBack) and for cross-reference targets (_Ref...). The generated table of contents and
+    /// every cross-reference in the body point at those names, so only the internal ones that no
+    /// hyperlink ever targets may be dropped.
+    /// </summary>
+    private static bool IsSyntheticBookmark(string name) =>
+        name.StartsWith("_Toc", StringComparison.OrdinalIgnoreCase) ||
+        name.Equals("_GoBack", StringComparison.OrdinalIgnoreCase);
 
     private static List<InlineNode> RewriteInlineText(List<InlineNode> inlines, ContextIdMarker.Marker marker)
     {
@@ -593,16 +647,19 @@ public sealed class DocxParser
         Dictionary<string, ImageResource> imageCache,
         List<ImageResource> orderedImages)
     {
+        var numbering = ResolveLevel(numId, level, numberingMap);
+
         if (list.Items.Count == 0)
         {
-            var ordered = true;
-            if (numId.HasValue && numberingMap.TryGetValue(numId.Value, out var levels))
-            {
-                var numbering = levels.FirstOrDefault(l => l.Level == level);
-                ordered = numbering?.Ordered ?? true;
-            }
+            list.Ordered = numbering?.Ordered ?? true;
+            list.MarkerFormat = list.Ordered ? ToCssListStyle(numbering?.FormatName) : null;
 
-            list.Ordered = ordered;
+            // Word keeps one counter per list definition for the whole document, so a list
+            // resumed after body text continues where it stopped. The parser emits that list
+            // as several <ol> blocks, so each block has to start at the number it reached.
+            list.Start = _listCounters.TryGetValue((numId ?? 0, level), out var seen)
+                ? seen + 1
+                : numbering?.Start ?? 1;
         }
 
         var inlines = BuildInlines(paragraph, main, imageCache, orderedImages, out _, out _);
@@ -614,7 +671,32 @@ public sealed class DocxParser
         var item = new ModelListItem { Level = level };
         item.Inlines.AddRange(inlines);
         list.Items.Add(item);
+
+        _listCounters[(numId ?? 0, level)] = list.Start + list.Items.Count - 1;
     }
+
+    private static NumberingLevel? ResolveLevel(
+        int? numId,
+        int level,
+        IReadOnlyDictionary<int, List<NumberingLevel>> numberingMap) =>
+        numId.HasValue && numberingMap.TryGetValue(numId.Value, out var levels)
+            ? levels.FirstOrDefault(l => l.Level == level)
+            : null;
+
+    /// <summary>
+    /// Translates Word's <c>numFmt</c> value to the matching CSS <c>list-style-type</c>, so the
+    /// markers keep Word's own lettering or numbering instead of the browser default.
+    /// </summary>
+    private static string? ToCssListStyle(string? format) => format?.ToLowerInvariant() switch
+    {
+        "decimal" or "decimalzero" => "decimal",
+        "lowerletter" => "lower-alpha",
+        "upperletter" => "upper-alpha",
+        "lowerroman" => "lower-roman",
+        "upperroman" => "upper-roman",
+        "none" => "none",
+        _ => null,
+    };
 
     private static void FlushList(List<DocumentBlock> blocks, ListBlock list)
     {
@@ -891,7 +973,12 @@ public sealed class DocxParser
             {
                 var lvl = level.LevelIndex?.Value ?? 0;
                 var format = level.NumberingFormat?.Val?.Value;
-                levels.Add(new NumberingLevel(lvl, IsOrderedFormat(format)));
+                levels.Add(new NumberingLevel(
+                    lvl,
+                    IsOrderedFormat(format),
+                    level.NumberingFormat?.Val?.InnerText,
+                    level.LevelText?.Val?.Value,
+                    level.StartNumberingValue?.Val?.Value ?? 1));
             }
 
             result[numId] = levels;
@@ -1056,5 +1143,5 @@ public sealed class DocxParser
 
     private sealed record StyleInfo(int OutlineLevel, string? FontName, StyleValues? Type, string? Name);
 
-    private sealed record NumberingLevel(int Level, bool Ordered);
+    private sealed record NumberingLevel(int Level, bool Ordered, string? FormatName, string? MarkerText, int Start);
 }

@@ -659,4 +659,63 @@ public sealed class ConversionPipelineTests : IDisposable
             }
         }
     }
+
+    [Fact]
+    public void ContinuesNumberingWhenAListIsInterruptedByText()
+    {
+        // Regression: Word keeps one counter per list definition for the whole document, so
+        // the run after the interrupting paragraph must start at 3. The parser emitted a
+        // separate <ol> per run, and every one of them restarted at 1.
+        var path = Path.Combine(_workDirectory, "elenco.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateResumedListSample());
+
+        var result = new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "elenco-out"),
+            BaseName = "guida",
+            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Compile = new CompileOptions(),
+        });
+
+        var page = result.Document.Pages.Single(p => p.Title == "Primo capitolo");
+        var html = File.ReadAllText(Path.Combine(result.OutputDirectory, page.FileName));
+
+        var lists = System.Text.RegularExpressions.Regex.Matches(html, "<ol[^>]*>");
+        Assert.Equal(2, lists.Count);
+        Assert.Contains("start=\"3\"", lists[1].Value);
+
+        // Word's own marker format has to survive as well, or an ordered list renders as a
+        // browser default that ignores the numbering Word assigned.
+        Assert.Contains("list-style-type:decimal", html);
+    }
+
+    [Fact]
+    public void ResolvesCrossReferenceToBookmarkWrittenBesideAParagraph()
+    {
+        // Regression: Word writes a cross-reference target as a direct child of the body,
+        // between two paragraphs. Reading only the bookmarks inside a paragraph dropped it,
+        // and the link fell back to href="#".
+        var path = Path.Combine(_workDirectory, "riferimento.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateResumedListSample());
+
+        var result = new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "rif-out"),
+            BaseName = "guida",
+            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Compile = new CompileOptions(),
+        });
+
+        var target = result.Document.Pages.Single(p => p.Title == "Secondo capitolo");
+        Assert.True(result.Document.BookmarkTargets.TryGetValue("_Capitolo_due", out var resolved));
+        Assert.Equal(target.FileName, resolved.PageFileName);
+
+        var source = result.Document.Pages.Single(p => p.Title == "Primo capitolo");
+        var html = File.ReadAllText(Path.Combine(result.OutputDirectory, source.FileName));
+
+        Assert.Contains($"{target.FileName}#{resolved.Anchor}", html);
+        Assert.DoesNotContain("href=\"#\"", html);
+    }
 }

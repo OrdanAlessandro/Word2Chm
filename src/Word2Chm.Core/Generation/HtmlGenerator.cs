@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text;
 using Word2Chm.Core.Model;
@@ -190,7 +191,21 @@ public sealed class HtmlGenerator
     private void RenderList(StringBuilder builder, ListBlock list, HelpDocument document, HelpPage page)
     {
         var tag = list.Ordered ? "ol" : "ul";
-        builder.Append('<').Append(tag).AppendLine(">");
+        builder.Append('<').Append(tag);
+
+        // Word counts a list across the whole document, but the parser can emit it as several
+        // blocks when body text interrupts it. Carrying Word's own number keeps the sequence.
+        if (list.Ordered && list.Start > 1)
+        {
+            builder.Append(" start=\"").Append(list.Start.ToString(CultureInfo.InvariantCulture)).Append('"');
+        }
+
+        if (list.MarkerFormat is not null)
+        {
+            builder.Append(" style=\"list-style-type:").Append(list.MarkerFormat).Append('"');
+        }
+
+        builder.AppendLine(">");
 
         foreach (var item in list.Items)
         {
