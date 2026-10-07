@@ -720,6 +720,54 @@ public sealed class ConversionPipelineTests : IDisposable
     }
 
     [Fact]
+    public void WritesTheConfiguredBodyFontSizeToTheStylesheet()
+    {
+        // Regression: the body size was hardcoded at 10.5pt, so the setting had no effect
+        // and the WinCHM skin kept overriding the content div with its own 8.5pt.
+        var path = Path.Combine(_workDirectory, "font.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateSample());
+
+        var result = new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "font-out"),
+            BaseName = "guida",
+            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1, BodyFontSizePt = 14 },
+            Compile = new CompileOptions(),
+        });
+
+        var css = File.ReadAllText(Path.Combine(result.OutputDirectory, "help.css"));
+
+        Assert.Contains("--body-font-size: 14pt;", css);
+        Assert.Contains("font-size: var(--body-font-size);", css);
+
+        // The skin sizes its content div with an id selector, which outranks body.
+        Assert.Contains("#winchm_template_content { font-size: var(--body-font-size); }", css);
+
+        // Headings stay relative, so enlarging the body must not change them.
+        Assert.Contains("h1 { font-size: 1.9em;", css);
+    }
+
+    [Fact]
+    public void DefaultsTheBodyFontSizeWhenNotConfigured()
+    {
+        var path = Path.Combine(_workDirectory, "font-default.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateSample());
+
+        var result = new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "font-default-out"),
+            BaseName = "guida",
+            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Compile = new CompileOptions(),
+        });
+
+        var css = File.ReadAllText(Path.Combine(result.OutputDirectory, "help.css"));
+        Assert.Contains("--body-font-size: 10.5pt;", css);
+    }
+
+    [Fact]
     public void ResolvesCrossReferenceToBookmarkWrittenBesideAParagraph()
     {
         // Regression: Word writes a cross-reference target as a direct child of the body,

@@ -14,6 +14,7 @@ internal sealed class MainForm : Form
     private readonly TextBox _baseName = new();
     private readonly NumericUpDown _startContextId = new();
     private readonly NumericUpDown _pageLevel = new();
+    private readonly NumericUpDown _bodyFontSize = new();
     private readonly TextBox _templateDirectory = new();
     private readonly TextBox _footer = new();
     private readonly TextBox _hhcPath = new();
@@ -42,7 +43,7 @@ internal sealed class MainForm : Form
         {
             Dock = DockStyle.Fill,
             ColumnCount = 3,
-            RowCount = 11,
+            RowCount = 12,
             Padding = new Padding(12),
         };
         root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
@@ -85,6 +86,16 @@ internal sealed class MainForm : Form
         _pageLevel.Maximum = 6;
         _pageLevel.Width = 120;
         root.Controls.Add(_pageLevel, 1, row++);
+
+        // Body text size.
+        root.Controls.Add(Label("Dimensione testo (pt):"), 0, row);
+        _bodyFontSize.Dock = DockStyle.Left;
+        _bodyFontSize.Minimum = 6;
+        _bodyFontSize.Maximum = 24;
+        _bodyFontSize.DecimalPlaces = 1;
+        _bodyFontSize.Increment = 0.5m;
+        _bodyFontSize.Width = 120;
+        root.Controls.Add(_bodyFontSize, 1, row++);
 
         // WinCHM skin.
         root.Controls.Add(Label("Template (skin):"), 0, row);
@@ -181,6 +192,10 @@ internal sealed class MainForm : Form
         _outputDirectory.Text = settings.OutputDirectory ?? string.Empty;
         _startContextId.Value = Math.Clamp(settings.StartContextId, 1, 65535);
         _pageLevel.Value = Math.Clamp(settings.PageLevel, 1, 6);
+        _bodyFontSize.Value = Math.Clamp(
+            (decimal)settings.BodyFontSizePt,
+            _bodyFontSize.Minimum,
+            _bodyFontSize.Maximum);
         _templateDirectory.Text = settings.TemplateDirectory ?? DefaultTemplateDirectory() ?? string.Empty;
         _footer.Text = settings.Footer ?? HelpDocument.DefaultFooter;
         _hhcPath.Text = settings.HhcPath ?? HhcLocator.Locate() ?? string.Empty;
@@ -197,6 +212,7 @@ internal sealed class MainForm : Form
         OutputDirectory = _outputDirectory.Text,
         StartContextId = (int)_startContextId.Value,
         PageLevel = (int)_pageLevel.Value,
+        BodyFontSizePt = (double)_bodyFontSize.Value,
         TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
         Footer = _footer.Text,
         HhcPath = _hhcPath.Text,
@@ -307,6 +323,7 @@ internal sealed class MainForm : Form
             {
                 DefaultContextId = (int)_startContextId.Value,
                 PageLevel = (int)_pageLevel.Value,
+                BodyFontSizePt = (double)_bodyFontSize.Value,
                 Footer = string.IsNullOrWhiteSpace(_footer.Text) ? HelpDocument.DefaultFooter : _footer.Text.Trim(),
             },
             TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
@@ -461,6 +478,13 @@ internal sealed class AppSettings
     public string? HhcPath { get; set; }
     public int StartContextId { get; set; } = 1000;
     public int PageLevel { get; set; } = BuildOptions.DefaultPageLevel;
+
+    /// <summary>
+    /// Body text size in points. A file written before this setting existed has no such
+    /// property, so the initializer supplies the default; a stored value outside the
+    /// allowed range is discarded on load.
+    /// </summary>
+    public double BodyFontSizePt { get; set; } = BuildOptions.DefaultBodyFontSizePt;
     public string? TemplateDirectory { get; set; }
 
     /// <summary>
@@ -481,6 +505,11 @@ internal sealed class AppSettings
                     if (settings.Version < CurrentVersion)
                     {
                         settings.PageLevel = BuildOptions.DefaultPageLevel;
+                    }
+
+                    if (settings.BodyFontSizePt is < 6 or > 24)
+                    {
+                        settings.BodyFontSizePt = BuildOptions.DefaultBodyFontSizePt;
                     }
 
                     return settings;

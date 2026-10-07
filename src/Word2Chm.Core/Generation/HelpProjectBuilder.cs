@@ -12,6 +12,13 @@ public sealed class BuildOptions
     /// </summary>
     public const int DefaultPageLevel = 6;
 
+    /// <summary>
+    /// Body text size in points, shared by the core and the GUI so the two can never
+    /// disagree about the default. Headings keep their own relative sizes and are not
+    /// affected, which is what lets the body be enlarged on its own.
+    /// </summary>
+    public const double DefaultBodyFontSizePt = 10.5;
+
     /// <summary>Base numeric value for auto-assigned context IDs.</summary>
     public int DefaultContextId { get; set; } = 1000;
 
@@ -22,6 +29,12 @@ public sealed class BuildOptions
     /// one long page and the menu would be the only way to move inside it.
     /// </summary>
     public int PageLevel { get; set; } = DefaultPageLevel;
+
+    /// <summary>
+    /// Size of the normal text, in points. Headings are sized in em and keep their
+    /// proportions, so only paragraphs, lists and tables follow this value.
+    /// </summary>
+    public double BodyFontSizePt { get; set; } = DefaultBodyFontSizePt;
 
     /// <summary>Deepest heading level included in the table of contents.</summary>
     public int MaxTocLevel { get; set; } = 6;

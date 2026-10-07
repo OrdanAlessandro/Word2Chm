@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Word2Chm.Core.Generation;
 
 /// <summary>Embedded stylesheet shared by every generated page.</summary>
@@ -5,7 +7,20 @@ public static class CssGenerator
 {
     public const string FileName = "help.css";
 
-    public static string Generate() => """
+    /// <summary>
+    /// Placeholder standing in for the configured body size, so the stylesheet stays a
+    /// readable raw string instead of an interpolated one where every brace would need
+    /// doubling.
+    /// </summary>
+    private const string BodyFontSizeToken = "__BODY_FONT_SIZE__";
+
+    public static string Generate(double bodyFontSizePt = BuildOptions.DefaultBodyFontSizePt) =>
+        Template.Replace(
+            BodyFontSizeToken,
+            bodyFontSizePt.ToString("0.##", CultureInfo.InvariantCulture),
+            StringComparison.Ordinal);
+
+    private static string Template => """
         :root {
             color-scheme: light dark;
             --fg: #1f2328;
@@ -14,6 +29,7 @@ public static class CssGenerator
             --border: #d0d7de;
             --accent: #0969da;
             --code-bg: #f6f8fa;
+            --body-font-size: __BODY_FONT_SIZE__pt;
         }
 
         * { box-sizing: border-box; }
@@ -22,11 +38,16 @@ public static class CssGenerator
             margin: 0;
             padding: 0;
             font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-            font-size: 10.5pt;
+            font-size: var(--body-font-size);
             line-height: 1.55;
             color: var(--fg);
             background: var(--bg);
         }
+
+        /* The WinCHM skin sizes its content div through an id selector, which outranks the
+           body rule above. The size is repeated here so the configured value also applies
+           inside the skin. */
+        #winchm_template_content { font-size: var(--body-font-size); }
 
         .page {
             max-width: 900px;
@@ -80,7 +101,7 @@ public static class CssGenerator
             padding: 12px;
             overflow-x: auto;
             font-family: Consolas, "Courier New", monospace;
-            font-size: 9.5pt;
+            font-size: 0.9em;
         }
 
         code {

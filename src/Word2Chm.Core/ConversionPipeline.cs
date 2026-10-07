@@ -74,7 +74,7 @@ public sealed class ConversionPipeline
 
         // Stylesheet.
         var cssPath = Path.Combine(outputDirectory, CssGenerator.FileName);
-        File.WriteAllText(cssPath, CssGenerator.Generate());
+        File.WriteAllText(cssPath, CssGenerator.Generate(options.Build.BodyFontSizePt));
         generated.Add(cssPath);
 
         // WinCHM skin: the template plus its stylesheet, script and button images.
