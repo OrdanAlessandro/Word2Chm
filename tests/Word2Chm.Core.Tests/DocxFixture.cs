@@ -186,6 +186,53 @@ internal static class DocxFixture
         return stream.ToArray();
     }
 
+    /// <summary>
+    /// A list whose items are separated by the empty paragraphs Word writes between them.
+    /// The separators used to close the run, so every item became its own &lt;ol&gt; and a
+    /// viewer that ignores the start attribute rendered all of them as 1.
+    /// </summary>
+    public static byte[] CreateListWithBlankSeparatorsSample()
+    {
+        using var stream = new MemoryStream();
+        using (var document = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var main = document.AddMainDocumentPart();
+            var stylesPart = main.AddNewPart<StyleDefinitionsPart>();
+
+            var numberingPart = main.AddNewPart<NumberingDefinitionsPart>();
+            numberingPart.Numbering = BuildNumbering();
+
+            var body = new Body();
+            main.Document = new Document(body);
+
+            var styles = new Styles();
+            for (var level = 1; level <= 3; level++)
+            {
+                styles.Append(new Style(
+                    new StyleName { Val = "Heading " + level },
+                    new BasedOn { Val = "Normal" })
+                {
+                    Type = StyleValues.Paragraph,
+                    StyleId = "Heading" + level,
+                });
+            }
+
+            stylesPart.Styles = styles;
+            stylesPart.Styles.Save();
+
+            body.Append(Heading("Operazioni preliminari {#IDH_OPERAZIONI}", 1));
+            body.Append(ListParagraph(2, 0, "Accertare che il collegamento sia attivo;"));
+            body.Append(TextParagraph());
+            body.Append(ListParagraph(2, 0, "Verificare le posizioni iniziali degli assi."));
+            body.Append(TextParagraph());
+            body.Append(ListParagraph(2, 0, "Verificare gli utensili impiegati."));
+
+            main.Document.Save();
+        }
+
+        return stream.ToArray();
+    }
+
     private static Hyperlink AnchorHyperlink(string anchor, string text) =>
         new(new Run(new Text(text))) { Anchor = anchor, History = true };
 

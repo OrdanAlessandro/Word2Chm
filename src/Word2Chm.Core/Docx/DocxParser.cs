@@ -117,6 +117,15 @@ public sealed class DocxParser
                 continue;
             }
 
+            // Word separates the items of one list with empty paragraphs. Closing the list on
+            // one of them would emit an <ol> per item, and a viewer that ignores the start
+            // attribute then renders every one of them as 1. A blank paragraph is skipped so
+            // the run stays a single list.
+            if (pending.Items.Count > 0 && element is Paragraph blank && IsBlankParagraph(blank))
+            {
+                continue;
+            }
+
             FlushList(result.Blocks, pending);
             pending = new ListBlock();
             pendingNumId = null;
@@ -705,6 +714,15 @@ public sealed class DocxParser
             blocks.Add(list);
         }
     }
+
+    /// <summary>
+    /// A paragraph with no visible content: no text, no drawing, no break. Word writes these
+    /// between the items of a list, so they must not be taken for the end of the list.
+    /// </summary>
+    private static bool IsBlankParagraph(Paragraph paragraph) =>
+        !paragraph.Descendants<Text>().Any(t => !string.IsNullOrWhiteSpace(t.Text)) &&
+        !paragraph.Descendants<Drawing>().Any() &&
+        !paragraph.Descendants<Break>().Any();
 
     /// <summary>
     /// A level is ordered unless it renders as a bullet or has no numbering at all.

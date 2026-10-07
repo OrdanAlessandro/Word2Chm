@@ -691,6 +691,35 @@ public sealed class ConversionPipelineTests : IDisposable
     }
 
     [Fact]
+    public void KeepsOneListWhenBlankParagraphsSeparateTheItems()
+    {
+        // Regression: Word writes an empty paragraph between the items of a list. Those
+        // separators used to close the run, so the chapter "Operazioni preliminari all'invio"
+        // came out as one <ol> per item, each rendering as 1 in a viewer that ignores start.
+        var path = Path.Combine(_workDirectory, "elenco-vuoti.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateListWithBlankSeparatorsSample());
+
+        var result = new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "elenco-vuoti-out"),
+            BaseName = "guida",
+            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Compile = new CompileOptions(),
+        });
+
+        var page = result.Document.Pages.Single(p => p.Title == "Operazioni preliminari");
+        var html = File.ReadAllText(Path.Combine(result.OutputDirectory, page.FileName));
+
+        var lists = System.Text.RegularExpressions.Regex.Matches(html, "<ol[^>]*>");
+        Assert.Single(lists);
+
+        // One list means the items number themselves natively, with no reliance on start.
+        Assert.Equal(3, System.Text.RegularExpressions.Regex.Matches(html, "<li").Count);
+        Assert.DoesNotContain("start=", html);
+    }
+
+    [Fact]
     public void ResolvesCrossReferenceToBookmarkWrittenBesideAParagraph()
     {
         // Regression: Word writes a cross-reference target as a direct child of the body,
