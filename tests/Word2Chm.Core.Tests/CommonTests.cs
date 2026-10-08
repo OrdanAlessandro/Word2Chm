@@ -264,6 +264,57 @@ public sealed class ContextIdHeaderTests
     }
 
     [Fact]
+    public void ReadsAnEnumInsideANamespace()
+    {
+        // Wrapping the enum in a namespace (or a class) is common; the symbol names are the
+        // same, so the namespace around them changes nothing.
+        var header = ContextIdHeader.Parse("""
+            #pragma once
+
+            namespace HelpID
+            {
+                enum {
+                    IDH_EDIT_PARAMETERS = 1000,
+                    IDH_START_JOB,
+                    IDH_AXES,
+                    IDH_BATCH,
+                    IDH_SCRIPT,
+                    IDH_SPINDLE_GROUP,
+                    IDH_ATC,
+                };
+            }
+            """);
+
+        Assert.Equal(1000, header.Definitions["IDH_EDIT_PARAMETERS"]);
+        Assert.Equal(1003, header.Definitions["IDH_BATCH"]);
+        Assert.Equal(1006, header.Definitions["IDH_ATC"]);
+    }
+
+    [Fact]
+    public void ReadsAWholeEnumWrittenOnOneLine()
+    {
+        var header = ContextIdHeader.Parse("namespace HelpID { enum { IDH_A = 1000, IDH_B, IDH_C }; }");
+
+        Assert.Equal(1000, header.Definitions["IDH_A"]);
+        Assert.Equal(1001, header.Definitions["IDH_B"]);
+        Assert.Equal(1002, header.Definitions["IDH_C"]);
+    }
+
+    [Fact]
+    public void ReadsSeveralEnumsInTheSameScope()
+    {
+        var header = ContextIdHeader.Parse("""
+            namespace HelpID {
+                enum { IDH_A = 100, IDH_B, };
+                enum Other { IDH_X = 200, IDH_Y, };
+            }
+            """);
+
+        Assert.Equal(101, header.Definitions["IDH_B"]);
+        Assert.Equal(201, header.Definitions["IDH_Y"]);
+    }
+
+    [Fact]
     public void ThrowsWhenAnEnumValueExceedsTheIntRange()
     {
         var text = """
