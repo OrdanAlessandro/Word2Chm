@@ -127,3 +127,20 @@ si filtrano con `grep -v NETSDK1188`.
 - **Bordi**: le tabelle usano `#000000` fisso (non `--border`, che è grigio chiaro) per
   rispecchiare lo stile griglia di Word. Il CSS dello skin azzera il bordo delle `<img>`
   dei pulsanti, che Internet Explorer (il motore del visualizzatore CHM) disegna sui link.
+- **Corsivo: lo stile carattere è un *toggle*, non una dichiarazione**. Un `w:rStyle`
+  che porta `<w:i/>` non significa "corsivo": *inverte* il corsivo ereditato dal
+  paragrafo. In `SkipperQt_IT.docx` i paragrafi `Didascalia` (corsivo) con run `Enfasicorsivo`
+  risultano *diritti*, e un run con `<w:i/>` proprio li rende di nuovo corsivi. Trattando
+  lo stile come "italic = true" si corsivano 154 paragrafi che Word mostra in tondo
+  (es. "Quando vengono modificati..." in "Salvare i parametri nella memoria del CN").
+  Precedenza effettiva: paragrafo → stile carattere (toggle, oppure off se `<w:i w:val="0"/>`)
+  → `<w:i>`/`<w:i w:val="0"/>` diretto sul run. `w:rPr` dentro `w:pPr` non è ereditato
+  dai run, quindi non va usato come corsivo del paragrafo.
+- **Come verificare la formattazione senza Word**: LibreOffice è installato e genera un
+  render di riferimento. Serve `LD_LIBRARY_PATH=/usr/lib/libreoffice/program` (senza,
+  `soffice.bin` non trova `libreglo.so`) e un profilo utente dedicato:
+  `LD_LIBRARY_PATH=/usr/lib/libreoffice/program soffice.bin -env:UserInstallation=file:///tmp/louser --headless --convert-to html --outdir /tmp/lorender sample/SkipperQt_IT.docx`.
+  Nel render, `<em class="western"><span style="font-style: normal">` = corsivo annullato.
+  Confrontare i modelli sui paragrafi del documento reale (non su casi inventati) è ciò
+  che ha smascherato il toggle: 62% di accordo per la lettura solo-run, 97% per lo stile
+  come verità, 99,6% per il toggle.
