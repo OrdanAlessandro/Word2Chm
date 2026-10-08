@@ -65,13 +65,16 @@ public sealed partial class ContextIdHeader
 
     /// <summary>
     /// Reads the body of an <c>enum</c>. An enumerator without <c>=</c> takes the previous
-    /// value plus one (starting from 0). An enumerator whose expression cannot be resolved
-    /// from the symbols already known is skipped rather than guessed, so it simply shows up as
-    /// a missing ID; the run of implicit values that follows it is unknown as well.
+    /// value plus one, starting from 0 like the compiler. An enumerator whose expression cannot
+    /// be resolved from the symbols already known is skipped rather than guessed, so it simply
+    /// shows up as a missing ID; the implicit values that follow it are unknown as well, until
+    /// an explicit value restarts the run.
     /// </summary>
     private void ReadEnum(string body)
     {
+        // previous is null only before the first enumerator, where an implicit value must be 0.
         int? previous = null;
+        var broken = false;
 
         foreach (var raw in body.Split(','))
         {
@@ -85,18 +88,20 @@ public sealed partial class ContextIdHeader
             if (!match.Success)
             {
                 previous = null;
+                broken = true;
                 continue;
             }
 
             var symbol = match.Groups["sym"].Value;
             if (!match.Groups["expr"].Success)
             {
-                if (previous is null)
+                if (broken)
                 {
+                    // The value follows an unresolved expression, so it is unknown too.
                     continue;
                 }
 
-                previous += 1;
+                previous = (previous ?? -1) + 1;
                 _definitions[symbol] = previous.Value;
                 continue;
             }
@@ -104,11 +109,13 @@ public sealed partial class ContextIdHeader
             if (ExpressionEvaluator.TryEvaluate(match.Groups["expr"].Value.Trim(), _definitions, out var value))
             {
                 previous = value;
+                broken = false;
                 _definitions[symbol] = value;
             }
             else
             {
                 previous = null;
+                broken = true;
             }
         }
     }

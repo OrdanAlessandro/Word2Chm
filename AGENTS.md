@@ -65,7 +65,8 @@ si filtrano con `grep -v NETSDK1188`.
 - **L'header degli ID può usare `#define` o `enum`**: `ContextIdHeader.Parse` legge
   entrambi e i due stili possono convivere nello stesso file; vince l'ultimo valore visto
   in ordine di file (come per il compilatore). In un `enum` (anche `enum class`) un
-  enumeratore senza `=` vale il precedente più uno, a partire da 0; sono valutate le
+  enumeratore senza `=` vale il precedente più uno, a partire da 0 (il primo enumeratore
+  implicito vale quindi 0, come in C++); sono valutate le
   espressioni costanti usuali (letterali dec/hex/bin/ottali, riferimenti a simboli già
   noti, `<< >> & ^ | + - * / % ~` e parentesi) con la giusta precedenza. Un'espressione
   non risolvibile (cast, chiamate, simboli definiti più avanti) **non** viene indovinata:
@@ -73,6 +74,13 @@ si filtrano con `grep -v NETSDK1188`.
   enumeratori impliciti resta ignoto finché un valore esplicito non lo riavvia. I commenti
   `//` e `/* ... */` sono rimossi prima dell'analisi, quindi un esempio dentro un commento
   non conta come definizione. Un valore che non entra in `int` lancia `OverflowException`.
+- **Intervallo ammesso per un ID di contesto HTML Help**: la specifica HTML Help archivia
+  gli ID come interi senza segno a 4 byte, quindi l'intervallo valido è **1–4294967295**;
+  lo **0 non è un ID valido** e non viene risolto dal visualizzatore (`HH_HELP_CONTEXT`
+  con 0 non apre nulla). Il tool non impone questo limite: uno 0 definito nell'header viene
+  scritto in `[MAP]` come qualunque altro valore. Se un `enum` parte da 0, il primo simbolo
+  ottiene 0 e la sua chiamata `HtmlHelp` non funzionerà, quindi conviene far partire gli ID
+  da 1 o più (il caso tipico negli esempi del progetto è 1000).
 - **ID di contesto su sottotitoli**: `[ALIAS]` accetta solo un file, non
   `file.htm#anchor`: `hhc.exe` cercherebbe un file con quel nome letterale e
   segnala `HHC3015 ... the file does not exist`, senza però fallire la

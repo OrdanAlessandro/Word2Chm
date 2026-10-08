@@ -16,13 +16,18 @@ tabelle, immagini, collegamenti e segnalibri.
   dal `#define` corrispondente nel header C++ indicato nella GUI (campo "File ID (.h)").
   Lo stesso file può definire gli ID con `#define IDH_X 1000` oppure con un `enum`
   (anche `enum class`), e i due stili possono convivere; in un `enum` un enumeratore
-  senza `=` vale il precedente più uno, come per il compilatore C++, e sono accettate
-  espressioni costanti (`1 << 4`, `IDH_BASE | 0x2`, `(2 + 3) * 4`). Un unico header può
+  senza `=` vale il precedente più uno, come per il compilatore C++ (il primo, se non ha
+  valore, vale 0), e sono accettate espressioni costanti (`1 << 4`, `IDH_BASE | 0x2`,
+  `(2 + 3) * 4`). Un unico header può
   quindi servire tutte le edizioni linguistiche mantenendo gli ID
   identici. I simboli usati nel documento ma assenti dall'header vengono elencati in
   `id-mancanti.txt` e la conversione si completa comunque, così si sistemano tutti in
   un solo passaggio. Un marcatore `{#IDH_NOME=1234}` di vecchi documenti è ancora
   riconosciuto e rimosso, ma il valore inline viene ignorato.
+  Attenzione al valore di partenza: HTML Help accetta ID da **1** in su (sono interi
+  senza segno a 4 byte) e lo **0 non è valido**, quindi un `enum` che parte da 0 assegna
+  0 al primo simbolo e la relativa chiamata `HtmlHelp` non aprirà nulla; conviene farlo
+  partire da 1 o più (negli esempi di questo progetto da 1000).
 - **Indice `.hhk` dalle voci di indice di Word.** I campi `XE` del documento
   alimentano il file di indice, incluse le sottovoci (`XE "parola" \t "sottovoce"`).
 

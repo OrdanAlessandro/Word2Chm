@@ -264,6 +264,56 @@ public sealed class ContextIdHeaderTests
     }
 
     [Fact]
+    public void FirstImplicitEnumeratorStartsAtZero()
+    {
+        // A value counts on from the previous one; the one before the first is 0, as in C++.
+        var header = ContextIdHeader.Parse("""
+            enum HelpID {
+                IDH_A,
+                IDH_B,
+                IDH_C,
+            };
+            """);
+
+        Assert.Equal(0, header.Definitions["IDH_A"]);
+        Assert.Equal(1, header.Definitions["IDH_B"]);
+        Assert.Equal(2, header.Definitions["IDH_C"]);
+    }
+
+    [Fact]
+    public void ImplicitEnumeratorsFollowAnExplicitStartOfOne()
+    {
+        // Starting the enum at 1 must not stop the implicit values from following it.
+        var header = ContextIdHeader.Parse("""
+            enum HelpID {
+                IDH_EDIT_PARAMETERS = 1,
+                IDH_START_JOB,
+                IDH_AXES,
+            };
+            """);
+
+        Assert.Equal(1, header.Definitions["IDH_EDIT_PARAMETERS"]);
+        Assert.Equal(2, header.Definitions["IDH_START_JOB"]);
+        Assert.Equal(3, header.Definitions["IDH_AXES"]);
+    }
+
+    [Fact]
+    public void ImplicitEnumeratorBeforeAnExplicitValueStartsAtZero()
+    {
+        var header = ContextIdHeader.Parse("""
+            enum HelpID {
+                IDH_A,
+                IDH_B = 10,
+                IDH_C,
+            };
+            """);
+
+        Assert.Equal(0, header.Definitions["IDH_A"]);
+        Assert.Equal(10, header.Definitions["IDH_B"]);
+        Assert.Equal(11, header.Definitions["IDH_C"]);
+    }
+
+    [Fact]
     public void ReadsAnEnumInsideANamespace()
     {
         // Wrapping the enum in a namespace (or a class) is common; the symbol names are the
