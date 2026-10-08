@@ -14,7 +14,7 @@ public sealed class ConversionOptions
     /// <summary>Output directory; created when missing.</summary>
     public required string OutputDirectory { get; init; }
 
-    /// <summary>Base name for the generated .chm/.hhp files.</summary>
+    /// <summary>Base name for the generated .hhp/.hhc/.hhk project files.</summary>
     public string? BaseName { get; init; }
 
     /// <summary>
@@ -22,6 +22,12 @@ public sealed class ConversionOptions
     /// file name is used, so the header always lands next to the other generated files.
     /// </summary>
     public string? HeaderFileName { get; init; }
+
+    /// <summary>
+    /// Name of the compiled help file (default <c>SkipperQtHelp_IT.chm</c>). Only the file
+    /// name is used, so the .chm always lands next to the other generated files.
+    /// </summary>
+    public string? ChmFileName { get; init; }
 
     public BuildOptions Build { get; init; } = new();
 
@@ -76,6 +82,7 @@ public sealed class ConversionPipeline
         {
             BaseName = baseName,
             HeaderFileName = ChmProjectNames.NormalizeHeaderFileName(options.HeaderFileName),
+            ChmFileName = options.ChmFileName,
         };
 
         var parsed = ParseDocument(options.DocxPath);

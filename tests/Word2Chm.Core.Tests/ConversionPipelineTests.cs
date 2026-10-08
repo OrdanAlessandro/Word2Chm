@@ -37,7 +37,8 @@ public sealed class ConversionPipelineTests : IDisposable
         string? baseName = null,
         string? templateDirectory = null,
         int? pageLevel = null,
-        string? headerFileName = null)
+        string? headerFileName = null,
+        string? chmFileName = null)
     {
         var pipeline = new ConversionPipeline();
         var build = new BuildOptions { DefaultContextId = 1000 };
@@ -54,6 +55,7 @@ public sealed class ConversionPipelineTests : IDisposable
             OutputDirectory = Path.Combine(_workDirectory, "out"),
             BaseName = baseName,
             HeaderFileName = headerFileName,
+            ChmFileName = chmFileName,
             Build = build,
             TemplateDirectory = templateDirectory,
             Compile = new CompileOptions { HhcPath = hhcPath },
@@ -205,6 +207,57 @@ public sealed class ConversionPipelineTests : IDisposable
         Assert.DoesNotContain('/', fileName);
         Assert.DoesNotContain('\\', fileName);
         Assert.Equal(".._fuori.h", fileName);
+    }
+
+    [Fact]
+    public void NamesTheChmSkipperQtHelpByDefault()
+    {
+        // The host application loads the help file by name, so the default cannot follow
+        // the base name: a conversion of "guida.docx" still produces SkipperQtHelp_IT.chm.
+        var result = RunPipeline(baseName: "guida");
+
+        var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+        Assert.Contains("Compiled file=SkipperQtHelp_IT.chm", hhp);
+    }
+
+    [Fact]
+    public void UsesTheConfiguredChmName()
+    {
+        var result = RunPipeline(chmFileName: "manuale.chm");
+
+        var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+        Assert.Contains("Compiled file=manuale.chm", hhp);
+    }
+
+    [Fact]
+    public void AppendsTheChmExtensionWhenItIsMissing()
+    {
+        // Typing "manuale" in the UI should still produce a .chm.
+        var result = RunPipeline(chmFileName: "manuale");
+
+        var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+        Assert.Contains("Compiled file=manuale.chm", hhp);
+    }
+
+    [Fact]
+    public void FallsBackToTheDefaultChmNameWhenBlank()
+    {
+        var result = RunPipeline(chmFileName: "   ");
+
+        var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+        Assert.Contains("Compiled file=SkipperQtHelp_IT.chm", hhp);
+    }
+
+    [Fact]
+    public void KeepsTheChmInsideTheOutputDirectory()
+    {
+        // The .hhp compiled-file value must stay a plain file name, otherwise hhc.exe would
+        // write the .chm somewhere else (or fail) depending on the working directory.
+        var result = RunPipeline(chmFileName: "../fuori.chm");
+
+        var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+        Assert.Contains("Compiled file=.._fuori.chm", hhp);
+        Assert.DoesNotContain("Compiled file=../", hhp);
     }
 
     [Fact]

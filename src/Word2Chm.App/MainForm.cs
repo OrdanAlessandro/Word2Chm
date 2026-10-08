@@ -13,6 +13,7 @@ internal sealed class MainForm : Form
     private readonly TextBox _docxPath = new();
     private readonly TextBox _outputDirectory = new();
     private readonly TextBox _baseName = new();
+    private readonly TextBox _chmFileName = new();
     private readonly TextBox _headerFileName = new();
     private readonly NumericUpDown _startContextId = new();
     private readonly NumericUpDown _pageLevel = new();
@@ -79,6 +80,13 @@ internal sealed class MainForm : Form
         _headerFileName.Dock = DockStyle.Fill;
         root.Controls.Add(_headerFileName, 1, row);
         root.SetColumnSpan(_headerFileName, 2);
+        row++;
+
+        // Name of the compiled .chm.
+        root.Controls.Add(Label("File CHM:"), 0, row);
+        _chmFileName.Dock = DockStyle.Fill;
+        root.Controls.Add(_chmFileName, 1, row);
+        root.SetColumnSpan(_chmFileName, 2);
         row++;
 
         // Start context ID.
@@ -208,6 +216,7 @@ internal sealed class MainForm : Form
             _bodyFontSize.Maximum);
         _templateDirectory.Text = settings.TemplateDirectory ?? DefaultTemplateDirectory() ?? string.Empty;
         _headerFileName.Text = ChmProjectNames.NormalizeHeaderFileName(settings.HeaderFileName);
+        _chmFileName.Text = ChmProjectNames.NormalizeChmFileName(settings.ChmFileName);
         _footer.Text = settings.Footer ?? HelpDocument.DefaultFooter;
         _hhcPath.Text = settings.HhcPath ?? HhcLocator.Locate() ?? string.Empty;
 
@@ -226,6 +235,7 @@ internal sealed class MainForm : Form
         BodyFontSizePt = (double)_bodyFontSize.Value,
         TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
         HeaderFileName = ChmProjectNames.NormalizeHeaderFileName(_headerFileName.Text),
+        ChmFileName = ChmProjectNames.NormalizeChmFileName(_chmFileName.Text),
         Footer = _footer.Text,
         HhcPath = _hhcPath.Text,
     }.Save();
@@ -340,6 +350,7 @@ internal sealed class MainForm : Form
             },
             TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
             HeaderFileName = _headerFileName.Text,
+            ChmFileName = _chmFileName.Text,
             Compile = new CompileOptions
             {
                 HhcPath = _compileChm.Checked ? _hhcPath.Text.Trim() : null,
@@ -512,6 +523,12 @@ internal sealed class AppSettings
     /// before this setting existed, where the default name still applies.
     /// </summary>
     public string? HeaderFileName { get; set; }
+
+    /// <summary>
+    /// Name of the compiled .chm. Null for files written before this setting existed,
+    /// where the default name still applies.
+    /// </summary>
+    public string? ChmFileName { get; set; }
 
     /// <summary>
     /// Footer written to every topic. A file from before this setting existed has a null

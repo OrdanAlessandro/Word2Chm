@@ -14,23 +14,39 @@ public sealed class ChmProjectNames
     /// </summary>
     public const string DefaultHeaderFileName = "helpId.h";
 
+    /// <summary>
+    /// Name of the compiled help file. The default is a fixed name because the host
+    /// application loads the help file by name; it is deliberately not derived from the
+    /// base name, which would rename the help file on every conversion.
+    /// </summary>
+    public const string DefaultChmFileName = "SkipperQtHelp_IT.chm";
+
     public required string BaseName { get; init; }
 
     public string HeaderFileName { get; init; } = DefaultHeaderFileName;
 
-    public string ChmFile => BaseName + ".chm";
+    /// <summary>File name of the compiled help file. Null means the default name.</summary>
+    public string? ChmFileName { get; init; }
+
+    public string ChmFile => NormalizeChmFileName(ChmFileName);
     public string HhpFile => BaseName + ".hhp";
     public string HhcFile => BaseName + ".hhc";
     public string HhkFile => BaseName + ".hhk";
     public string HeaderFile => NormalizeHeaderFileName(HeaderFileName);
 
+    public static string NormalizeHeaderFileName(string? value) =>
+        NormalizeFileName(value, DefaultHeaderFileName);
+
+    public static string NormalizeChmFileName(string? value) =>
+        NormalizeFileName(value, DefaultChmFileName);
+
     /// <summary>
-    /// Trims the configured name and appends the .h extension when it is missing, so a
-    /// field filled in as "mioheader" still produces an includable header. Only a plain
-    /// file name survives: path separators and characters that are invalid on either
-    /// Windows or Linux become underscores, so the header cannot escape the output folder.
+    /// Reduces a configured name to a plain file name and gives it the extension of
+    /// <paramref name="fallback"/> when it has none. Path separators and characters that
+    /// are invalid on either Windows or Linux become underscores, so a configured name can
+    /// never escape the output directory; an empty value yields <paramref name="fallback"/>.
     /// </summary>
-    public static string NormalizeHeaderFileName(string? value)
+    private static string NormalizeFileName(string? value, string fallback)
     {
         var trimmed = value?.Trim() ?? string.Empty;
         var cleaned = new string(trimmed
@@ -39,10 +55,13 @@ public sealed class ChmProjectNames
 
         if (string.IsNullOrEmpty(cleaned))
         {
-            return DefaultHeaderFileName;
+            return fallback;
         }
 
-        return cleaned.EndsWith(".h", StringComparison.OrdinalIgnoreCase) ? cleaned : cleaned + ".h";
+        var extension = Path.GetExtension(fallback);
+        return cleaned.EndsWith(extension, StringComparison.OrdinalIgnoreCase)
+            ? cleaned
+            : cleaned + extension;
     }
 }
 
