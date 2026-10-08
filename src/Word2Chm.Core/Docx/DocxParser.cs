@@ -945,15 +945,23 @@ public sealed class DocxParser
         var styleId = props?.RunStyle?.Val?.Value;
         var vertical = props?.VerticalTextAlignment?.Val;
 
-        // Precedence mirrors Word: an explicit w:i on the run wins, then the character style
-        // it references, then the paragraph style. Without the style lookups a document that
-        // italicises through "Emphasis" or "caption" lost every one of those runs.
-        var italic = props?.Italic is not null
-            ? props.Italic.Val?.Value != false
-            : !string.IsNullOrEmpty(styleId) && _styleMap.TryGetValue(styleId!, out var charStyle) &&
-              charStyle.Italic is { } fromCharStyle
-                ? fromCharStyle
-                : _paragraphStyleItalic ?? false;
+        var italic = _paragraphStyleItalic ?? false;
+
+        // A character style toggles the italic inherited from the paragraph style rather
+        // than stating it outright. "Emphasis" on a word inside ordinary body text turns
+        // it italic, but the same style on a caption - already italic through Didascalia -
+        // turns it upright again, which is how Word stores those captions. An explicit
+        // w:i val="0" in the style switches the inheritance off instead of toggling it.
+        if (!string.IsNullOrEmpty(styleId) && _styleMap.TryGetValue(styleId!, out var charStyle) &&
+            charStyle.Italic is { } fromCharStyle)
+        {
+            italic = fromCharStyle ? !italic : false;
+        }
+
+        if (props?.Italic is not null)
+        {
+            italic = props.Italic.Val?.Value != false;
+        }
 
         return (
             props?.Bold is not null && props.Bold.Val?.Value != false,

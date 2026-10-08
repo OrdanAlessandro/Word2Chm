@@ -510,45 +510,40 @@ internal static class DocxFixture
             stylesPart.Styles = BuildItalicStyles();
             stylesPart.Styles.Save();
 
-            // Caption: the paragraph style italicises, the runs stay bare.
-            body.Append(new Paragraph(
-                new ParagraphProperties(
-                    new ParagraphStyleId { Val = "Heading1" }),
-                new Run(new Text("Didascalie") { Space = SpaceProcessingModeValues.Preserve })));
+            // Caption: the paragraph style italicises and the runs state nothing.
+            body.Append(Heading("Didascalie", 1));
             body.Append(new Paragraph(
                 new ParagraphProperties(new ParagraphStyleId { Val = "Didascalia" }),
-                StyledRun("Enfasi", "Figura 1: pannello dei parametri")));
+                Run("Figura 1: pannello dei parametri")));
 
-            // A character style that italicises a run inside a normal paragraph.
-            body.Append(new Paragraph(
-                new ParagraphProperties(
-                    new ParagraphStyleId { Val = "Heading1" }),
-                new Run(new Text("Enfasi") { Space = SpaceProcessingModeValues.Preserve })));
+            // Emphasis inside ordinary body text turns the run italic.
+            body.Append(Heading("Enfasi", 1));
             body.Append(new Paragraph(
                 new ParagraphProperties(new ParagraphStyleId { Val = "Normal" }),
-                StyledRun("Enfasi", "Testo normale con "),
+                Run("Testo normale con "),
                 StyledRun("Enfasi", "enfasi"),
-                StyledRun("Enfasi", " e testo normale.")));
+                Run(" e testo normale.")));
 
-            // A direct w:i val="0" must win over the italics of the character style.
-            body.Append(new Paragraph(
-                new ParagraphProperties(
-                    new ParagraphStyleId { Val = "Heading1" }),
-                new Run(new Text("Disattivazione") { Space = SpaceProcessingModeValues.Preserve })));
+            // The same character style inside an already italic paragraph cancels the
+            // inherited italic, which is the shape Word writes for these captions.
+            body.Append(Heading("DidascalieEnfasi", 1));
             body.Append(new Paragraph(
                 new ParagraphProperties(new ParagraphStyleId { Val = "Didascalia" }),
-                StyledRun("Enfasi", "Corsivo "),
-                PlainRun("non corsivo in didascalia")));
+                StyledRun("Enfasi", "Quando vengono modificati dei parametri")));
 
-            // Italic inherited through two levels of basedOn, so the run style itself
-            // states nothing and only the ancestor does.
-            body.Append(new Paragraph(
-                new ParagraphProperties(
-                    new ParagraphStyleId { Val = "Heading1" }),
-                new Run(new Text("Ereditarieta") { Space = SpaceProcessingModeValues.Preserve })));
+            // Italic inherited through the basedOn chain, with the run style silent.
+            body.Append(Heading("Ereditarieta", 1));
             body.Append(new Paragraph(
                 new ParagraphProperties(new ParagraphStyleId { Val = "Normal" }),
                 StyledRun("Indiretta", "Testo corsivo per ereditarieta.")));
+
+            // An explicit w:i val="0" on the run switches off an italic that the character
+            // style would otherwise turn on.
+            body.Append(Heading("Disattivazione", 1));
+            body.Append(new Paragraph(
+                new ParagraphProperties(new ParagraphStyleId { Val = "Normal" }),
+                StyledRun("Enfasi", "corsivo "),
+                RunWithItalicOff("non corsivo")));
         }
 
         return stream.ToArray();
@@ -558,7 +553,7 @@ internal static class DocxFixture
         new RunProperties(new RunStyle { Val = styleId }),
         new Text(text) { Space = SpaceProcessingModeValues.Preserve });
 
-    private static Run PlainRun(string text) => new(
+    private static Run RunWithItalicOff(string text) => new(
         new RunProperties(new Italic { Val = false }),
         new Text(text) { Space = SpaceProcessingModeValues.Preserve });
 

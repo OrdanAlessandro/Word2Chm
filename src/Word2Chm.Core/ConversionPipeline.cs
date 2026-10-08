@@ -1,3 +1,5 @@
+using DocumentFormat.OpenXml.Packaging;
+using Word2Chm.Core.Common;
 using Word2Chm.Core.Compilation;
 using Word2Chm.Core.Docx;
 using Word2Chm.Core.Generation;
@@ -54,7 +56,8 @@ public sealed class ConversionPipeline
     {
         if (!File.Exists(options.DocxPath))
         {
-            throw new FileNotFoundException("File DOCX non trovato.", options.DocxPath);
+            throw new DocxUnreadableException(
+                $"Il documento \"{options.DocxPath}\" non esiste o non è raggiungibile.");
         }
 
         var outputDirectory = Path.GetFullPath(options.OutputDirectory);
@@ -65,7 +68,7 @@ public sealed class ConversionPipeline
             : options.BaseName!;
         var names = new ChmProjectNames { BaseName = baseName };
 
-        var parsed = _parser.Parse(options.DocxPath);
+        var parsed = ParseDocument(options.DocxPath);
         var document = _builder.Build(parsed, options.Build);
 
         var generated = new List<string>();
@@ -171,7 +174,40 @@ public sealed class ConversionPipeline
         };
     }
 
-    /// <summary>Depth-first page order, matching the order the table of contents is walked.</summary>
+    /// <summary>
+    /// Reads the .docx, turning the ways an unusable file fails into one exception the UI
+    /// can present. Word keeps the document open with a lock, so a file that exists can
+    /// still be unreadable; a renamed .docx or a wrong file throws from the Open XML SDK.
+    /// </summary>
+    private ParsedDocument ParseDocument(string path)
+    {
+        try
+        {
+            return _parser.Parse(path);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            throw new DocxUnreadableException(
+                $"Il documento \"{path}\" è in uso o non è accessibile. " +
+                "Chiudilo in Word e riprova.", ex);
+        }
+        catch (IOException ex)
+        {
+            throw new DocxUnreadableException(
+                $"Impossibile leggere il documento \"{path}\": {ex.Message}", ex);
+        }
+        catch (FileFormatException ex)
+        {
+            throw new DocxUnreadableException(
+                $"Il file \"{path}\" non è un documento Word (.docx) valido.", ex);
+        }
+        catch (Exception ex) when (ex is not DocxUnreadableException)
+        {
+            throw new DocxUnreadableException(
+                $"Impossibile aprire il documento \"{path}\": {ex.Message}", ex);
+        }
+    }
+
     private static List<HelpPage> FlattenPages(HelpDocument document)
     {
         var byFile = document.Pages.ToDictionary(p => p.FileName, StringComparer.Ordinal);

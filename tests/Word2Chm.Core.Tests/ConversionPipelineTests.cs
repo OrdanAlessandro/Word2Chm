@@ -1,5 +1,6 @@
 using System.Text;
 using Word2Chm.Core;
+using Word2Chm.Core.Common;
 using Word2Chm.Core.Compilation;
 using Word2Chm.Core.Generation;
 using Word2Chm.Core.Model;
@@ -500,11 +501,13 @@ public sealed class ConversionPipelineTests : IDisposable
     public void ThrowsForMissingInput()
     {
         var pipeline = new ConversionPipeline();
-        Assert.Throws<FileNotFoundException>(() => pipeline.Run(new ConversionOptions
+        var error = Assert.Throws<DocxUnreadableException>(() => pipeline.Run(new ConversionOptions
         {
             DocxPath = Path.Combine(_workDirectory, "missing.docx"),
             OutputDirectory = Path.Combine(_workDirectory, "out"),
         }));
+
+        Assert.Contains("non esiste o non è raggiungibile", error.Message);
     }
 
     /// <summary>
@@ -824,6 +827,23 @@ public sealed class ConversionPipelineTests : IDisposable
     }
 
     [Fact]
+    public void CharacterStyleCancelsItalicInheritedFromTheParagraph()
+    {
+        // Regression: in an already italic caption the "Emphasis" style means the opposite
+        // of what it means in body text. Word stores "Quando vengono modificati..." with a
+        // Didascalia paragraph and an Enfasi run, and renders it upright: treating the style
+        // as a plain "italic = true" wrongly italicised 154 paragraphs of the manual.
+        var path = Path.Combine(_workDirectory, "corsivo-annullato.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateStyleItalicSample());
+
+        var result = RunItalicPipeline(path);
+        var html = ReadPage(result, "DidascalieEnfasi");
+
+        Assert.Contains("Quando vengono modificati dei parametri", html);
+        Assert.DoesNotContain("<em>Quando vengono modificati dei parametri</em>", html);
+    }
+
+    [Fact]
     public void ResolvesItalicThroughTheBasedOnChain()
     {
         // A style that states no italic of its own inherits it from the style it is based on.
@@ -839,16 +859,15 @@ public sealed class ConversionPipelineTests : IDisposable
     [Fact]
     public void LetsADirectRunSettingSwitchItalicOff()
     {
-        // w:i val="0" on the run means "not italic" even when the style says otherwise, so
-        // the inherited value must not be applied on top of it.
+        // w:i val="0" on the run means "not italic" even when the character style would
+        // turn the italic on, so the explicit run value has to win.
         var path = Path.Combine(_workDirectory, "corsivo-disattivato.docx");
         File.WriteAllBytes(path, DocxFixture.CreateStyleItalicSample());
 
         var result = RunItalicPipeline(path);
         var html = ReadPage(result, "Disattivazione");
 
-        Assert.Contains("<em>Corsivo </em>non corsivo in didascalia", html);
-        Assert.DoesNotContain("<em>non corsivo in didascalia</em>", html);
+        Assert.Contains("<em>corsivo </em>non corsivo", html);
     }
 
     private ConversionResult RunItalicPipeline(string path) =>
@@ -860,4 +879,28 @@ public sealed class ConversionPipelineTests : IDisposable
             Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
             Compile = new CompileOptions(),
         });
+
+    [Fact]
+    public void ReportsAFileThatIsNotAWordDocument()
+    {
+        // Regression: renaming any file to .docx used to leak FileFormatException from the
+        // Open XML SDK straight into the popup. It is reported as an unusable document.
+        var notDocx = Path.Combine(_workDirectory, "finto.docx");
+        File.WriteAllText(notDocx, "questo non è un documento Word");
+
+        var error = Assert.Throws<DocxUnreadableException>(() => RunItalicPipeline(notDocx));
+
+        Assert.Contains("non è un documento Word", error.Message);
+    }
+
+    [Fact]
+    public void ReportsADirectoryPassedAsTheDocument()
+    {
+        var directory = Path.Combine(_workDirectory, "cartella.docx");
+        Directory.CreateDirectory(directory);
+
+        var error = Assert.Throws<DocxUnreadableException>(() => RunItalicPipeline(directory));
+
+        Assert.Contains("non esiste o non è raggiungibile", error.Message);
+    }
 }

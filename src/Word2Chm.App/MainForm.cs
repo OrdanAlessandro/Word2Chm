@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using Word2Chm.Core;
+using Word2Chm.Core.Common;
 using Word2Chm.Core.Compilation;
 using Word2Chm.Core.Generation;
 using Word2Chm.Core.Model;
@@ -345,6 +346,13 @@ internal sealed class MainForm : Form
             {
                 OpenInExplorer(result.OutputDirectory);
             }
+        }
+        catch (DocxUnreadableException ex)
+        {
+            // A missing, locked or non-Word document is the user's mistake to fix, so it gets
+            // a clear popup instead of the generic error path below.
+            AppendLog("ERRORE: " + ex.Message);
+            MessageBox.Show(this, ex.Message, "Documento non leggibile", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
         catch (Exception ex)
         {
