@@ -127,6 +127,12 @@ si filtrano con `grep -v NETSDK1188`.
 - **Bordi**: le tabelle usano `#000000` fisso (non `--border`, che è grigio chiaro) per
   rispecchiare lo stile griglia di Word. Il CSS dello skin azzera il bordo delle `<img>`
   dei pulsanti, che Internet Explorer (il motore del visualizzatore CHM) disegna sui link.
+- **Nome dell'header C++**: il file con gli `#define IDH_*` è parametrizzato
+  (`ConversionOptions.HeaderFileName`, campo "File header (ID)" nella GUI) e il default è
+  `helpId.h`, **non** derivato dal nome base: il programma host fa `#include` di un nome
+  fisso e non deve cambiare a ogni build. La guardia `#ifndef` segue il nome del file, non
+  il nome base. Separatori di percorso e caratteri non validi vengono sostituiti con `_`,
+  così un nome tipo `../fuori.h` resta dentro la cartella di output.
 - **Corsivo: lo stile carattere è un *toggle*, non una dichiarazione**. Un `w:rStyle`
   che porta `<w:i/>` non significa "corsivo": *inverte* il corsivo ereditato dal
   paragrafo. In `SkipperQt_IT.docx` i paragrafi `Didascalia` (corsivo) con run `Enfasicorsivo`

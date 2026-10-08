@@ -7,12 +7,43 @@ namespace Word2Chm.Core.Generation;
 /// <summary>Names and identifiers used across the generated CHM project files.</summary>
 public sealed class ChmProjectNames
 {
+    /// <summary>
+    /// Name of the C++ header holding the context IDs. It is independent of the base name
+    /// because the host application already <c>#include</c>s it under a fixed name, so a
+    /// conversion must be able to overwrite that exact file.
+    /// </summary>
+    public const string DefaultHeaderFileName = "helpId.h";
+
     public required string BaseName { get; init; }
+
+    public string HeaderFileName { get; init; } = DefaultHeaderFileName;
+
     public string ChmFile => BaseName + ".chm";
     public string HhpFile => BaseName + ".hhp";
     public string HhcFile => BaseName + ".hhc";
     public string HhkFile => BaseName + ".hhk";
-    public string HeaderFile => BaseName + ".h";
+    public string HeaderFile => NormalizeHeaderFileName(HeaderFileName);
+
+    /// <summary>
+    /// Trims the configured name and appends the .h extension when it is missing, so a
+    /// field filled in as "mioheader" still produces an includable header. Only a plain
+    /// file name survives: path separators and characters that are invalid on either
+    /// Windows or Linux become underscores, so the header cannot escape the output folder.
+    /// </summary>
+    public static string NormalizeHeaderFileName(string? value)
+    {
+        var trimmed = value?.Trim() ?? string.Empty;
+        var cleaned = new string(trimmed
+            .Select(c => char.IsLetterOrDigit(c) || c is '.' or '_' or '-' ? c : '_')
+            .ToArray());
+
+        if (string.IsNullOrEmpty(cleaned))
+        {
+            return DefaultHeaderFileName;
+        }
+
+        return cleaned.EndsWith(".h", StringComparison.OrdinalIgnoreCase) ? cleaned : cleaned + ".h";
+    }
 }
 
 /// <summary>
@@ -265,7 +296,7 @@ public static class ChmProjectGenerator
     /// </summary>
     public static string GenerateHeader(HelpDocument document, ChmProjectNames names, string? chmRelativePath = null)
     {
-        var guard = "_" + Sanitize(names.BaseName).ToUpperInvariant() + "_H_";
+        var guard = "_" + Sanitize(Path.GetFileNameWithoutExtension(names.HeaderFile)).ToUpperInvariant() + "_H_";
         var builder = new StringBuilder();
 
         builder.AppendLine("// Generato automaticamente da Word2Chm. Non modificare a mano.");

@@ -13,6 +13,7 @@ internal sealed class MainForm : Form
     private readonly TextBox _docxPath = new();
     private readonly TextBox _outputDirectory = new();
     private readonly TextBox _baseName = new();
+    private readonly TextBox _headerFileName = new();
     private readonly NumericUpDown _startContextId = new();
     private readonly NumericUpDown _pageLevel = new();
     private readonly NumericUpDown _bodyFontSize = new();
@@ -71,6 +72,14 @@ internal sealed class MainForm : Form
         root.Controls.Add(Label("Nome base:"), 0, row);
         _baseName.Dock = DockStyle.Fill;
         root.Controls.Add(_baseName, 1, row++);
+
+        // Name of the generated C++ header with the context IDs. The default is applied
+        // in LoadDefaults, which also honours a stored value.
+        root.Controls.Add(Label("File header (ID):"), 0, row);
+        _headerFileName.Dock = DockStyle.Fill;
+        root.Controls.Add(_headerFileName, 1, row);
+        root.SetColumnSpan(_headerFileName, 2);
+        row++;
 
         // Start context ID.
         root.Controls.Add(Label("ID di contesto iniziale:"), 0, row);
@@ -198,6 +207,7 @@ internal sealed class MainForm : Form
             _bodyFontSize.Minimum,
             _bodyFontSize.Maximum);
         _templateDirectory.Text = settings.TemplateDirectory ?? DefaultTemplateDirectory() ?? string.Empty;
+        _headerFileName.Text = ChmProjectNames.NormalizeHeaderFileName(settings.HeaderFileName);
         _footer.Text = settings.Footer ?? HelpDocument.DefaultFooter;
         _hhcPath.Text = settings.HhcPath ?? HhcLocator.Locate() ?? string.Empty;
 
@@ -215,6 +225,7 @@ internal sealed class MainForm : Form
         PageLevel = (int)_pageLevel.Value,
         BodyFontSizePt = (double)_bodyFontSize.Value,
         TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
+        HeaderFileName = ChmProjectNames.NormalizeHeaderFileName(_headerFileName.Text),
         Footer = _footer.Text,
         HhcPath = _hhcPath.Text,
     }.Save();
@@ -328,6 +339,7 @@ internal sealed class MainForm : Form
                 Footer = string.IsNullOrWhiteSpace(_footer.Text) ? HelpDocument.DefaultFooter : _footer.Text.Trim(),
             },
             TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
+            HeaderFileName = _headerFileName.Text,
             Compile = new CompileOptions
             {
                 HhcPath = _compileChm.Checked ? _hhcPath.Text.Trim() : null,
@@ -494,6 +506,12 @@ internal sealed class AppSettings
     /// </summary>
     public double BodyFontSizePt { get; set; } = BuildOptions.DefaultBodyFontSizePt;
     public string? TemplateDirectory { get; set; }
+
+    /// <summary>
+    /// Name of the generated C++ header with the context IDs. Null for files written
+    /// before this setting existed, where the default name still applies.
+    /// </summary>
+    public string? HeaderFileName { get; set; }
 
     /// <summary>
     /// Footer written to every topic. A file from before this setting existed has a null

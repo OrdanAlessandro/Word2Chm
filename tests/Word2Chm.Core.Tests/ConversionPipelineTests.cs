@@ -36,7 +36,8 @@ public sealed class ConversionPipelineTests : IDisposable
         string? hhcPath = null,
         string? baseName = null,
         string? templateDirectory = null,
-        int? pageLevel = null)
+        int? pageLevel = null,
+        string? headerFileName = null)
     {
         var pipeline = new ConversionPipeline();
         var build = new BuildOptions { DefaultContextId = 1000 };
@@ -52,6 +53,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = WriteSampleDocx(),
             OutputDirectory = Path.Combine(_workDirectory, "out"),
             BaseName = baseName,
+            HeaderFileName = headerFileName,
             Build = build,
             TemplateDirectory = templateDirectory,
             Compile = new CompileOptions { HhcPath = hhcPath },
@@ -139,6 +141,70 @@ public sealed class ConversionPipelineTests : IDisposable
         Assert.Contains("#define IDH_INSTALLAZIONE", header);
         Assert.Contains("#define IDH_RIFERIMENTI", header);
         Assert.Contains("5000", header);
+    }
+
+    [Fact]
+    public void NamesTheHeaderHelpIdByDefault()
+    {
+        // The host application includes the header under a fixed name, so it cannot follow
+        // the base name: a conversion whose base name is not "helpId" must still write helpId.h.
+        var result = RunPipeline(baseName: "guida");
+
+        Assert.Equal("helpId.h", Path.GetFileName(result.HeaderPath!));
+        Assert.True(File.Exists(Path.Combine(result.OutputDirectory, "helpId.h")));
+    }
+
+    [Fact]
+    public void UsesTheConfiguredHeaderName()
+    {
+        var result = RunPipeline(headerFileName: "idContesto.h");
+
+        Assert.Equal("idContesto.h", Path.GetFileName(result.HeaderPath!));
+        Assert.True(File.Exists(Path.Combine(result.OutputDirectory, "idContesto.h")));
+        Assert.False(File.Exists(Path.Combine(result.OutputDirectory, "helpId.h")));
+    }
+
+    [Fact]
+    public void AppendsTheHeaderExtensionWhenItIsMissing()
+    {
+        // Typing "idContesto" in the UI should still produce an includable header.
+        var result = RunPipeline(headerFileName: "idContesto");
+
+        Assert.Equal("idContesto.h", Path.GetFileName(result.HeaderPath!));
+    }
+
+    [Fact]
+    public void FallsBackToTheDefaultHeaderNameWhenBlank()
+    {
+        var result = RunPipeline(headerFileName: "   ");
+
+        Assert.Equal("helpId.h", Path.GetFileName(result.HeaderPath!));
+    }
+
+    [Fact]
+    public void BasesTheIncludeGuardOnTheHeaderName()
+    {
+        // The guard must match the file that is included, not the base name, otherwise two
+        // projects sharing one header name would collide or the guard would read wrong.
+        var result = RunPipeline(headerFileName: "idContesto.h");
+
+        var header = File.ReadAllText(result.HeaderPath!);
+        Assert.Contains("#ifndef _IDCONTESTO_H_", header);
+        Assert.Contains("#define _IDCONTESTO_H_", header);
+    }
+
+    [Fact]
+    public void KeepsTheHeaderInsideTheOutputDirectory()
+    {
+        // A name carrying a path separator must not be able to write outside the output
+        // folder: the separators are scrubbed, so the result stays a plain file name there.
+        var result = RunPipeline(headerFileName: "../fuori.h");
+
+        var fileName = Path.GetFileName(result.HeaderPath!);
+        Assert.Equal(result.OutputDirectory, Path.GetDirectoryName(result.HeaderPath!));
+        Assert.DoesNotContain('/', fileName);
+        Assert.DoesNotContain('\\', fileName);
+        Assert.Equal(".._fuori.h", fileName);
     }
 
     [Fact]

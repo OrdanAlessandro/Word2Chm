@@ -14,8 +14,14 @@ public sealed class ConversionOptions
     /// <summary>Output directory; created when missing.</summary>
     public required string OutputDirectory { get; init; }
 
-    /// <summary>Base name for the generated .chm/.hhp/.h files.</summary>
+    /// <summary>Base name for the generated .chm/.hhp files.</summary>
     public string? BaseName { get; init; }
+
+    /// <summary>
+    /// Name of the C++ header with the context IDs (default <c>helpId.h</c>). Only the
+    /// file name is used, so the header always lands next to the other generated files.
+    /// </summary>
+    public string? HeaderFileName { get; init; }
 
     public BuildOptions Build { get; init; } = new();
 
@@ -66,7 +72,11 @@ public sealed class ConversionPipeline
         var baseName = string.IsNullOrWhiteSpace(options.BaseName)
             ? Path.GetFileNameWithoutExtension(options.DocxPath)
             : options.BaseName!;
-        var names = new ChmProjectNames { BaseName = baseName };
+        var names = new ChmProjectNames
+        {
+            BaseName = baseName,
+            HeaderFileName = ChmProjectNames.NormalizeHeaderFileName(options.HeaderFileName),
+        };
 
         var parsed = ParseDocument(options.DocxPath);
         var document = _builder.Build(parsed, options.Build);
