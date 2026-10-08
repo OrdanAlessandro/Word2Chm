@@ -1,3 +1,4 @@
+using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using Word2Chm.Core.Common;
 using Word2Chm.Core.Compilation;
@@ -18,10 +19,11 @@ public sealed class ConversionOptions
     public string? BaseName { get; init; }
 
     /// <summary>
-    /// Name of the C++ header with the context IDs (default <c>helpId.h</c>). Only the
-    /// file name is used, so the header always lands next to the other generated files.
+    /// C++ header that supplies the numeric context IDs, e.g. <c>helpId.h</c>. The document
+    /// names a symbol and the number is read from here, so one header can back every
+    /// language edition and the IDs stay identical across all of them.
     /// </summary>
-    public string? HeaderFileName { get; init; }
+    public string? ContextIdHeaderPath { get; init; }
 
     /// <summary>
     /// Name of the compiled help file (default <c>SkipperQtHelp_IT.chm</c>). Only the file
@@ -32,9 +34,6 @@ public sealed class ConversionOptions
     public BuildOptions Build { get; init; } = new();
 
     public CompileOptions Compile { get; init; } = new();
-
-    /// <summary>Relative path stamped into the generated header comment.</summary>
-    public string? ChmRelativePath { get; init; }
 
     /// <summary>
     /// Directory holding the WinCHM skin (fixedtop.htm and its css/js/gif). When set and
@@ -49,8 +48,13 @@ public sealed class ConversionResult
     public required IReadOnlyList<string> GeneratedFiles { get; init; }
     public required CompileResult Compilation { get; init; }
     public required string OutputDirectory { get; init; }
-    public string? HeaderPath { get; init; }
     public string? ChmPath { get; init; }
+
+    /// <summary>
+    /// Text file listing the symbols the document used but the header did not define. Null
+    /// when every symbol resolved; the file is written even so the CHM is produced.
+    /// </summary>
+    public string? MissingIdsReportPath { get; init; }
 }
 
 /// <summary>
@@ -81,12 +85,17 @@ public sealed class ConversionPipeline
         var names = new ChmProjectNames
         {
             BaseName = baseName,
-            HeaderFileName = ChmProjectNames.NormalizeHeaderFileName(options.HeaderFileName),
             ChmFileName = options.ChmFileName,
         };
 
         var parsed = ParseDocument(options.DocxPath);
-        var document = _builder.Build(parsed, options.Build);
+
+        // The header supplied by the user is the source of truth for the numeric IDs. A
+        // missing or unreadable header is a mistake to fix before converting, not something
+        // to work around silently, so it is reported as such.
+        var build = options.Build;
+        build.ContextIds = LoadContextIdHeader(options.ContextIdHeaderPath);
+        var document = _builder.Build(parsed, build);
 
         var generated = new List<string>();
         var assetsDirectory = Path.Combine(outputDirectory, "assets");
@@ -168,9 +177,15 @@ public sealed class ConversionPipeline
             generated.Add(hhkPath);
         }
 
-        var headerPath = Path.Combine(outputDirectory, names.HeaderFile);
-        File.WriteAllText(headerPath, ChmProjectGenerator.GenerateHeader(document, names, options.ChmRelativePath));
-        generated.Add(headerPath);
+        // Symbols the document used but the header does not define. The CHM is still built so
+        // the rest of the work is not lost; the list is written to a text file the UI opens.
+        string? missingReportPath = null;
+        if (build.MissingSymbols.Count > 0)
+        {
+            missingReportPath = Path.Combine(outputDirectory, "id-mancanti.txt");
+            File.WriteAllText(missingReportPath, BuildMissingIdsReport(build.MissingSymbols, options.ContextIdHeaderPath));
+            generated.Add(missingReportPath);
+        }
 
         var chmPath = Path.Combine(outputDirectory, names.ChmFile);
         var compilation = _compiler.Compile(hhpPath, chmPath, options.Compile);
@@ -186,9 +201,73 @@ public sealed class ConversionPipeline
             GeneratedFiles = generated,
             Compilation = compilation,
             OutputDirectory = outputDirectory,
-            HeaderPath = headerPath,
             ChmPath = compilation.Success ? chmPath : null,
+            MissingIdsReportPath = missingReportPath,
         };
+    }
+
+    /// <summary>
+    /// Reads the C++ header with the ID definitions. A blank path yields an empty set, which
+    /// makes every symbol "missing" and is reported; a path pointing at a file that is not
+    /// there is a mistake to fix, so it stops the conversion.
+    /// </summary>
+    private static ContextIdHeader LoadContextIdHeader(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return ContextIdHeader.Parse(string.Empty);
+        }
+
+        if (!File.Exists(path))
+        {
+            throw new DocxUnreadableException(
+                $"Il file degli ID \"{path}\" non esiste o non è raggiungibile.");
+        }
+
+        try
+        {
+            return ContextIdHeader.Load(path);
+        }
+        catch (IOException ex)
+        {
+            throw new DocxUnreadableException(
+                $"Il file degli ID \"{path}\" non è leggibile: {ex.Message}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Writes the list of symbols missing from the header, ready to be pasted into it. A
+    /// numeric placeholder is included so the user only has to replace the numbers, which
+    /// is faster than typing every <c>#define</c> by hand.
+    /// </summary>
+    private static string BuildMissingIdsReport(IReadOnlyList<string> missing, string? headerPath)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("ID di contesto mancanti nel file .h");
+        builder.AppendLine("====================================");
+        builder.AppendLine();
+        builder.AppendLine(headerPath is not null
+            ? $"File .h utilizzato: {headerPath}"
+            : "File .h utilizzato: (nessuno)");
+        builder.AppendLine();
+        builder.AppendLine(
+            $"I seguenti {missing.Count} simboli sono usati nel documento Word ma non sono definiti nel file .h:");
+        builder.AppendLine("aggiungi le righe indicate al file .h e ripeti la conversione.");
+        builder.AppendLine();
+        foreach (var symbol in missing)
+        {
+            builder.AppendLine($"  {symbol}");
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("Righe da aggiungere al file .h (sostituisci i valori numerici):");
+        builder.AppendLine();
+        foreach (var symbol in missing)
+        {
+            builder.AppendLine($"#define {symbol,-40} 0");
+        }
+
+        return builder.ToString();
     }
 
     /// <summary>

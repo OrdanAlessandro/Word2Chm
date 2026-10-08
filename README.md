@@ -9,13 +9,18 @@ tabelle, immagini, collegamenti e segnalibri.
 - **Una pagina HTML per ogni Titolo 1.** Il livello che genera una nuova pagina è
   configurabile (1-6).
 - **ID di contesto espliciti.** Gli ID vengono scritti nel titolo con un marcatore
-  `Titolo {#IDH_NOME}` (oppure `Titolo {#IDH_NOME=1234}` per forzare il numero).
-  Il marcatore viene rimosso dal testo visibile. Poiché gli ID sono definiti a mano,
-  restano stabili anche quando la struttura o la lingua del documento cambiano.
+  `Titolo {#IDH_NOME}`. Il marcatore viene rimosso dal testo visibile. Poiché gli ID
+  sono definiti a mano, restano stabili anche quando la struttura o la lingua del
+  documento cambiano.
+- **Valori numerici dal file `.h` dell'utente.** Il numero non è generato: viene letto
+  dal `#define` corrispondente nel header C++ indicato nella GUI (campo "File ID (.h)").
+  Un unico header può quindi servire tutte le edizioni linguistiche mantenendo gli ID
+  identici. I simboli usati nel documento ma assenti dall'header vengono elencati in
+  `id-mancanti.txt` e la conversione si completa comunque, così si sistemano tutti in
+  un solo passaggio. Un marcatore `{#IDH_NOME=1234}` di vecchi documenti è ancora
+  riconosciuto e rimosso, ma il valore inline viene ignorato.
 - **Indice `.hhk` dalle voci di indice di Word.** I campi `XE` del documento
   alimentano il file di indice, incluse le sottovoci (`XE "parola" \t "sottovoce"`).
-- **Header C++ `.h`.** Ogni simbolo diventa una costante di compilazione, quindi il
-  codice chiamante non dipende mai dai valori numerici generati.
 
 ## Output prodotti
 
@@ -30,8 +35,11 @@ Per un documento `guida.docx` vengono generati, nella cartella di output:
 | `guida.hhp` | Progetto di HTML Help Workshop, con `[FILES]`, `[ALIAS]`, `[MAP]` |
 | `guida.hhc` | Indice (Contents) |
 | `guida.hhk` | Indice analitico (Index), solo se ci sono voci `XE` |
-| `guida.h` | Header C++ con gli help ID |
-| `guida.chm` | Guida compilata, solo se `hhc.exe` è disponibile |
+| `SkipperQtHelp_IT.chm` | Guida compilata, solo se `hhc.exe` è disponibile |
+| `id-mancanti.txt` | Simboli assenti dall'header `.h`, solo se ce ne sono |
+
+Il nome del `.chm` è configurabile (campo "File CHM") e non deriva dal nome base,
+così il file caricato dall'applicazione host conserva sempre lo stesso nome.
 
 ## Requisiti
 
@@ -59,7 +67,8 @@ var result = new ConversionPipeline().Run(new ConversionOptions
 {
     DocxPath = @"C:\docs\guida.docx",
     OutputDirectory = @"C:\docs\guida-chm",
-    Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 6 },
+    ContextIdHeaderPath = @"C:\src\helpId.h",          // obbligatorio: fornisce i numeri
+    Build = new BuildOptions { PageLevel = 6 },
     TemplateDirectory = @"C:\docs\template\fixedtop",   // opzionale
     Compile = new CompileOptions { HhcPath = @"C:\Program Files (x86)\HTML Help Workshop\hhc.exe" },
 });
@@ -80,14 +89,14 @@ GUI il percorso viene rilevato automaticamente accanto all'eseguibile.
 Nel codice C++:
 
 ```cpp
-#include "guida.h"
-HtmlHelp(hwnd, L"guida.chm", HH_HELP_CONTEXT, IDH_INSTALLAZIONE);
+#include "helpId.h"   // lo stesso header fornito alla conversione
+HtmlHelp(hwnd, L"SkipperQtHelp_IT.chm", HH_HELP_CONTEXT, IDH_INSTALLAZIONE);
 ```
 
 ## Struttura del repository
 
 - `src/Word2Chm.Core` — parser DOCX, modello intermedio, generatori (HTML, CSS,
-  `.hhp`, `.hhc`, `.hhk`, `.h`) e invocazione di `hhc.exe`.
+  `.hhp`, `.hhc`, `.hhk`) e invocazione di `hhc.exe`.
 - `src/Word2Chm.App` — interfaccia WinForms.
 - `tests/Word2Chm.Core.Tests` — test sulla pipeline completa; il documento di prova
   viene costruito a runtime, quindi non serve alcun binario di fixture.

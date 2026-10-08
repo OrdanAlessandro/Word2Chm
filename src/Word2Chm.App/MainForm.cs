@@ -14,8 +14,7 @@ internal sealed class MainForm : Form
     private readonly TextBox _outputDirectory = new();
     private readonly TextBox _baseName = new();
     private readonly TextBox _chmFileName = new();
-    private readonly TextBox _headerFileName = new();
-    private readonly NumericUpDown _startContextId = new();
+    private readonly TextBox _contextIdHeaderPath = new();
     private readonly NumericUpDown _pageLevel = new();
     private readonly NumericUpDown _bodyFontSize = new();
     private readonly TextBox _templateDirectory = new();
@@ -74,13 +73,13 @@ internal sealed class MainForm : Form
         _baseName.Dock = DockStyle.Fill;
         root.Controls.Add(_baseName, 1, row++);
 
-        // Name of the generated C++ header with the context IDs. The default is applied
-        // in LoadDefaults, which also honours a stored value.
-        root.Controls.Add(Label("File header (ID):"), 0, row);
-        _headerFileName.Dock = DockStyle.Fill;
-        root.Controls.Add(_headerFileName, 1, row);
-        root.SetColumnSpan(_headerFileName, 2);
-        row++;
+        // Header with the ID definitions. The document names the symbols, the numbers come
+        // from this file, so the same IDs hold across every language edition.
+        root.Controls.Add(Label("File ID (.h):"), 0, row);
+        _contextIdHeaderPath.Dock = DockStyle.Fill;
+        root.Controls.Add(_contextIdHeaderPath, 1, row);
+        var browseHeader = Button("Sfoglia...", BrowseContextIdHeader);
+        root.Controls.Add(browseHeader, 2, row++);
 
         // Name of the compiled .chm.
         root.Controls.Add(Label("File CHM:"), 0, row);
@@ -88,14 +87,6 @@ internal sealed class MainForm : Form
         root.Controls.Add(_chmFileName, 1, row);
         root.SetColumnSpan(_chmFileName, 2);
         row++;
-
-        // Start context ID.
-        root.Controls.Add(Label("ID di contesto iniziale:"), 0, row);
-        _startContextId.Dock = DockStyle.Left;
-        _startContextId.Minimum = 1;
-        _startContextId.Maximum = 65535;
-        _startContextId.Width = 120;
-        root.Controls.Add(_startContextId, 1, row++);
 
         // Page level.
         root.Controls.Add(Label("Nuova pagina al livello:"), 0, row);
@@ -208,14 +199,13 @@ internal sealed class MainForm : Form
 
         _docxPath.Text = settings.DocxPath ?? string.Empty;
         _outputDirectory.Text = settings.OutputDirectory ?? string.Empty;
-        _startContextId.Value = Math.Clamp(settings.StartContextId, 1, 65535);
         _pageLevel.Value = Math.Clamp(settings.PageLevel, 1, 6);
         _bodyFontSize.Value = Math.Clamp(
             (decimal)settings.BodyFontSizePt,
             _bodyFontSize.Minimum,
             _bodyFontSize.Maximum);
         _templateDirectory.Text = settings.TemplateDirectory ?? DefaultTemplateDirectory() ?? string.Empty;
-        _headerFileName.Text = ChmProjectNames.NormalizeHeaderFileName(settings.HeaderFileName);
+        _contextIdHeaderPath.Text = settings.ContextIdHeaderPath ?? string.Empty;
         _chmFileName.Text = ChmProjectNames.NormalizeChmFileName(settings.ChmFileName);
         _footer.Text = settings.Footer ?? HelpDocument.DefaultFooter;
         _hhcPath.Text = settings.HhcPath ?? HhcLocator.Locate() ?? string.Empty;
@@ -230,11 +220,10 @@ internal sealed class MainForm : Form
     {
         DocxPath = _docxPath.Text,
         OutputDirectory = _outputDirectory.Text,
-        StartContextId = (int)_startContextId.Value,
         PageLevel = (int)_pageLevel.Value,
         BodyFontSizePt = (double)_bodyFontSize.Value,
         TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
-        HeaderFileName = ChmProjectNames.NormalizeHeaderFileName(_headerFileName.Text),
+        ContextIdHeaderPath = string.IsNullOrWhiteSpace(_contextIdHeaderPath.Text) ? null : _contextIdHeaderPath.Text.Trim(),
         ChmFileName = ChmProjectNames.NormalizeChmFileName(_chmFileName.Text),
         Footer = _footer.Text,
         HhcPath = _hhcPath.Text,
@@ -271,6 +260,21 @@ internal sealed class MainForm : Form
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
             _outputDirectory.Text = dialog.SelectedPath;
+        }
+    }
+
+    private void BrowseContextIdHeader()
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Filter = "File header (*.h)|*.h|Tutti i file (*.*)|*.*",
+            Title = "Seleziona il file .h con le definizioni degli ID",
+            FileName = _contextIdHeaderPath.Text,
+        };
+
+        if (dialog.ShowDialog(this) == DialogResult.OK)
+        {
+            _contextIdHeaderPath.Text = dialog.FileName;
         }
     }
 
@@ -341,15 +345,14 @@ internal sealed class MainForm : Form
             DocxPath = _docxPath.Text.Trim(),
             OutputDirectory = _outputDirectory.Text.Trim(),
             BaseName = string.IsNullOrWhiteSpace(_baseName.Text) ? null : _baseName.Text.Trim(),
+            ContextIdHeaderPath = string.IsNullOrWhiteSpace(_contextIdHeaderPath.Text) ? null : _contextIdHeaderPath.Text.Trim(),
             Build = new BuildOptions
             {
-                DefaultContextId = (int)_startContextId.Value,
                 PageLevel = (int)_pageLevel.Value,
                 BodyFontSizePt = (double)_bodyFontSize.Value,
                 Footer = string.IsNullOrWhiteSpace(_footer.Text) ? HelpDocument.DefaultFooter : _footer.Text.Trim(),
             },
             TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
-            HeaderFileName = _headerFileName.Text,
             ChmFileName = _chmFileName.Text,
             Compile = new CompileOptions
             {
@@ -397,7 +400,9 @@ internal sealed class MainForm : Form
 
         var withIds = result.Document.Pages.Count(p => p.Symbol is not null);
         var anchoredIds = result.Document.Pages.Sum(p => p.Anchors.Count);
-        AppendLog($"ID di contesto definiti: {withIds + anchoredIds}");
+        var resolved = result.Document.Pages.Count(p => p.ContextId.HasValue) +
+                       result.Document.Pages.Sum(p => p.Anchors.Count(a => a.ContextId.HasValue));
+        AppendLog($"ID di contesto definiti: {withIds + anchoredIds} (risolti dal file .h: {resolved})");
         if (anchoredIds > 0)
         {
             AppendLog($"  di cui su sottotitoli (collegati a un'ancora): {anchoredIds}");
@@ -408,6 +413,12 @@ internal sealed class MainForm : Form
         foreach (var warning in result.Document.Warnings)
         {
             AppendLog("AVVISO: " + warning);
+        }
+
+        if (result.MissingIdsReportPath is not null)
+        {
+            AppendLog("ATTENZIONE: alcuni ID usati nel documento non sono definiti nel file .h.");
+            AppendLog("Elenco scritto in: " + Path.GetRelativePath(result.OutputDirectory, result.MissingIdsReportPath));
         }
 
         AppendLog("File generati:");
@@ -428,6 +439,27 @@ internal sealed class MainForm : Form
                 AppendLog(result.Compilation.Output);
             }
         }
+
+        // The missing-ID list is what the user has to act on, so open it right away instead
+        // of making them hunt for it in the output folder.
+        if (result.MissingIdsReportPath is not null)
+        {
+            OpenWithDefaultEditor(result.MissingIdsReportPath);
+        }
+    }
+
+    /// <summary>Opens a text file in the default editor, falling back to Notepad.</summary>
+    private static void OpenWithDefaultEditor(string path)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+        }
+        catch (Exception)
+        {
+            // open with notepad as fallback
+            Process.Start("notepad.exe", path);
+        }
     }
 
     private string? ValidateInputs()
@@ -440,6 +472,11 @@ internal sealed class MainForm : Form
         if (string.IsNullOrWhiteSpace(_outputDirectory.Text))
         {
             return "Seleziona la cartella di output.";
+        }
+
+        if (string.IsNullOrWhiteSpace(_contextIdHeaderPath.Text) || !File.Exists(_contextIdHeaderPath.Text))
+        {
+            return "Seleziona il file .h con le definizioni degli ID di contesto.";
         }
 
         if (_compileChm.Checked && !string.IsNullOrWhiteSpace(_hhcPath.Text) && !File.Exists(_hhcPath.Text))
@@ -507,7 +544,6 @@ internal sealed class AppSettings
     public string? DocxPath { get; set; }
     public string? OutputDirectory { get; set; }
     public string? HhcPath { get; set; }
-    public int StartContextId { get; set; } = 1000;
     public int PageLevel { get; set; } = BuildOptions.DefaultPageLevel;
 
     /// <summary>
@@ -519,10 +555,9 @@ internal sealed class AppSettings
     public string? TemplateDirectory { get; set; }
 
     /// <summary>
-    /// Name of the generated C++ header with the context IDs. Null for files written
-    /// before this setting existed, where the default name still applies.
+    /// Path of the C++ header (e.g. helpId.h) the numeric context IDs are read from.
     /// </summary>
-    public string? HeaderFileName { get; set; }
+    public string? ContextIdHeaderPath { get; set; }
 
     /// <summary>
     /// Name of the compiled .chm. Null for files written before this setting existed,

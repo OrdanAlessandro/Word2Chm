@@ -26,9 +26,6 @@ public sealed class HeadingBlock : DocumentBlock
     /// <summary>Symbolic context ID declared with the <c>{#...}</c> marker, if any.</summary>
     public string? Symbol { get; set; }
 
-    /// <summary>Numeric context ID declared as <c>{#SYMBOL=123}</c>, if any.</summary>
-    public int? ExplicitId { get; set; }
-
     public List<InlineNode> Inlines { get; } = new();
 
     /// <summary>Word index entry keywords declared by an XE field in this heading.</summary>

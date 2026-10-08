@@ -32,16 +32,42 @@ public sealed class ConversionPipelineTests : IDisposable
         return path;
     }
 
+    /// <summary>
+    /// Writes a header defining <paramref name="symbols"/> with sequential numbers, mirroring
+    /// the file the user supplies. It is written once per test run and reused.
+    /// </summary>
+    private string WriteContextIdHeader(params string[] symbols)
+    {
+        var path = Path.Combine(_workDirectory, "ids-" + Guid.NewGuid().ToString("N") + ".h");
+        var builder = new StringBuilder();
+        builder.AppendLine("#pragma once");
+        builder.AppendLine();
+        var id = 1000;
+        foreach (var symbol in symbols)
+        {
+            builder.AppendLine($"#define {symbol} {id++}");
+        }
+
+        File.WriteAllText(path, builder.ToString());
+        return path;
+    }
+
     private ConversionResult RunPipeline(
         string? hhcPath = null,
         string? baseName = null,
         string? templateDirectory = null,
         int? pageLevel = null,
-        string? headerFileName = null,
+        string? contextIdHeaderPath = null,
         string? chmFileName = null)
     {
+        // Every symbol the sample document declares, so a plain RunPipeline resolves them all.
+        var header = contextIdHeaderPath ?? WriteContextIdHeader(
+            "IDH_PANORAMICA", "IDH_REQUISITI", "IDH_INSTALLAZIONE", "IDH_PROCEDURA",
+            "IDH_RIFERIMENTI", "IDH_CAPITOLO", "IDH_PRIMO", "IDH_SECONDO",
+            "IDH_OPERAZIONI", "IDH_SEZIONE");
+
         var pipeline = new ConversionPipeline();
-        var build = new BuildOptions { DefaultContextId = 1000 };
+        var build = new BuildOptions();
         if (pageLevel is not null)
         {
             // Left unset otherwise, so the tests follow the production default instead of
@@ -54,7 +80,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = WriteSampleDocx(),
             OutputDirectory = Path.Combine(_workDirectory, "out"),
             BaseName = baseName,
-            HeaderFileName = headerFileName,
+            ContextIdHeaderPath = header,
             ChmFileName = chmFileName,
             Build = build,
             TemplateDirectory = templateDirectory,
@@ -73,7 +99,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "out-vuoto"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = pageLevel },
+            Build = new BuildOptions { PageLevel = pageLevel },
             Compile = new CompileOptions { HhcPath = null },
         });
     }
@@ -112,101 +138,95 @@ public sealed class ConversionPipelineTests : IDisposable
     }
 
     [Fact]
+    public void TakesContextIdsFromTheSuppliedHeader()
+    {
+        // The numbers come from the header, not from the order in the document, so the same
+        // header keeps the IDs identical across language editions.
+        var header = Path.Combine(_workDirectory, "mio.h");
+        File.WriteAllText(header, """
+            #pragma once
+            #define IDH_PANORAMICA   4001
+            #define IDH_REQUISITI    4002
+            #define IDH_INSTALLAZIONE 0x0FDA
+            #define IDH_PROCEDURA    4004
+            #define IDH_RIFERIMENTI  4005
+            #define IDH_CAPITOLO     4006
+            #define IDH_PRIMO        4007
+            #define IDH_SECONDO      4008
+            #define IDH_OPERAZIONI   4009
+            #define IDH_SEZIONE      4010
+            """);
+
+        var result = RunPipeline(contextIdHeaderPath: header);
+
+        Assert.Equal(4001, result.Document.Pages.Single(p => p.Title == "Panoramica").ContextId);
+        Assert.Equal(4002, result.Document.Pages.Single(p => p.Title == "Requisiti").ContextId);
+        // The header value is in hexadecimal, proving the number is parsed rather than guessed.
+        Assert.Equal(0x0FDA, result.Document.Pages.Single(p => p.Title == "Installazione").ContextId);
+    }
+
+    [Fact]
+    public void IgnoresTheLegacyInlineNumber()
+    {
+        // The sample declares {#IDH_RIFERIMENTI=5000} on the last page. That number is now
+        // meaningless: the header is the only source, because a number in the document could
+        // not stay consistent across languages.
+        var result = RunPipeline();
+
+        Assert.Equal(1004, result.Document.Pages.Single(p => p.Title == "Riferimenti").ContextId);
+    }
+
+    [Fact]
+    public void ReportsSymbolsMissingFromTheHeaderAndStillBuilds()
+    {
+        // Only two symbols are defined; the others must be listed, and the conversion must
+        // still complete so the CHM and the rest of the work are not lost.
+        var header = WriteContextIdHeader("IDH_PANORAMICA", "IDH_INSTALLAZIONE");
+
+        var result = RunPipeline(contextIdHeaderPath: header);
+
+        Assert.NotNull(result.MissingIdsReportPath);
+        var report = File.ReadAllText(result.MissingIdsReportPath!);
+        Assert.Contains("IDH_RIFERIMENTI", report);
+        Assert.Contains("IDH_PROCEDURA", report);
+        Assert.DoesNotContain("IDH_PANORAMICA", report);
+
+        // The symbol that is defined keeps its ID, the missing ones get none.
+        Assert.Equal(1000, result.Document.Pages.Single(p => p.Title == "Panoramica").ContextId);
+        Assert.Null(result.Document.Pages.Single(p => p.Title == "Riferimenti").ContextId);
+
+        // The CHM was still produced.
+        Assert.True(File.Exists(Path.Combine(result.OutputDirectory, "guida.hhp")));
+    }
+
+    [Fact]
+    public void WritesNoMapEntryForAMissingSymbol()
+    {
+        var header = WriteContextIdHeader("IDH_PANORAMICA");
+
+        var result = RunPipeline(contextIdHeaderPath: header);
+
+        var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+        Assert.Contains("#define IDH_PANORAMICA 1000", hhp);
+        Assert.DoesNotContain("#define IDH_RIFERIMENTI", hhp);
+    }
+
+    [Fact]
+    public void FailsWhenTheHeaderFileDoesNotExist()
+    {
+        var error = Assert.Throws<DocxUnreadableException>(() =>
+            RunPipeline(contextIdHeaderPath: Path.Combine(_workDirectory, "nope.h")));
+
+        Assert.Contains("non esiste", error.Message);
+    }
+
+    [Fact]
     public void StripsContextIdMarkerFromVisibleTitle()
     {
         var result = RunPipeline();
 
         Assert.All(result.Document.Pages, page => Assert.DoesNotContain("{#", page.Title));
         Assert.Equal("IDH_INSTALLAZIONE", result.Document.Pages.Single(p => p.Title == "Installazione").Symbol);
-    }
-
-    [Fact]
-    public void AssignsSequentialContextIdsButHonoursExplicitOnes()
-    {
-        var result = RunPipeline();
-
-        Assert.Equal(1000, result.Document.Pages.Single(p => p.Title == "Panoramica").ContextId);
-        Assert.Equal(1001, result.Document.Pages.Single(p => p.Title == "Requisiti").ContextId);
-        Assert.Equal(1002, result.Document.Pages.Single(p => p.Title == "Installazione").ContextId);
-
-        // The last page declares {#IDH_RIFERIMENTI=5000}.
-        Assert.Equal(5000, result.Document.Pages.Single(p => p.Title == "Riferimenti").ContextId);
-    }
-
-    [Fact]
-    public void GeneratesHeaderWithDefineForEachSymbol()
-    {
-        var result = RunPipeline();
-
-        var header = File.ReadAllText(result.HeaderPath!);
-        Assert.Contains("#define IDH_PANORAMICA", header);
-        Assert.Contains("#define IDH_INSTALLAZIONE", header);
-        Assert.Contains("#define IDH_RIFERIMENTI", header);
-        Assert.Contains("5000", header);
-    }
-
-    [Fact]
-    public void NamesTheHeaderHelpIdByDefault()
-    {
-        // The host application includes the header under a fixed name, so it cannot follow
-        // the base name: a conversion whose base name is not "helpId" must still write helpId.h.
-        var result = RunPipeline(baseName: "guida");
-
-        Assert.Equal("helpId.h", Path.GetFileName(result.HeaderPath!));
-        Assert.True(File.Exists(Path.Combine(result.OutputDirectory, "helpId.h")));
-    }
-
-    [Fact]
-    public void UsesTheConfiguredHeaderName()
-    {
-        var result = RunPipeline(headerFileName: "idContesto.h");
-
-        Assert.Equal("idContesto.h", Path.GetFileName(result.HeaderPath!));
-        Assert.True(File.Exists(Path.Combine(result.OutputDirectory, "idContesto.h")));
-        Assert.False(File.Exists(Path.Combine(result.OutputDirectory, "helpId.h")));
-    }
-
-    [Fact]
-    public void AppendsTheHeaderExtensionWhenItIsMissing()
-    {
-        // Typing "idContesto" in the UI should still produce an includable header.
-        var result = RunPipeline(headerFileName: "idContesto");
-
-        Assert.Equal("idContesto.h", Path.GetFileName(result.HeaderPath!));
-    }
-
-    [Fact]
-    public void FallsBackToTheDefaultHeaderNameWhenBlank()
-    {
-        var result = RunPipeline(headerFileName: "   ");
-
-        Assert.Equal("helpId.h", Path.GetFileName(result.HeaderPath!));
-    }
-
-    [Fact]
-    public void BasesTheIncludeGuardOnTheHeaderName()
-    {
-        // The guard must match the file that is included, not the base name, otherwise two
-        // projects sharing one header name would collide or the guard would read wrong.
-        var result = RunPipeline(headerFileName: "idContesto.h");
-
-        var header = File.ReadAllText(result.HeaderPath!);
-        Assert.Contains("#ifndef _IDCONTESTO_H_", header);
-        Assert.Contains("#define _IDCONTESTO_H_", header);
-    }
-
-    [Fact]
-    public void KeepsTheHeaderInsideTheOutputDirectory()
-    {
-        // A name carrying a path separator must not be able to write outside the output
-        // folder: the separators are scrubbed, so the result stays a plain file name there.
-        var result = RunPipeline(headerFileName: "../fuori.h");
-
-        var fileName = Path.GetFileName(result.HeaderPath!);
-        Assert.Equal(result.OutputDirectory, Path.GetDirectoryName(result.HeaderPath!));
-        Assert.DoesNotContain('/', fileName);
-        Assert.DoesNotContain('\\', fileName);
-        Assert.Equal(".._fuori.h", fileName);
     }
 
     [Fact]
@@ -461,7 +481,8 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "loc-out"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            ContextIdHeaderPath = WriteContextIdHeader("IDH_PRIMO", "IDH_SEZIONE"),
+            Build = new BuildOptions { PageLevel = 1 },
             Compile = new CompileOptions(),
         });
 
@@ -469,13 +490,13 @@ public sealed class ConversionPipelineTests : IDisposable
         Assert.Equal("Capitolo primo", result.Document.Pages[0].Title);
         Assert.Equal("IDH_PRIMO", result.Document.Pages[0].Symbol);
 
-        var header = File.ReadAllText(result.HeaderPath!);
-        Assert.Contains("#define IDH_PRIMO", header);
+        var hhp0 = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+        Assert.Contains("#define IDH_PRIMO", hhp0);
 
         // IDH_SEZIONE sits on a level-2 heading. The compiler resolves an alias only to a
         // topic file ("file.htm#anchor" triggers HHC3015 and the CHM then fails to open),
         // so the symbol targets a small redirect topic that forwards to the section.
-        Assert.Contains("#define IDH_SEZIONE", header);
+        Assert.Contains("#define IDH_SEZIONE", hhp0);
 
         var page = result.Document.Pages[0];
         var anchor = Assert.Single(page.Anchors);
@@ -517,7 +538,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "loc-out"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000 },
+            Build = new BuildOptions(),
             Compile = new CompileOptions(),
         });
 
@@ -568,7 +589,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "out-contenitore"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000 },
+            Build = new BuildOptions(),
             Compile = new CompileOptions { HhcPath = null },
         });
 
@@ -796,7 +817,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "elenco-out"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Build = new BuildOptions { PageLevel = 1 },
             Compile = new CompileOptions(),
         });
 
@@ -826,7 +847,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "elenco-vuoti-out"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Build = new BuildOptions { PageLevel = 1 },
             Compile = new CompileOptions(),
         });
 
@@ -854,7 +875,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "font-out"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1, BodyFontSizePt = 14 },
+            Build = new BuildOptions { PageLevel = 1, BodyFontSizePt = 14 },
             Compile = new CompileOptions(),
         });
 
@@ -881,7 +902,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "font-default-out"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Build = new BuildOptions { PageLevel = 1 },
             Compile = new CompileOptions(),
         });
 
@@ -903,7 +924,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "rif-out"),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Build = new BuildOptions { PageLevel = 1 },
             Compile = new CompileOptions(),
         });
 
@@ -995,7 +1016,7 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "corsivo-out-" + Guid.NewGuid().ToString("N")),
             BaseName = "guida",
-            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Build = new BuildOptions { PageLevel = 1 },
             Compile = new CompileOptions(),
         });
 

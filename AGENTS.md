@@ -46,9 +46,14 @@ si filtrano con `grep -v NETSDK1188`.
   Unicode (`String.Normalize`) non sono affidabili in questo ambiente. Per gli
   slug usare `Slugger.Deaccent`, che usa una mappa di accenti esplicita; per le
   lingue usare la mappa LCID in `ChmProjectGenerator`.
-- **ID di contesto**: definiti dall'utente nei titoli come `Titolo {#IDH_NOME}`
-  (o `{#IDH_NOME=1234}`). Vanno mantenuti stabili: sono il contratto verso il
-  codice C++ che chiama `HtmlHelp`.
+- **ID di contesto**: l'utente scrive il simbolo nel titolo (`Titolo {#IDH_NOME}`) e
+  fornisce con la GUI (`ContextIdHeaderPath`, campo "File ID (.h)") l'header C++ che
+  definisce i numeri. Il `.h` è l'unica fonte dei valori: così un solo header serve
+  tutte le edizioni linguistiche e gli ID restano stabili, che è il contratto verso il
+  codice C++ che chiama `HtmlHelp`. Un vecchio `{#IDH_NOME=1234}` è ancora riconosciuto
+  e rimosso dal testo visibile, ma il valore inline è ignorato. Un simbolo assente
+  dall'header non ferma la conversione: finisce in `BuildOptions.MissingSymbols` e viene
+  elencato in `id-mancanti.txt`, senza voce `[MAP]` (il compilatore la accetta).
 - **ID di contesto su sottotitoli**: `[ALIAS]` accetta solo un file, non
   `file.htm#anchor`: `hhc.exe` cercherebbe un file con quel nome letterale e
   segnala `HHC3015 ... the file does not exist`, senza però fallire la
@@ -127,13 +132,13 @@ si filtrano con `grep -v NETSDK1188`.
 - **Bordi**: le tabelle usano `#000000` fisso (non `--border`, che è grigio chiaro) per
   rispecchiare lo stile griglia di Word. Il CSS dello skin azzera il bordo delle `<img>`
   dei pulsanti, che Internet Explorer (il motore del visualizzatore CHM) disegna sui link.
-- **Nomi dei file di output**: sia il nome dell'header C++ (`helpId.h`) sia quello del
-  `.chm` (`SkipperQtHelp_IT.chm`) sono parametrizzati (`ConversionOptions.HeaderFileName` /
-  `ChmFileName`, campi "File header (ID)" e "File CHM" nella GUI) e **non** derivano dal nome
-  base: il programma host include un nome fisso e carica il CHM per nome, quindi non devono
-  cambiare a ogni conversione. La guardia `#ifndef` segue il nome dell'header, non il nome
-  base. Separatori di percorso e caratteri non validi diventano `_`, così un nome tipo
-  `../fuori.h` resta dentro la cartella di output; se manca l'estensione viene aggiunta.
+- **Nomi dei file di output**: il nome del `.chm` (`SkipperQtHelp_IT.chm`) è
+  parametrizzato (`ConversionOptions.ChmFileName`, campo "File CHM" nella GUI) e **non**
+  deriva dal nome base: il programma host carica il CHM per nome, quindi non deve cambiare
+  a ogni conversione. Separatori di percorso e caratteri non validi diventano `_`, così un
+  nome tipo `../fuori.chm` resta dentro la cartella di output; se manca l'estensione viene
+  aggiunta. L'header `.h` non è più generato: è un **input** dell'utente, e il suo percorso
+  è obbligatorio nella GUI (vedi la nota sugli ID di contesto).
 - **Corsivo: lo stile carattere è un *toggle*, non una dichiarazione**. Un `w:rStyle`
   che porta `<w:i/>` non significa "corsivo": *inverte* il corsivo ereditato dal
   paragrafo. In `SkipperQt_IT.docx` i paragrafi `Didascalia` (corsivo) con run `Enfasicorsivo`

@@ -19,9 +19,6 @@ public sealed class BuildOptions
     /// </summary>
     public const double DefaultBodyFontSizePt = 10.5;
 
-    /// <summary>Base numeric value for auto-assigned context IDs.</summary>
-    public int DefaultContextId { get; set; } = 1000;
-
     /// <summary>
     /// Deepest heading level that opens a new HTML page. It defaults to
     /// <see cref="DefaultPageLevel"/> so every heading that appears in the table of
@@ -44,8 +41,19 @@ public sealed class BuildOptions
     /// <summary>Footer text written to every page; see <see cref="HelpDocument.DefaultFooter"/>.</summary>
     public string Footer { get; set; } = HelpDocument.DefaultFooter;
 
-    /// <summary>Optional external overrides, keyed by symbol name.</summary>
-    public Dictionary<string, int> ContextIdOverrides { get; set; } = new(StringComparer.Ordinal);
+    /// <summary>
+    /// Header supplying the numeric context IDs, keyed by symbol name. The document only
+    /// names a symbol; the number always comes from here, so the IDs stay identical across
+    /// language editions that share one header.
+    /// </summary>
+    public ContextIdHeader? ContextIds { get; set; }
+
+    /// <summary>
+    /// Symbols referenced by the document but absent from <see cref="ContextIds"/>. Filled
+    /// while building; the conversion still completes so the user can see the whole list at
+    /// once instead of fixing one symbol per run.
+    /// </summary>
+    public List<string> MissingSymbols { get; } = new();
 }
 
 /// <summary>
@@ -65,17 +73,14 @@ public sealed class HelpProjectBuilder
         {
             Title = parsed.Title,
             Language = options.Language,
-            DefaultContextId = options.DefaultContextId,
             Footer = options.Footer,
         };
 
-        var usedIds = new HashSet<int>();
         var tocBuilder = new TocBuilder(options.MaxTocLevel);
 
         // Index entries reference the nearest preceding heading; we record it while scanning.
         var headingTargets = new Dictionary<DocumentBlock, (HelpPage Page, string Anchor)>();
         var pendingIndexEntries = new List<(IndexKeyword Keyword, DocumentBlock Block)>();
-        var nextId = options.DefaultContextId;
 
         HelpPage? current = null;
 
@@ -94,7 +99,7 @@ public sealed class HelpProjectBuilder
                 var isPageStart = heading.Level <= options.PageLevel || current is null;
                 if (isPageStart)
                 {
-                    current = CreatePage(heading, document.Pages.Count, options, usedIds, ref nextId);
+                    current = CreatePage(heading, document.Pages.Count, options);
                     SetAncestors(current, headingStack.Select(h => (h.Title, h.Local)).ToList());
                     document.Pages.Add(current);
 
@@ -115,7 +120,7 @@ public sealed class HelpProjectBuilder
                     // accept an anchor in that file name, so a marker on a sub-heading is
                     // bound to a small redirect topic that forwards to the page anchor.
                     heading.Anchor = slugger.Slug(heading.Title);
-                    var id = ResolveContextId(heading.Symbol, heading.ExplicitId, options, usedIds, ref nextId);
+                    var id = ResolveContextId(heading.Symbol, options);
                     var anchorTarget = $"{current.FileName}#{heading.Anchor}";
                     current.Anchors.Add(new HelpAnchor
                     {
@@ -385,9 +390,7 @@ public sealed class HelpProjectBuilder
     private static HelpPage CreatePage(
         HeadingBlock heading,
         int index,
-        BuildOptions options,
-        HashSet<int> usedIds,
-        ref int nextId)
+        BuildOptions options)
     {
         var page = new HelpPage
         {
@@ -399,7 +402,7 @@ public sealed class HelpProjectBuilder
 
         if (page.Symbol is not null)
         {
-            page.ContextId = ResolveContextId(page.Symbol, heading.ExplicitId, options, usedIds, ref nextId);
+            page.ContextId = ResolveContextId(page.Symbol, options);
         }
 
         return page;
@@ -430,36 +433,25 @@ public sealed class HelpProjectBuilder
         return page;
     }
 
-    private static int ResolveContextId(
-        string symbol,
-        int? explicitId,
-        BuildOptions options,
-        HashSet<int> usedIds,
-        ref int nextId)
+    /// <summary>
+    /// Looks the symbol up in the supplied header. A symbol the header does not define is
+    /// recorded and reported instead of stopping the run: the conversion still produces a
+    /// complete CHM, so the user fixes every missing ID in one pass. The topic keeps its
+    /// file and alias but carries no [MAP] entry, which the compiler accepts.
+    /// </summary>
+    private static int? ResolveContextId(string symbol, BuildOptions options)
     {
-        var id = explicitId
-                 ?? (options.ContextIdOverrides.TryGetValue(symbol, out var over) ? over : (int?)null)
-                 ?? TakeNext(ref nextId, usedIds);
-
-        if (!usedIds.Add(id))
+        if (options.ContextIds is not null && options.ContextIds.TryGetId(symbol, out var id))
         {
-            throw new InvalidOperationException(
-                $"L'ID di contesto {id} per il simbolo '{symbol}' è già usato da un altro simbolo.");
+            return id;
         }
 
-        return id;
-    }
-
-    private static int TakeNext(ref int nextId, HashSet<int> usedIds)
-    {
-        while (usedIds.Contains(nextId))
+        if (!options.MissingSymbols.Contains(symbol, StringComparer.Ordinal))
         {
-            nextId++;
+            options.MissingSymbols.Add(symbol);
         }
 
-        var value = nextId;
-        nextId = value + 1;
-        return value;
+        return null;
     }
 
     private static (HelpPage Page, string Anchor)? FindNearestHeading(

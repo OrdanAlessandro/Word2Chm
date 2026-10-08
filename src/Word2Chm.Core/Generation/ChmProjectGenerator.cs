@@ -8,13 +8,6 @@ namespace Word2Chm.Core.Generation;
 public sealed class ChmProjectNames
 {
     /// <summary>
-    /// Name of the C++ header holding the context IDs. It is independent of the base name
-    /// because the host application already <c>#include</c>s it under a fixed name, so a
-    /// conversion must be able to overwrite that exact file.
-    /// </summary>
-    public const string DefaultHeaderFileName = "helpId.h";
-
-    /// <summary>
     /// Name of the compiled help file. The default is a fixed name because the host
     /// application loads the help file by name; it is deliberately not derived from the
     /// base name, which would rename the help file on every conversion.
@@ -23,8 +16,6 @@ public sealed class ChmProjectNames
 
     public required string BaseName { get; init; }
 
-    public string HeaderFileName { get; init; } = DefaultHeaderFileName;
-
     /// <summary>File name of the compiled help file. Null means the default name.</summary>
     public string? ChmFileName { get; init; }
 
@@ -32,10 +23,6 @@ public sealed class ChmProjectNames
     public string HhpFile => BaseName + ".hhp";
     public string HhcFile => BaseName + ".hhc";
     public string HhkFile => BaseName + ".hhk";
-    public string HeaderFile => NormalizeHeaderFileName(HeaderFileName);
-
-    public static string NormalizeHeaderFileName(string? value) =>
-        NormalizeFileName(value, DefaultHeaderFileName);
 
     public static string NormalizeChmFileName(string? value) =>
         NormalizeFileName(value, DefaultChmFileName);
@@ -137,7 +124,10 @@ public static class ChmProjectGenerator
 
             foreach (var anchor in page.Anchors)
             {
-                builder.AppendLine($"#define {anchor.Symbol} {anchor.ContextId}");
+                if (anchor.ContextId.HasValue)
+                {
+                    builder.AppendLine($"#define {anchor.Symbol} {anchor.ContextId.Value}");
+                }
             }
         }
 
@@ -307,47 +297,6 @@ public static class ChmProjectGenerator
         builder.AppendLine($"      <param name=\"Local\" value=\"{Escape(Local(fileName, anchor))}\">");
         builder.AppendLine($"      <param name=\"ImageNumber\" value=\"{DocumentImageNumber}\">");
         builder.AppendLine("    </OBJECT>");
-    }
-
-    /// <summary>
-    /// Emits the header to include in a C++ project. Every symbol is a stable compile-time
-    /// constant, so call sites never depend on generated numeric values.
-    /// </summary>
-    public static string GenerateHeader(HelpDocument document, ChmProjectNames names, string? chmRelativePath = null)
-    {
-        var guard = "_" + Sanitize(Path.GetFileNameWithoutExtension(names.HeaderFile)).ToUpperInvariant() + "_H_";
-        var builder = new StringBuilder();
-
-        builder.AppendLine("// Generato automaticamente da Word2Chm. Non modificare a mano.");
-        builder.AppendLine("// Compila con: HtmlHelp(hwnd, L\"" + (chmRelativePath ?? names.ChmFile) + "\", HH_HELP_CONTEXT, IDH);");
-        builder.AppendLine("#pragma once");
-        builder.AppendLine();
-        builder.AppendLine("#ifndef " + guard);
-        builder.AppendLine("#define " + guard);
-        builder.AppendLine();
-
-        foreach (var page in document.Pages)
-        {
-            if (page.Symbol is not null && page.ContextId.HasValue)
-            {
-                builder.AppendLine($"#define {page.Symbol,-40} {page.ContextId.Value}   // {page.Title}");
-            }
-
-            foreach (var anchor in page.Anchors)
-            {
-                builder.AppendLine($"#define {anchor.Symbol,-40} {anchor.ContextId}   // {page.Title} > {anchor.Title}");
-            }
-        }
-
-        builder.AppendLine();
-        builder.AppendLine("#endif // " + guard);
-        return builder.ToString();
-    }
-
-    private static string Sanitize(string value)
-    {
-        var chars = value.Select(c => char.IsLetterOrDigit(c) ? c : '_').ToArray();
-        return new string(chars);
     }
 
     private static string MapLanguage(string language)

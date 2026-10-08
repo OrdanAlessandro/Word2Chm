@@ -14,9 +14,6 @@ public sealed class HelpDocument
     /// <summary>Culture code (e.g. "it-IT") written to the CHM language field.</summary>
     public string Language { get; set; } = "it-IT";
 
-    /// <summary>Base numeric value assigned to the first context ID.</summary>
-    public int DefaultContextId { get; set; } = 1000;
-
     /// <summary>
     /// Text shown in the footer of every page. Kept on the document so the skin and the
     /// built-in layout can share one value, configured from the application.
@@ -93,8 +90,11 @@ public sealed class HelpAnchor
     /// <summary>Symbolic identifier declared in the document, e.g. <c>IDH_AXES</c>.</summary>
     public string Symbol { get; set; } = string.Empty;
 
-    /// <summary>Numeric context ID written to the [MAP] section.</summary>
-    public int ContextId { get; set; }
+    /// <summary>
+    /// Numeric context ID written to the [MAP] section, taken from the supplied header.
+    /// Null when the header does not define the symbol; the anchor still gets its alias.
+    /// </summary>
+    public int? ContextId { get; set; }
 
     /// <summary>Anchor generated for the heading that declared the symbol.</summary>
     public string Anchor { get; set; } = string.Empty;

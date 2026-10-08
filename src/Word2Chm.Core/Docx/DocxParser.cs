@@ -269,7 +269,6 @@ public sealed class DocxParser
             Level = level,
             Title = marker.CleanText,
             Symbol = string.IsNullOrEmpty(marker.Symbol) ? null : marker.Symbol,
-            ExplicitId = marker.ExplicitId,
         };
 
         heading.Inlines.AddRange(RewriteInlineText(inlines, marker));
