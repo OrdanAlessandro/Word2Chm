@@ -39,6 +39,14 @@ si filtrano con `grep -v NETSDK1188`.
   `EnableWindowsTargeting`, ma non può essere eseguito qui.
 - La compilazione del `.chm` richiede `hhc.exe` (solo Windows). Senza di esso la
   pipeline genera comunque tutti i file di progetto.
+- **`hhc.exe` esce con codice 1 quando la compilazione riesce** (il suo flag interno
+  "file scritto" finisce nell'exit code senza essere invertito), quindi l'esito **non**
+  si decide con `ExitCode == 0`: `ChmCompiler` cancella il `.chm` precedente e considera
+  riuscita la compilazione se il file esiste dopo l'esecuzione. Il test
+  `CopiesTheChmEvenWhenHhcExitsWithANonZeroCode` blinda questo comportamento usando un
+  finto `hhc` che esce con 1 ma scrive comunque il file. Per lo stesso motivo un `.chm`
+  stantio nell'output non deve far sembrare riuscita una compilazione fallita: da qui la
+  cancellazione preventiva e il test `IgnoresAStaleChmLeftByAnEarlierRun`.
 
 ## Note di progettazione
 

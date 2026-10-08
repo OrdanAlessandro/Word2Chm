@@ -54,6 +54,19 @@ public sealed class ChmCompiler
             };
         }
 
+        // Remove any .chm left by an earlier run, so the file only exists afterwards if this
+        // compilation produced it. Without this a failed build could look successful just
+        // because a stale help file is sitting in the output directory.
+        try
+        {
+            File.Delete(chmPath);
+        }
+        catch (Exception)
+        {
+            // If it cannot be removed, the check below will simply see it; the compilation
+            // itself is unaffected.
+        }
+
         var output = new StringBuilder();
         using var process = new System.Diagnostics.Process();
         process.StartInfo = new System.Diagnostics.ProcessStartInfo
@@ -118,10 +131,15 @@ public sealed class ChmCompiler
         // Ensure asynchronous output draining has completed.
         process.WaitForExit();
 
+        // The exit code is not a usable success signal: hhc.exe returns 1 after a compilation
+        // that produced the help file (its internal "wrote the file" flag ends up in the
+        // process exit code, not inverted), so requiring 0 would report every real build as a
+        // failure. The presence of the .chm is the reliable outcome, since a previous one was
+        // removed just before the build started.
         var compiled = File.Exists(chmPath);
         return new CompileResult
         {
-            Success = process.ExitCode == 0 && compiled,
+            Success = compiled,
             ExitCode = process.ExitCode,
             Output = output.ToString().Trim(),
             ChmPath = compiled ? chmPath : null,

@@ -108,21 +108,26 @@ public sealed class ConversionPipelineTests : IDisposable
 
     /// <summary>
     /// A stand-in for hhc.exe that succeeds and produces the .chm the pipeline expects next to
-    /// the .hhp, so the post-compilation steps can be exercised on Linux too.
+    /// the .hhp, so the post-compilation steps can be exercised on Linux too. Pass
+    /// <paramref name="exitCode"/> to rehearse a compiler whose exit code is not zero even
+    /// though it wrote the file, which is what the real hhc.exe does.
     /// </summary>
-    private string WriteFakeHhc()
-    {
-        var path = Path.Combine(_workDirectory, "fake-hhc");
-        var lines = new[]
-        {
-            "#!/bin/sh",
-            "chm=\"$(sed -n 's/^Compiled file=//p' \"$1\" | tr -d '\\r')\"",
-            "[ -n \"$chm\" ] || exit 1",
-            "printf 'fake chm' > \"$chm\"",
-            "exit 0",
-        };
+    private string WriteFakeHhc(int exitCode = 0) =>
+        WriteScript("fake-hhc", $"""
+            chm="$(sed -n 's/^Compiled file=//p' "$1" | tr -d '\r')"
+            [ -n "$chm" ] || exit 1
+            printf 'fake chm' > "$chm"
+            exit {exitCode}
+            """);
 
-        File.WriteAllText(path, string.Join("\n", lines) + "\n");
+    /// <summary>A compiler that fails without producing any .chm.</summary>
+    private string WriteFailingHhc() =>
+        WriteScript("failing-hhc", "exit 1");
+
+    private string WriteScript(string name, string body)
+    {
+        var path = Path.Combine(_workDirectory, name);
+        File.WriteAllText(path, "#!/bin/sh\n" + body + "\n");
 
         if (!OperatingSystem.IsWindows())
         {
@@ -749,6 +754,47 @@ public sealed class ConversionPipelineTests : IDisposable
         Assert.NotNull(result.ChmPath);
         Assert.Null(result.CopiedChmPath);
         Assert.Contains(result.Document.Warnings, w => w.Contains("copiarlo"));
+    }
+
+    [Fact]
+    public void CopiesTheChmEvenWhenHhcExitsWithANonZeroCode()
+    {
+        // hhc.exe returns 1 after a build that produced the help file, so the exit code must
+        // not decide the outcome: the copy still has to happen.
+        var destination = Path.Combine(_workDirectory, "dist");
+        Directory.CreateDirectory(destination);
+
+        var result = RunPipeline(
+            hhcPath: WriteFakeHhc(exitCode: 1),
+            chmFileName: "manuale.chm",
+            chmCopyPath: destination);
+
+        Assert.True(result.Compilation.Success);
+        Assert.Equal(1, result.Compilation.ExitCode);
+        Assert.Equal(Path.Combine(destination, "manuale.chm"), result.CopiedChmPath);
+        Assert.True(File.Exists(Path.Combine(destination, "manuale.chm")));
+    }
+
+    [Fact]
+    public void IgnoresAStaleChmLeftByAnEarlierRun()
+    {
+        // A .chm already in the output directory must not make a failed compilation look
+        // successful, otherwise a stale help file would be copied to the destination.
+        var first = RunPipeline(hhcPath: WriteFakeHhc(), chmFileName: "manuale.chm");
+        var stale = Path.Combine(first.OutputDirectory, "manuale.chm");
+        Assert.True(File.Exists(stale));
+        File.WriteAllText(stale, "vecchio");
+
+        var destination = Path.Combine(_workDirectory, "dist");
+        var second = RunPipeline(
+            hhcPath: WriteFailingHhc(),
+            chmFileName: "manuale.chm",
+            chmCopyPath: destination);
+
+        Assert.False(second.Compilation.Success);
+        Assert.Null(second.CopiedChmPath);
+        Assert.False(File.Exists(stale));
+        Assert.False(Directory.Exists(destination));
     }
 
     [Fact]
