@@ -20,6 +20,17 @@ public sealed class BuildOptions
     public const double DefaultBodyFontSizePt = 10.5;
 
     /// <summary>
+    /// Range the GUI offers and a stored value is clamped to, so a settings or project file
+    /// that was hand-edited cannot request a page level the builder does not produce.
+    /// </summary>
+    public const int MinPageLevel = 1;
+    public const int MaxPageLevel = 6;
+
+    /// <summary>Range of the body text size, in points; shared with the GUI and the .w2c files.</summary>
+    public const double MinBodyFontSizePt = 6;
+    public const double MaxBodyFontSizePt = 24;
+
+    /// <summary>
     /// Deepest heading level that opens a new HTML page. It defaults to
     /// <see cref="DefaultPageLevel"/> so every heading that appears in the table of
     /// contents gets its own topic; the viewer would otherwise show a whole chapter as

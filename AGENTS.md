@@ -50,6 +50,22 @@ si filtrano con `grep -v NETSDK1188`.
 
 ## Note di progettazione
 
+- **Progetti `.w2c`**: i parametri della conversione si salvano in un file `.w2c`
+  (`Word2Chm.Core.Project.ProjectFile`, JSON camelCase con `version`). Il file contiene
+  **percorsi, non il documento**: si apre con "Apri..." o con il doppio click, e in quest'ultimo
+  caso Windows passa il percorso all'eseguibile come primo argomento (`Program.Main`), che
+  `MainForm` apre all'avvio. `Program` registra anche l'associazione `.w2c` in
+  `HKCU\Software\Classes` (`FileAssociation`), senza diritti di amministratore; la scrittura è
+  best-effort, quindi su una macchina bloccata resta comunque la barra strumenti. Documento,
+  header, cartella di output e destinazione della copia vengono scritti **relativi** al `.w2c`
+  quando stanno nella stessa cartella (o sotto di essa), così spostando la cartella del progetto
+  i percorsi restano validi; un percorso fuori da quell'albero resta assoluto e `hhc.exe` (che
+  appartiene alla macchina) resta assoluto. `ProjectFile.ToConversionOptions` fa da ponte verso
+  la pipeline e **clampa** `pageLevel` e `bodyFontSizePt` (il file si può modificare a mano),
+  con i limiti in `BuildOptions.Min/Max*`. La GUI ricava le opzioni di conversione dallo stesso
+  snapshot che salva, quindi non esiste un secondo posto da cui possano divergere; le modifiche
+  non salvate si confrontano serializzando il progetto (`HasUnsavedChanges`) e compaiono come
+  `*` nel titolo.
 - **Invariant globalization**: `CultureInfo.GetCultures` e la normalizzazione
   Unicode (`String.Normalize`) non sono affidabili in questo ambiente. Per gli
   slug usare `Slugger.Deaccent`, che usa una mappa di accenti esplicita; per le

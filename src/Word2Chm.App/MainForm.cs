@@ -5,6 +5,7 @@ using Word2Chm.Core.Common;
 using Word2Chm.Core.Compilation;
 using Word2Chm.Core.Generation;
 using Word2Chm.Core.Model;
+using Word2Chm.Core.Project;
 
 namespace Word2Chm.App;
 
@@ -26,18 +27,139 @@ internal sealed class MainForm : Form
     private readonly TextBox _log = new();
     private readonly Button _convertButton = new();
     private readonly ProgressBar _progress = new();
+    private readonly ToolStrip _toolStrip = new();
 
     private CancellationTokenSource? _cancellation;
 
-    public MainForm()
+    /// <summary>
+    /// UI state that is not a conversion input: which .w2c is open and whether the fields
+    /// have changed since it was last saved. Both change the title bar, which is where the
+    /// user reads them.
+    /// </summary>
+    private string? _projectPath;
+    private string _savedProjectJson = string.Empty;
+
+    public MainForm(string? projectPath = null)
     {
         Text = "Word2Chm - Da Word a guida HTML Help (.chm)";
         MinimumSize = new Size(760, 620);
         StartPosition = FormStartPosition.CenterScreen;
         Font = new Font("Segoe UI", 9F);
+        ApplyWindowIcon();
 
+        BuildToolStrip();
         BuildLayout();
         LoadDefaults();
+        _savedProjectJson = CurrentProject().Serialize();
+
+        if (!string.IsNullOrWhiteSpace(projectPath))
+        {
+            OpenProjectAtStartup(projectPath);
+        }
+
+        UpdateTitle();
+    }
+
+    /// <summary>
+    /// Opens the project passed on the command line, i.e. the file that was double-clicked.
+    /// A project that cannot be read is reported and the window stays on its defaults rather
+    /// than closing, so the user still has a working application.
+    /// </summary>
+    private void OpenProjectAtStartup(string path)
+    {
+        try
+        {
+            ApplyProject(ProjectFile.Load(path));
+            AppendLog("Progetto aperto: " + Path.GetFullPath(path));
+        }
+        catch (ProjectFileException ex)
+        {
+            AppendLog("ERRORE: " + ex.Message);
+            MessageBox.Show(this, ex.Message, "Progetto non leggibile", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    /// <summary>
+    /// Uses the executable icon for the title bar and task bar. Loaded from the file next to
+    /// the executable rather than the embedded resource so the same asset drives the window,
+    /// the .exe and the .w2c association.
+    /// </summary>
+    private void ApplyWindowIcon()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "app.ico");
+        try
+        {
+            if (File.Exists(path))
+            {
+                Icon = new Icon(path);
+            }
+        }
+        catch (Exception)
+        {
+            // A missing or unreadable icon must not stop the application from starting.
+        }
+    }
+
+    /// <summary>
+    /// New/open/save, placed above the fields so the file commands sit where the title bar
+    /// suggests. Icons are 16px PNGs shipped next to the executable; a missing file only
+    /// costs the picture, since every command keeps its label.
+    /// </summary>
+    private void BuildToolStrip()
+    {
+        _toolStrip.GripStyle = ToolStripGripStyle.Hidden;
+        _toolStrip.RenderMode = ToolStripRenderMode.System;
+        _toolStrip.Padding = new Padding(8, 4, 8, 4);
+        _toolStrip.ImageList = BuildIconList();
+        var hasIcons = _toolStrip.ImageList.Images.Count > 0;
+        _toolStrip.Items.Add(ToolItem("Nuovo", "new", hasIcons, NewProject));
+        _toolStrip.Items.Add(ToolItem("Apri...", "open", hasIcons, OpenProject));
+        _toolStrip.Items.Add(ToolItem("Salva", "save", hasIcons, () => SaveProject(saveAs: false)));
+        _toolStrip.Items.Add(ToolItem("Salva con nome...", "save-as", hasIcons, () => SaveProject(saveAs: true)));
+        Controls.Add(_toolStrip);
+    }
+
+    private static ImageList BuildIconList()
+    {
+        var list = new ImageList
+        {
+            ImageSize = new Size(16, 16),
+            ColorDepth = ColorDepth.Depth32Bit,
+            TransparentColor = Color.Transparent,
+        };
+
+        foreach (var name in new[] { "new", "open", "save", "save-as" })
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, "icons", $"{name}-16.png");
+            if (!File.Exists(path))
+            {
+                continue;
+            }
+
+            try
+            {
+                using var stream = File.OpenRead(path);
+                // Copied into a new bitmap so the list does not hold the file open.
+                list.Images.Add(name, new Bitmap(Image.FromStream(stream)));
+            }
+            catch (Exception)
+            {
+                // Skip the picture; the text label still identifies the command.
+            }
+        }
+
+        return list;
+    }
+
+    private static ToolStripButton ToolItem(string text, string imageKey, bool hasIcons, Action onClick)
+    {
+        var item = new ToolStripButton(text) { ImageKey = imageKey };
+        item.DisplayStyle = hasIcons
+            ? ToolStripItemDisplayStyle.ImageAndText
+            : ToolStripItemDisplayStyle.Text;
+        item.TextImageRelation = TextImageRelation.ImageBeforeText;
+        item.Click += (_, _) => onClick();
+        return item;
     }
 
     private void BuildLayout()
@@ -179,6 +301,9 @@ internal sealed class MainForm : Form
 
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         Controls.Add(root);
+        // Docked controls lay out in reverse z-order, so the bar has to be front-most to sit
+        // above the panel rather than under it.
+        _toolStrip.BringToFront();
         AcceptButton = _convertButton;
     }
 
@@ -203,7 +328,7 @@ internal sealed class MainForm : Form
 
         _docxPath.Text = settings.DocxPath ?? string.Empty;
         _outputDirectory.Text = settings.OutputDirectory ?? string.Empty;
-        _pageLevel.Value = Math.Clamp(settings.PageLevel, 1, 6);
+        _pageLevel.Value = Math.Clamp(settings.PageLevel, BuildOptions.MinPageLevel, BuildOptions.MaxPageLevel);
         _bodyFontSize.Value = Math.Clamp(
             (decimal)settings.BodyFontSizePt,
             _bodyFontSize.Minimum,
@@ -227,13 +352,229 @@ internal sealed class MainForm : Form
         OutputDirectory = _outputDirectory.Text,
         PageLevel = (int)_pageLevel.Value,
         BodyFontSizePt = (double)_bodyFontSize.Value,
-        TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
-        ContextIdHeaderPath = string.IsNullOrWhiteSpace(_contextIdHeaderPath.Text) ? null : _contextIdHeaderPath.Text.Trim(),
+        TemplateDirectory = Blank(_templateDirectory.Text),
+        ContextIdHeaderPath = Blank(_contextIdHeaderPath.Text),
         ChmFileName = ChmProjectNames.NormalizeChmFileName(_chmFileName.Text),
-        ChmCopyPath = string.IsNullOrWhiteSpace(_chmCopyPath.Text) ? null : _chmCopyPath.Text.Trim(),
+        ChmCopyPath = Blank(_chmCopyPath.Text),
         Footer = _footer.Text,
         HhcPath = _hhcPath.Text,
     }.Save();
+
+    private static string? Blank(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    /// <summary>Fills the fields from a project, replacing whatever is there.</summary>
+    private void ApplyProject(ProjectFile project)
+    {
+        _docxPath.Text = project.DocxPath ?? string.Empty;
+        _outputDirectory.Text = project.OutputDirectory ?? string.Empty;
+        _baseName.Text = project.BaseName ?? string.Empty;
+        _contextIdHeaderPath.Text = project.ContextIdHeaderPath ?? string.Empty;
+        _chmFileName.Text = ChmProjectNames.NormalizeChmFileName(project.ChmFileName);
+        _chmCopyPath.Text = project.ChmCopyPath ?? string.Empty;
+        _pageLevel.Value = Math.Clamp(project.PageLevel, BuildOptions.MinPageLevel, BuildOptions.MaxPageLevel);
+        _bodyFontSize.Value = Math.Clamp(
+            (decimal)project.BodyFontSizePt,
+            _bodyFontSize.Minimum,
+            _bodyFontSize.Maximum);
+        _templateDirectory.Text = project.TemplateDirectory ?? string.Empty;
+        _footer.Text = project.Footer ?? HelpDocument.DefaultFooter;
+        _hhcPath.Text = project.HhcPath ?? string.Empty;
+        _compileChm.Checked = project.CompileChm;
+        _openOutput.Checked = project.OpenOutputOnFinish;
+
+        _projectPath = project.SourcePath;
+        _savedProjectJson = CurrentProject().Serialize();
+        UpdateTitle();
+    }
+
+    /// <summary>Snapshots the fields as a project, without touching the open file.</summary>
+    private ProjectFile CurrentProject() => new()
+    {
+        SourcePath = _projectPath,
+        DocxPath = Blank(_docxPath.Text),
+        OutputDirectory = Blank(_outputDirectory.Text),
+        BaseName = Blank(_baseName.Text),
+        ContextIdHeaderPath = Blank(_contextIdHeaderPath.Text),
+        ChmFileName = _chmFileName.Text,
+        ChmCopyPath = Blank(_chmCopyPath.Text),
+        PageLevel = (int)_pageLevel.Value,
+        BodyFontSizePt = (double)_bodyFontSize.Value,
+        TemplateDirectory = Blank(_templateDirectory.Text),
+        Footer = _footer.Text,
+        HhcPath = Blank(_hhcPath.Text),
+        CompileChm = _compileChm.Checked,
+        OpenOutputOnFinish = _openOutput.Checked,
+    };
+
+    /// <summary>
+    /// True when the fields differ from the project last saved or opened. Compared through
+    /// the serialized form so a new field cannot silently go unnoticed.
+    /// </summary>
+    private bool HasUnsavedChanges() =>
+        !string.Equals(CurrentProject().Serialize(), _savedProjectJson, StringComparison.Ordinal);
+
+    private void NewProject()
+    {
+        if (!ConfirmDiscardChanges())
+        {
+            return;
+        }
+
+        SaveSettings();
+
+        // A new project starts from the same defaults as a first run, so the fields come back
+        // to a known state rather than keeping the previous project's values.
+        _docxPath.Clear();
+        _outputDirectory.Clear();
+        _baseName.Clear();
+        _contextIdHeaderPath.Clear();
+        _chmCopyPath.Clear();
+        _pageLevel.Value = BuildOptions.DefaultPageLevel;
+        _bodyFontSize.Value = (decimal)BuildOptions.DefaultBodyFontSizePt;
+        _footer.Text = HelpDocument.DefaultFooter;
+        _templateDirectory.Text = DefaultTemplateDirectory() ?? string.Empty;
+        _chmFileName.Text = ChmProjectNames.NormalizeChmFileName(null);
+        _hhcPath.Text = HhcLocator.Locate() ?? string.Empty;
+        _compileChm.Checked = true;
+        _openOutput.Checked = false;
+
+        _projectPath = null;
+        _savedProjectJson = CurrentProject().Serialize();
+        UpdateTitle();
+        AppendLog("Nuovo progetto.");
+    }
+
+    private void OpenProject()
+    {
+        if (!ConfirmDiscardChanges())
+        {
+            return;
+        }
+
+        using var dialog = new OpenFileDialog
+        {
+            Filter = ProjectFile.DialogFilter,
+            Title = "Apri un progetto Word2Chm",
+            DefaultExt = ProjectFile.Extension,
+            CheckFileExists = true,
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        try
+        {
+            ApplyProject(ProjectFile.Load(dialog.FileName));
+            AppendLog("Progetto aperto: " + dialog.FileName);
+        }
+        catch (ProjectFileException ex)
+        {
+            AppendLog("ERRORE: " + ex.Message);
+            MessageBox.Show(this, ex.Message, "Progetto non leggibile", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private void SaveProject(bool saveAs)
+    {
+        var target = _projectPath;
+
+        if (saveAs || string.IsNullOrWhiteSpace(target))
+        {
+            using var dialog = new SaveFileDialog
+            {
+                Filter = ProjectFile.DialogFilter,
+                Title = saveAs ? "Salva il progetto con un altro nome" : "Salva il progetto",
+                DefaultExt = ProjectFile.Extension,
+                FileName = string.IsNullOrWhiteSpace(target)
+                    ? ProjectFile.SuggestedFileName(_docxPath.Text)
+                    : Path.GetFileName(target),
+                InitialDirectory = string.IsNullOrWhiteSpace(target)
+                    ? SafeDirectory(_docxPath.Text)
+                    : Path.GetDirectoryName(target),
+            };
+
+            if (dialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            target = dialog.FileName;
+        }
+
+        var project = CurrentProject();
+        try
+        {
+            project.Save(target!);
+        }
+        catch (ProjectFileException ex)
+        {
+            AppendLog("ERRORE: " + ex.Message);
+            MessageBox.Show(this, ex.Message, "Salvataggio non riuscito", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        _projectPath = project.SourcePath;
+        _savedProjectJson = CurrentProject().Serialize();
+        UpdateTitle();
+        AppendLog("Progetto salvato: " + _projectPath);
+    }
+
+    /// <summary>Folder of a path, for seeding a dialog; an empty string when there is none.</summary>
+    private static string SafeDirectory(string path)
+    {
+        try
+        {
+            return string.IsNullOrWhiteSpace(path) ? string.Empty : Path.GetDirectoryName(path) ?? string.Empty;
+        }
+        catch (ArgumentException)
+        {
+            // A half-typed path is not worth an error when it only seeds a dialog.
+            return string.Empty;
+        }
+    }
+
+    /// <summary>
+    /// Asks before throwing away edits. Returns true when it is safe to continue.
+    /// </summary>
+    private bool ConfirmDiscardChanges()
+    {
+        if (!HasUnsavedChanges())
+        {
+            return true;
+        }
+
+        var answer = MessageBox.Show(
+            this,
+            "Il progetto ha modifiche non salvate. Salvarle prima di continuare?",
+            "Modifiche non salvate",
+            MessageBoxButtons.YesNoCancel,
+            MessageBoxIcon.Question);
+
+        switch (answer)
+        {
+            case DialogResult.Yes:
+                SaveProject(saveAs: false);
+                // If the save was cancelled the fields are still dirty, so continue only when
+                // it actually went through.
+                return !HasUnsavedChanges();
+            case DialogResult.No:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void UpdateTitle()
+    {
+        var name = string.IsNullOrWhiteSpace(_projectPath)
+            ? "Senza titolo"
+            : Path.GetFileName(_projectPath);
+        var dirty = HasUnsavedChanges() ? " *" : string.Empty;
+        Text = $"Word2Chm - {name}{dirty}";
+    }
 
     private void BrowseDocx()
     {
@@ -367,26 +708,9 @@ internal sealed class MainForm : Form
         SaveSettings();
         SetBusy(true);
 
-        var options = new ConversionOptions
-        {
-            DocxPath = _docxPath.Text.Trim(),
-            OutputDirectory = _outputDirectory.Text.Trim(),
-            BaseName = string.IsNullOrWhiteSpace(_baseName.Text) ? null : _baseName.Text.Trim(),
-            ContextIdHeaderPath = string.IsNullOrWhiteSpace(_contextIdHeaderPath.Text) ? null : _contextIdHeaderPath.Text.Trim(),
-            Build = new BuildOptions
-            {
-                PageLevel = (int)_pageLevel.Value,
-                BodyFontSizePt = (double)_bodyFontSize.Value,
-                Footer = string.IsNullOrWhiteSpace(_footer.Text) ? HelpDocument.DefaultFooter : _footer.Text.Trim(),
-            },
-            TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
-            ChmFileName = _chmFileName.Text,
-            ChmCopyPath = string.IsNullOrWhiteSpace(_chmCopyPath.Text) ? null : _chmCopyPath.Text.Trim(),
-            Compile = new CompileOptions
-            {
-                HhcPath = _compileChm.Checked ? _hhcPath.Text.Trim() : null,
-            },
-        };
+        // The fields are the project, so the conversion input is derived from the same
+        // snapshot the file commands use; there is no second place where they could drift.
+        var options = CurrentProject().ToConversionOptions();
 
         _cancellation = new CancellationTokenSource();
         var token = _cancellation.Token;
@@ -558,6 +882,13 @@ internal sealed class MainForm : Form
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
+        // Closing with unsaved edits asks first, and a cancelled close leaves the window open.
+        if (e.CloseReason == CloseReason.UserClosing && !ConfirmDiscardChanges())
+        {
+            e.Cancel = true;
+            return;
+        }
+
         _cancellation?.Cancel();
         base.OnFormClosing(e);
     }

@@ -70,12 +70,43 @@ Il percorso di `hhc.exe` può essere passato esplicitamente oppure viene ricerca
 automaticamente nella variabile d'ambiente `HHC_PATH`, nelle cartelle di
 installazione di HTML Help Workshop, nel Windows SDK e accanto all'eseguibile.
 
+## Progetti `.w2c`
+
+La GUI mette in cima quattro comandi con icona e testo: **Nuovo**, **Apri...**,
+**Salva** e **Salva con nome...**. Salvare scrive un file `.w2c` con tutti i parametri
+della conversione (documento, header `.h`, cartella di output, nome e destinazione del
+`.chm`, livello di pagina, corpo, piè di pagina, template, percorso di `hhc.exe` e stato
+dei flag "Compila" e "Apri l'output"). Le icone sono PNG da 16px in
+`src/Word2Chm.App/icons`; se un file manca resta il testo, quindi il comando è comunque
+riconoscibile.
+
+Il `.w2c` contiene **percorsi, non il documento**: documento, header, cartella di output
+e destinazione della copia vengono salvati relativi al file di progetto quando stanno
+nella stessa cartella, così spostando o copiando la cartella su un'altra macchina i
+percorsi restano validi. Il percorso di `hhc.exe` resta assoluto, perché appartiene alla
+macchina e non al progetto.
+
+Il file si apre dal comando **Apri...** oppure con il doppio click: l'applicazione
+registra l'associazione `.w2c` per l'utente corrente al primo avvio (in
+`HKCU\Software\Classes`, senza richiedere privilegi di amministratore). Se la macchina
+impedisce la scrittura nel registro, il comando **Apri...** funziona comunque.
+
+Il titolo della finestra mostra il nome del progetto aperto e un `*` quando ci sono
+modifiche non salvate; chiudendo o aprendo un altro progetto l'applicazione chiede se
+salvarle.
+
 ## Uso
 
 GUI:
 
 ```
 dotnet run --project src/Word2Chm.App
+```
+
+La GUI può anche aprire direttamente un progetto:
+
+```
+dotnet run --project src/Word2Chm.App -- C:\docs\guida.w2c
 ```
 
 Da codice:
@@ -115,8 +146,9 @@ HtmlHelp(hwnd, L"SkipperQtHelp_IT.chm", HH_HELP_CONTEXT, IDH_INSTALLAZIONE);
 ## Struttura del repository
 
 - `src/Word2Chm.Core` — parser DOCX, modello intermedio, generatori (HTML, CSS,
-  `.hhp`, `.hhc`, `.hhk`) e invocazione di `hhc.exe`.
-- `src/Word2Chm.App` — interfaccia WinForms.
+  `.hhp`, `.hhc`, `.hhk`), file di progetto `.w2c` e invocazione di `hhc.exe`.
+- `src/Word2Chm.App` — interfaccia WinForms, con le icone della barra in
+  `src/Word2Chm.App/icons` e l'icona dell'applicazione in `app.ico`.
 - `tests/Word2Chm.Core.Tests` — test sulla pipeline completa; il documento di prova
   viene costruito a runtime, quindi non serve alcun binario di fixture.
 

@@ -11,7 +11,16 @@
     <Product>Word2Chm</Product>
     <Version>1.0.0</Version>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- Also shown by Explorer for the .w2c files the app registers itself for. -->
+    <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Shipped alongside the executable so the window icon does not depend on extraction. -->
+    <None Include="app.ico" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Toolbar icons, one file per command; see MainForm.BuildIconList. -->
+    <None Include="icons\*.png" CopyToOutputDirectory="PreserveNewest" Link="icons\%(Filename)%(Extension)" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Word2Chm.Core\Word2Chm.Core.csproj" />
