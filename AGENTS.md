@@ -54,6 +54,17 @@ si filtrano con `grep -v NETSDK1188`.
   e rimosso dal testo visibile, ma il valore inline è ignorato. Un simbolo assente
   dall'header non ferma la conversione: finisce in `BuildOptions.MissingSymbols` e viene
   elencato in `id-mancanti.txt`, senza voce `[MAP]` (il compilatore la accetta).
+- **L'header degli ID può usare `#define` o `enum`**: `ContextIdHeader.Parse` legge
+  entrambi e i due stili possono convivere nello stesso file; vince l'ultimo valore visto
+  in ordine di file (come per il compilatore). In un `enum` (anche `enum class`) un
+  enumeratore senza `=` vale il precedente più uno, a partire da 0; sono valutate le
+  espressioni costanti usuali (letterali dec/hex/bin/ottali, riferimenti a simboli già
+  noti, `<< >> & ^ | + - * / % ~` e parentesi) con la giusta precedenza. Un'espressione
+  non risolvibile (cast, chiamate, simboli definiti più avanti) **non** viene indovinata:
+  il simbolo resta assente e finisce tra gli ID mancanti; anche il successivo run di
+  enumeratori impliciti resta ignoto finché un valore esplicito non lo riavvia. I commenti
+  `//` e `/* ... */` sono rimossi prima dell'analisi, quindi un esempio dentro un commento
+  non conta come definizione. Un valore che non entra in `int` lancia `OverflowException`.
 - **ID di contesto su sottotitoli**: `[ALIAS]` accetta solo un file, non
   `file.htm#anchor`: `hhc.exe` cercherebbe un file con quel nome letterale e
   segnala `HHC3015 ... the file does not exist`, senza però fallire la
@@ -139,6 +150,15 @@ si filtrano con `grep -v NETSDK1188`.
   nome tipo `../fuori.chm` resta dentro la cartella di output; se manca l'estensione viene
   aggiunta. L'header `.h` non è più generato: è un **input** dell'utente, e il suo percorso
   è obbligatorio nella GUI (vedi la nota sugli ID di contesto).
+- **Copia del `.chm` fuori dalla cartella di output**: `ConversionOptions.ChmCopyPath`
+  (campo "Copia il .chm in" nella GUI) copia il file compilato dove lo legge
+  l'applicazione host. Una destinazione che è già una cartella riceve il file con il suo
+  nome, altrimenti il valore è il percorso del file e l'estensione `.chm` viene aggiunta se
+  manca. La copia avviene **dopo** la compilazione e solo se la compilazione è riuscita; un
+  errore di copia non annulla nulla (il `.chm` resta nella cartella di output e il problema
+  finisce in `HelpDocument.Warnings`, mostrato nel log). Il percorso effettivo è in
+  `ConversionResult.CopiedChmPath`. La GUI rifiuta la copia con "Compila il .chm" disattivato,
+  perché non ci sarebbe alcun file da copiare.
 - **Corsivo: lo stile carattere è un *toggle*, non una dichiarazione**. Un `w:rStyle`
   che porta `<w:i/>` non significa "corsivo": *inverte* il corsivo ereditato dal
   paragrafo. In `SkipperQt_IT.docx` i paragrafi `Didascalia` (corsivo) con run `Enfasicorsivo`

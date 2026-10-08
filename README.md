@@ -14,7 +14,11 @@ tabelle, immagini, collegamenti e segnalibri.
   documento cambiano.
 - **Valori numerici dal file `.h` dell'utente.** Il numero non è generato: viene letto
   dal `#define` corrispondente nel header C++ indicato nella GUI (campo "File ID (.h)").
-  Un unico header può quindi servire tutte le edizioni linguistiche mantenendo gli ID
+  Lo stesso file può definire gli ID con `#define IDH_X 1000` oppure con un `enum`
+  (anche `enum class`), e i due stili possono convivere; in un `enum` un enumeratore
+  senza `=` vale il precedente più uno, come per il compilatore C++, e sono accettate
+  espressioni costanti (`1 << 4`, `IDH_BASE | 0x2`, `(2 + 3) * 4`). Un unico header può
+  quindi servire tutte le edizioni linguistiche mantenendo gli ID
   identici. I simboli usati nel documento ma assenti dall'header vengono elencati in
   `id-mancanti.txt` e la conversione si completa comunque, così si sistemano tutti in
   un solo passaggio. Un marcatore `{#IDH_NOME=1234}` di vecchi documenti è ancora
@@ -40,6 +44,15 @@ Per un documento `guida.docx` vengono generati, nella cartella di output:
 
 Il nome del `.chm` è configurabile (campo "File CHM") e non deriva dal nome base,
 così il file caricato dall'applicazione host conserva sempre lo stesso nome.
+
+Con il campo "Copia il .chm in" si indica dove copiare il `.chm` compilato al termine
+della conversione: una cartella esistente (o un percorso che termina con il separatore)
+riceve il file con il suo nome, altrimenti il valore è il percorso del file di
+destinazione e, se manca, l'estensione `.chm` viene aggiunta. Il `.chm` resta comunque
+nella cartella di output. Se la copia non riesce (destinazione non scrivibile, disco
+pieno) la conversione non viene persa: il file compilato resta nella cartella di output
+e il problema compare tra gli avvisi. La copia ha senso solo insieme alla compilazione,
+quindi la GUI rifiuta la combinazione "copia impostata" e "compila disattivato".
 
 ## Requisiti
 
@@ -70,6 +83,7 @@ var result = new ConversionPipeline().Run(new ConversionOptions
     ContextIdHeaderPath = @"C:\src\helpId.h",          // obbligatorio: fornisce i numeri
     Build = new BuildOptions { PageLevel = 6 },
     TemplateDirectory = @"C:\docs\template\fixedtop",   // opzionale
+    ChmCopyPath = @"C:\app\Help\",                       // opzionale: copia il .chm qui
     Compile = new CompileOptions { HhcPath = @"C:\Program Files (x86)\HTML Help Workshop\hhc.exe" },
 });
 ```

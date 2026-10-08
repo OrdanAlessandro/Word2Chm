@@ -14,6 +14,7 @@ internal sealed class MainForm : Form
     private readonly TextBox _outputDirectory = new();
     private readonly TextBox _baseName = new();
     private readonly TextBox _chmFileName = new();
+    private readonly TextBox _chmCopyPath = new();
     private readonly TextBox _contextIdHeaderPath = new();
     private readonly NumericUpDown _pageLevel = new();
     private readonly NumericUpDown _bodyFontSize = new();
@@ -45,7 +46,6 @@ internal sealed class MainForm : Form
         {
             Dock = DockStyle.Fill,
             ColumnCount = 3,
-            RowCount = 12,
             Padding = new Padding(12),
         };
         root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
@@ -87,6 +87,13 @@ internal sealed class MainForm : Form
         root.Controls.Add(_chmFileName, 1, row);
         root.SetColumnSpan(_chmFileName, 2);
         row++;
+
+        // Where to drop a copy of the compiled .chm for the host application.
+        root.Controls.Add(Label("Copia il .chm in:"), 0, row);
+        _chmCopyPath.Dock = DockStyle.Fill;
+        root.Controls.Add(_chmCopyPath, 1, row);
+        var browseChmCopy = Button("Sfoglia...", BrowseChmCopyPath);
+        root.Controls.Add(browseChmCopy, 2, row++);
 
         // Page level.
         root.Controls.Add(Label("Nuova pagina al livello:"), 0, row);
@@ -163,17 +170,14 @@ internal sealed class MainForm : Form
         root.Controls.Add(logPanel, 1, row);
         root.SetColumnSpan(logPanel, 2);
 
-        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        // Every row sizes to its content except the log, which takes the remaining height.
+        root.RowCount = row + 1;
+        for (var i = 0; i < row; i++)
+        {
+            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        }
 
+        root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         Controls.Add(root);
         AcceptButton = _convertButton;
     }
@@ -207,6 +211,7 @@ internal sealed class MainForm : Form
         _templateDirectory.Text = settings.TemplateDirectory ?? DefaultTemplateDirectory() ?? string.Empty;
         _contextIdHeaderPath.Text = settings.ContextIdHeaderPath ?? string.Empty;
         _chmFileName.Text = ChmProjectNames.NormalizeChmFileName(settings.ChmFileName);
+        _chmCopyPath.Text = settings.ChmCopyPath ?? string.Empty;
         _footer.Text = settings.Footer ?? HelpDocument.DefaultFooter;
         _hhcPath.Text = settings.HhcPath ?? HhcLocator.Locate() ?? string.Empty;
 
@@ -225,6 +230,7 @@ internal sealed class MainForm : Form
         TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
         ContextIdHeaderPath = string.IsNullOrWhiteSpace(_contextIdHeaderPath.Text) ? null : _contextIdHeaderPath.Text.Trim(),
         ChmFileName = ChmProjectNames.NormalizeChmFileName(_chmFileName.Text),
+        ChmCopyPath = string.IsNullOrWhiteSpace(_chmCopyPath.Text) ? null : _chmCopyPath.Text.Trim(),
         Footer = _footer.Text,
         HhcPath = _hhcPath.Text,
     }.Save();
@@ -275,6 +281,27 @@ internal sealed class MainForm : Form
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
             _contextIdHeaderPath.Text = dialog.FileName;
+        }
+    }
+
+    /// <summary>
+    /// Picks the destination for the .chm copy. A file dialog is used by default because the
+    /// common case is dropping the guide into a folder the application already defines; typing a
+    /// directory into the field still works and is honoured by the pipeline.
+    /// </summary>
+    private void BrowseChmCopyPath()
+    {
+        using var dialog = new SaveFileDialog
+        {
+            Filter = "Guida compilata (*.chm)|*.chm|Tutti i file (*.*)|*.*",
+            Title = "Dove copiare il file .chm al termine",
+            FileName = ChmProjectNames.NormalizeChmFileName(_chmFileName.Text),
+            OverwritePrompt = false,
+        };
+
+        if (dialog.ShowDialog(this) == DialogResult.OK)
+        {
+            _chmCopyPath.Text = dialog.FileName;
         }
     }
 
@@ -354,6 +381,7 @@ internal sealed class MainForm : Form
             },
             TemplateDirectory = string.IsNullOrWhiteSpace(_templateDirectory.Text) ? null : _templateDirectory.Text.Trim(),
             ChmFileName = _chmFileName.Text,
+            ChmCopyPath = string.IsNullOrWhiteSpace(_chmCopyPath.Text) ? null : _chmCopyPath.Text.Trim(),
             Compile = new CompileOptions
             {
                 HhcPath = _compileChm.Checked ? _hhcPath.Text.Trim() : null,
@@ -430,6 +458,10 @@ internal sealed class MainForm : Form
         if (result.Compilation.Success)
         {
             AppendLog("Compilazione CHM completata: " + result.ChmPath);
+            if (result.CopiedChmPath is not null)
+            {
+                AppendLog("Copia del .chm scritta in: " + result.CopiedChmPath);
+            }
         }
         else
         {
@@ -482,6 +514,13 @@ internal sealed class MainForm : Form
         if (_compileChm.Checked && !string.IsNullOrWhiteSpace(_hhcPath.Text) && !File.Exists(_hhcPath.Text))
         {
             return "Il percorso di hhc.exe non esiste. Correggilo oppure disabilita la compilazione.";
+        }
+
+        // There is nothing to copy when the .chm is not compiled, so catch the combination
+        // here rather than silently leaving the requested copy undone.
+        if (!_compileChm.Checked && !string.IsNullOrWhiteSpace(_chmCopyPath.Text))
+        {
+            return "Per copiare il .chm devi anche abilitare \"Compila il .chm\".";
         }
 
         return null;
@@ -564,6 +603,12 @@ internal sealed class AppSettings
     /// where the default name still applies.
     /// </summary>
     public string? ChmFileName { get; set; }
+
+    /// <summary>
+    /// Destination the compiled .chm is copied to at the end of a successful conversion.
+    /// Null means no copy is made.
+    /// </summary>
+    public string? ChmCopyPath { get; set; }
 
     /// <summary>
     /// Footer written to every topic. A file from before this setting existed has a null

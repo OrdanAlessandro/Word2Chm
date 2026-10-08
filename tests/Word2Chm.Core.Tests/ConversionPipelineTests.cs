@@ -58,7 +58,8 @@ public sealed class ConversionPipelineTests : IDisposable
         string? templateDirectory = null,
         int? pageLevel = null,
         string? contextIdHeaderPath = null,
-        string? chmFileName = null)
+        string? chmFileName = null,
+        string? chmCopyPath = null)
     {
         // Every symbol the sample document declares, so a plain RunPipeline resolves them all.
         var header = contextIdHeaderPath ?? WriteContextIdHeader(
@@ -82,6 +83,7 @@ public sealed class ConversionPipelineTests : IDisposable
             BaseName = baseName,
             ContextIdHeaderPath = header,
             ChmFileName = chmFileName,
+            ChmCopyPath = chmCopyPath,
             Build = build,
             TemplateDirectory = templateDirectory,
             Compile = new CompileOptions { HhcPath = hhcPath },
@@ -102,6 +104,34 @@ public sealed class ConversionPipelineTests : IDisposable
             Build = new BuildOptions { PageLevel = pageLevel },
             Compile = new CompileOptions { HhcPath = null },
         });
+    }
+
+    /// <summary>
+    /// A stand-in for hhc.exe that succeeds and produces the .chm the pipeline expects next to
+    /// the .hhp, so the post-compilation steps can be exercised on Linux too.
+    /// </summary>
+    private string WriteFakeHhc()
+    {
+        var path = Path.Combine(_workDirectory, "fake-hhc");
+        var lines = new[]
+        {
+            "#!/bin/sh",
+            "chm=\"$(sed -n 's/^Compiled file=//p' \"$1\" | tr -d '\\r')\"",
+            "[ -n \"$chm\" ] || exit 1",
+            "printf 'fake chm' > \"$chm\"",
+            "exit 0",
+        };
+
+        File.WriteAllText(path, string.Join("\n", lines) + "\n");
+
+        if (!OperatingSystem.IsWindows())
+        {
+            File.SetUnixFileMode(
+                path,
+                UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        }
+
+        return path;
     }
 
     /// <summary>Writes the fixedtop skin into the test directory and returns its folder.</summary>
@@ -628,6 +658,126 @@ public sealed class ConversionPipelineTests : IDisposable
         var result = RunPipeline(hhcPath: Path.Combine(_workDirectory, "nope.exe"));
 
         Assert.False(result.Compilation.Success);
+    }
+
+    [Fact]
+    public void CopiesTheCompiledChmToTheConfiguredDirectory()
+    {
+        var destination = Path.Combine(_workDirectory, "dist");
+        Directory.CreateDirectory(destination);
+
+        var result = RunPipeline(
+            hhcPath: WriteFakeHhc(),
+            chmFileName: "manuale.chm",
+            chmCopyPath: destination);
+
+        Assert.True(result.Compilation.Success);
+        var expected = Path.Combine(destination, "manuale.chm");
+        Assert.Equal(expected, result.CopiedChmPath);
+        Assert.True(File.Exists(expected));
+        Assert.Contains(expected, result.GeneratedFiles);
+
+        // The .chm stays in the output directory as well.
+        Assert.True(File.Exists(Path.Combine(result.OutputDirectory, "manuale.chm")));
+    }
+
+    [Fact]
+    public void CopiesTheCompiledChmToTheConfiguredFileName()
+    {
+        var destination = Path.Combine(_workDirectory, "altrove", "copia.chm");
+
+        var result = RunPipeline(
+            hhcPath: WriteFakeHhc(),
+            chmFileName: "manuale.chm",
+            chmCopyPath: destination);
+
+        Assert.Equal(destination, result.CopiedChmPath);
+        Assert.True(File.Exists(destination));
+    }
+
+    [Fact]
+    public void AppendsTheChmExtensionToTheCopyDestination()
+    {
+        var destination = Path.Combine(_workDirectory, "senzaestensione");
+
+        var result = RunPipeline(
+            hhcPath: WriteFakeHhc(),
+            chmFileName: "manuale.chm",
+            chmCopyPath: destination);
+
+        Assert.Equal(destination + ".chm", result.CopiedChmPath);
+        Assert.True(File.Exists(destination + ".chm"));
+    }
+
+    [Fact]
+    public void MakesNoCopyWhenNoDestinationIsConfigured()
+    {
+        var result = RunPipeline(hhcPath: WriteFakeHhc(), chmFileName: "manuale.chm");
+
+        Assert.True(result.Compilation.Success);
+        Assert.Null(result.CopiedChmPath);
+    }
+
+    [Fact]
+    public void MakesNoCopyWhenTheChmWasNotCompiled()
+    {
+        var destination = Path.Combine(_workDirectory, "dist");
+
+        // Without hhc.exe there is no .chm, so the requested copy cannot happen and must be
+        // reported as absent rather than silently creating an empty file.
+        var result = RunPipeline(chmCopyPath: destination);
+
+        Assert.False(result.Compilation.Success);
+        Assert.Null(result.CopiedChmPath);
+        Assert.False(Directory.Exists(destination));
+    }
+
+    [Fact]
+    public void KeepsTheConversionWhenTheCopyDestinationIsUnusable()
+    {
+        // A file, not a directory, stands in the way, so creating the copy fails. The compiled
+        // .chm is still reported and the failure surfaces as a warning.
+        var blocker = Path.Combine(_workDirectory, "bloccato");
+        File.WriteAllText(blocker, "x");
+
+        var result = RunPipeline(
+            hhcPath: WriteFakeHhc(),
+            chmFileName: "manuale.chm",
+            chmCopyPath: Path.Combine(blocker, "sotto", "manuale.chm"));
+
+        Assert.True(result.Compilation.Success);
+        Assert.NotNull(result.ChmPath);
+        Assert.Null(result.CopiedChmPath);
+        Assert.Contains(result.Document.Warnings, w => w.Contains("copiarlo"));
+    }
+
+    [Fact]
+    public void UsesTheHeaderWrittenAsAnEnum()
+    {
+        // The header can define the IDs with an enum instead of #define; implicit enumerators
+        // count on from the previous value, exactly as the compiler would.
+        var header = Path.Combine(_workDirectory, "enum-ids.h");
+        File.WriteAllText(header, """
+            enum class HelpID {
+                IDH_PANORAMICA = 1000,
+                IDH_REQUISITI,
+                IDH_INSTALLAZIONE,
+                IDH_PROCEDURA,
+                IDH_RIFERIMENTI,
+                IDH_CAPITOLO,
+                IDH_PRIMO,
+                IDH_SECONDO,
+                IDH_OPERAZIONI,
+                IDH_SEZIONE,
+            };
+            """);
+
+        var result = RunPipeline(contextIdHeaderPath: header);
+        var hhp = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhp"));
+
+        Assert.Contains("IDH_INSTALLAZIONE=002-installazione.html", hhp);
+        Assert.Contains("#define IDH_INSTALLAZIONE 1002", hhp);
+        Assert.Contains("#define IDH_PROCEDURA 1003", hhp);
     }
 
     [Fact]

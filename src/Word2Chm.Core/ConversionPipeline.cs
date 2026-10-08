@@ -31,6 +31,15 @@ public sealed class ConversionOptions
     /// </summary>
     public string? ChmFileName { get; init; }
 
+    /// <summary>
+    /// Where the compiled .chm is copied once the build succeeds, for dropping the guide into
+    /// the folder the host application reads it from. An existing directory (or a value ending
+    /// with a separator) receives the file under its own name; anything else is the target file
+    /// path, given a .chm extension when it has none. Null leaves the .chm only in the output
+    /// directory.
+    /// </summary>
+    public string? ChmCopyPath { get; init; }
+
     public BuildOptions Build { get; init; } = new();
 
     public CompileOptions Compile { get; init; } = new();
@@ -49,6 +58,13 @@ public sealed class ConversionResult
     public required CompileResult Compilation { get; init; }
     public required string OutputDirectory { get; init; }
     public string? ChmPath { get; init; }
+
+    /// <summary>
+    /// Full path of the copy made outside the output directory, when <see cref="ConversionOptions.ChmCopyPath"/>
+    /// was set and the copy succeeded. Null when no copy was requested or there was no compiled
+    /// file to copy.
+    /// </summary>
+    public string? CopiedChmPath { get; init; }
 
     /// <summary>
     /// Text file listing the symbols the document used but the header did not define. Null
@@ -195,6 +211,12 @@ public sealed class ConversionPipeline
             generated.Add(chmPath);
         }
 
+        // Copying the help file where the host application expects it is a convenience after a
+        // successful build: a failure to copy must not discard the work that already succeeded.
+        var copiedChmPath = compilation.Success
+            ? CopyChm(chmPath, options.ChmCopyPath, document, generated)
+            : null;
+
         return new ConversionResult
         {
             Document = document,
@@ -202,8 +224,59 @@ public sealed class ConversionPipeline
             Compilation = compilation,
             OutputDirectory = outputDirectory,
             ChmPath = compilation.Success ? chmPath : null,
+            CopiedChmPath = copiedChmPath,
             MissingIdsReportPath = missingReportPath,
         };
+    }
+
+    /// <summary>
+    /// Copies the compiled .chm to the path the user configured and returns the file written,
+    /// or null when nothing was requested or there was nothing to copy. A destination that
+    /// already names a directory receives the file under its own name; any other value is the
+    /// target file, given a .chm extension when it has none.
+    /// </summary>
+    private static string? CopyChm(string chmPath, string? destination, HelpDocument document, List<string> generated)
+    {
+        if (string.IsNullOrWhiteSpace(destination) || !File.Exists(chmPath))
+        {
+            return null;
+        }
+
+        var requested = destination.Trim();
+        string targetPath;
+        try
+        {
+            targetPath = Path.GetFullPath(
+                Directory.Exists(requested) || requested.EndsWith(Path.DirectorySeparatorChar) ||
+                requested.EndsWith(Path.AltDirectorySeparatorChar)
+                    ? Path.Combine(requested, Path.GetFileName(chmPath))
+                    : Path.HasExtension(requested) ? requested : requested + ".chm");
+
+            var targetDirectory = Path.GetDirectoryName(targetPath);
+            if (!string.IsNullOrEmpty(targetDirectory))
+            {
+                Directory.CreateDirectory(targetDirectory);
+            }
+
+            if (string.Equals(Path.GetFullPath(chmPath), targetPath, StringComparison.OrdinalIgnoreCase))
+            {
+                // Source and destination coincide: the file is already where it was asked to be.
+                return targetPath;
+            }
+
+            File.Copy(chmPath, targetPath, overwrite: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException or ArgumentException)
+        {
+            // The .chm is already built in the output directory, so an unusable destination is
+            // reported and the rest of the conversion stands.
+            document.Warnings.Add(
+                $"Il .chm è stato compilato ma non è stato possibile copiarlo in \"{requested}\": {ex.Message}");
+            return null;
+        }
+
+        generated.Add(targetPath);
+        return targetPath;
     }
 
     /// <summary>

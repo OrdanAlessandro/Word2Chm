@@ -131,6 +131,151 @@ public sealed class ContextIdHeaderTests
     }
 
     [Fact]
+    public void ReadsEnumeratorsWithExplicitValues()
+    {
+        var header = ContextIdHeader.Parse("""
+            enum class HelpID {
+                IDH_EDIT_PARAMETERS = 1000,
+                IDH_START_JOB = 1001,
+                IDH_AXES = 0x03EA,
+            };
+            """);
+
+        Assert.Equal(1000, header.Definitions["IDH_EDIT_PARAMETERS"]);
+        Assert.Equal(1001, header.Definitions["IDH_START_JOB"]);
+        Assert.Equal(1002, header.Definitions["IDH_AXES"]);
+    }
+
+    [Fact]
+    public void ImplicitEnumeratorsIncrementThePreviousValue()
+    {
+        var header = ContextIdHeader.Parse("""
+            enum class HelpID {
+                IDH_EDIT_PARAMETERS = 1000,
+                IDH_START_JOB,
+                IDH_AXES,
+                IDH_BATCH,
+                IDH_SCRIPT,
+                IDH_SPINDLE_GROUP,
+                IDH_ATC,
+            };
+            """);
+
+        Assert.Equal(1000, header.Definitions["IDH_EDIT_PARAMETERS"]);
+        Assert.Equal(1001, header.Definitions["IDH_START_JOB"]);
+        Assert.Equal(1002, header.Definitions["IDH_AXES"]);
+        Assert.Equal(1003, header.Definitions["IDH_BATCH"]);
+        Assert.Equal(1004, header.Definitions["IDH_SCRIPT"]);
+        Assert.Equal(1005, header.Definitions["IDH_SPINDLE_GROUP"]);
+        Assert.Equal(1006, header.Definitions["IDH_ATC"]);
+    }
+
+    [Fact]
+    public void AnEnumeratorWithoutValueAfterAnExpressionKeepsTheRun()
+    {
+        var header = ContextIdHeader.Parse("""
+            #define IDH_BASE 1000
+            enum Plain {
+                IDH_A = IDH_BASE + 1,
+                IDH_B,
+                IDH_C = 2000,
+                IDH_D,
+            };
+            """);
+
+        Assert.Equal(1001, header.Definitions["IDH_A"]);
+        Assert.Equal(1002, header.Definitions["IDH_B"]);
+        Assert.Equal(2000, header.Definitions["IDH_C"]);
+        Assert.Equal(2001, header.Definitions["IDH_D"]);
+    }
+
+    [Fact]
+    public void ResolvesCommonConstantExpressions()
+    {
+        var header = ContextIdHeader.Parse("""
+            #define IDH_BASE 0x1000
+            enum Flags {
+                IDH_ONE = 1 << 4,
+                IDH_TWO = IDH_BASE | 0x2,
+                IDH_THREE = (2 + 3) * 4,
+                IDH_FOUR = 0b1010,
+                IDH_FIVE = 010,
+            };
+            """);
+
+        Assert.Equal(16, header.Definitions["IDH_ONE"]);
+        Assert.Equal(0x1002, header.Definitions["IDH_TWO"]);
+        Assert.Equal(20, header.Definitions["IDH_THREE"]);
+        Assert.Equal(10, header.Definitions["IDH_FOUR"]);
+        Assert.Equal(8, header.Definitions["IDH_FIVE"]);
+    }
+
+    [Fact]
+    public void SkipsEnumeratorsItCannotResolveInsteadOfGuessing()
+    {
+        var header = ContextIdHeader.Parse("""
+            enum Weird {
+                IDH_A = someFunction(),
+                IDH_B,
+                IDH_C = 3000,
+                IDH_D,
+            };
+            """);
+
+        // The unresolvable value poisons the implicit run after it, but a later explicit value
+        // starts a fresh one.
+        Assert.False(header.TryGetId("IDH_A", out _));
+        Assert.False(header.TryGetId("IDH_B", out _));
+        Assert.Equal(3000, header.Definitions["IDH_C"]);
+        Assert.Equal(3001, header.Definitions["IDH_D"]);
+    }
+
+    [Fact]
+    public void MixesDefinesAndEnumsKeepingTheLastValue()
+    {
+        var header = ContextIdHeader.Parse("""
+            #define IDH_A 1000
+            enum Plain {
+                IDH_A = 2000,
+                IDH_B,
+            };
+            #define IDH_B 3000
+            """);
+
+        Assert.Equal(2000, header.Definitions["IDH_A"]);
+        Assert.Equal(3000, header.Definitions["IDH_B"]);
+    }
+
+    [Fact]
+    public void IgnoresBlockCommentsSpanningLines()
+    {
+        var header = ContextIdHeader.Parse("""
+            /* enum Plain {
+                   IDH_A = 1000,
+               }; */
+            enum Plain {
+                IDH_A = 2000,
+                IDH_B,
+            };
+            """);
+
+        Assert.Equal(2000, header.Definitions["IDH_A"]);
+        Assert.Equal(2001, header.Definitions["IDH_B"]);
+    }
+
+    [Fact]
+    public void ThrowsWhenAnEnumValueExceedsTheIntRange()
+    {
+        var text = """
+            enum TooBig {
+                IDH_A = 2147483648,
+            };
+            """;
+
+        Assert.Throws<OverflowException>(() => ContextIdHeader.Parse(text));
+    }
+
+    [Fact]
     public void ReadsTheSampleHeaderShippedWithTheProject()
     {
         // Guards the contract with the real header used by the sample document.
