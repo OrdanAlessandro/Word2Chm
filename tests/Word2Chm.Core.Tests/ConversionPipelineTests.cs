@@ -795,4 +795,69 @@ public sealed class ConversionPipelineTests : IDisposable
         Assert.Contains($"{target.FileName}#{resolved.Anchor}", html);
         Assert.DoesNotContain("href=\"#\"", html);
     }
+
+    [Fact]
+    public void KeepsItalicDeclaredByAParagraphStyle()
+    {
+        // Regression: Word italicises captions through the paragraph style, leaving the runs
+        // bare. Reading only the run's own w:i dropped every caption in the document.
+        var path = Path.Combine(_workDirectory, "corsivo-paragrafo.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateStyleItalicSample());
+
+        var result = RunItalicPipeline(path);
+        var html = ReadPage(result, "Didascalie");
+
+        Assert.Contains("<em>Figura 1: pannello dei parametri</em>", html);
+    }
+
+    [Fact]
+    public void KeepsItalicDeclaredByACharacterStyle()
+    {
+        // Regression: the "Emphasis" character style states the italic, not the run.
+        var path = Path.Combine(_workDirectory, "corsivo-carattere.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateStyleItalicSample());
+
+        var result = RunItalicPipeline(path);
+        var html = ReadPage(result, "Enfasi");
+
+        Assert.Contains("<em>enfasi</em>", html);
+    }
+
+    [Fact]
+    public void ResolvesItalicThroughTheBasedOnChain()
+    {
+        // A style that states no italic of its own inherits it from the style it is based on.
+        var path = Path.Combine(_workDirectory, "corsivo-ereditato.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateStyleItalicSample());
+
+        var result = RunItalicPipeline(path);
+        var html = ReadPage(result, "Ereditarieta");
+
+        Assert.Contains("<em>Testo corsivo per ereditarieta.</em>", html);
+    }
+
+    [Fact]
+    public void LetsADirectRunSettingSwitchItalicOff()
+    {
+        // w:i val="0" on the run means "not italic" even when the style says otherwise, so
+        // the inherited value must not be applied on top of it.
+        var path = Path.Combine(_workDirectory, "corsivo-disattivato.docx");
+        File.WriteAllBytes(path, DocxFixture.CreateStyleItalicSample());
+
+        var result = RunItalicPipeline(path);
+        var html = ReadPage(result, "Disattivazione");
+
+        Assert.Contains("<em>Corsivo </em>non corsivo in didascalia", html);
+        Assert.DoesNotContain("<em>non corsivo in didascalia</em>", html);
+    }
+
+    private ConversionResult RunItalicPipeline(string path) =>
+        new ConversionPipeline().Run(new ConversionOptions
+        {
+            DocxPath = path,
+            OutputDirectory = Path.Combine(_workDirectory, "corsivo-out-" + Guid.NewGuid().ToString("N")),
+            BaseName = "guida",
+            Build = new BuildOptions { DefaultContextId = 1000, PageLevel = 1 },
+            Compile = new CompileOptions(),
+        });
 }

@@ -489,4 +489,118 @@ internal static class DocxFixture
     /// <summary>Smallest valid PNG, used as an embedded image placeholder.</summary>
     private static readonly byte[] TinyPng = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==");
+
+    /// <summary>
+    /// A document that italicises through styles rather than through direct run formatting,
+    /// the shape Word produces for captions, quotes and the Emphasis character style. It
+    /// also covers the basedOn chain and an explicit w:i val="0" that switches off an
+    /// inherited italic.
+    /// </summary>
+    public static byte[] CreateStyleItalicSample()
+    {
+        using var stream = new MemoryStream();
+        using (var document = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var main = document.AddMainDocumentPart();
+            var stylesPart = main.AddNewPart<StyleDefinitionsPart>();
+
+            var body = new Body();
+            main.Document = new Document(body);
+
+            stylesPart.Styles = BuildItalicStyles();
+            stylesPart.Styles.Save();
+
+            // Caption: the paragraph style italicises, the runs stay bare.
+            body.Append(new Paragraph(
+                new ParagraphProperties(
+                    new ParagraphStyleId { Val = "Heading1" }),
+                new Run(new Text("Didascalie") { Space = SpaceProcessingModeValues.Preserve })));
+            body.Append(new Paragraph(
+                new ParagraphProperties(new ParagraphStyleId { Val = "Didascalia" }),
+                StyledRun("Enfasi", "Figura 1: pannello dei parametri")));
+
+            // A character style that italicises a run inside a normal paragraph.
+            body.Append(new Paragraph(
+                new ParagraphProperties(
+                    new ParagraphStyleId { Val = "Heading1" }),
+                new Run(new Text("Enfasi") { Space = SpaceProcessingModeValues.Preserve })));
+            body.Append(new Paragraph(
+                new ParagraphProperties(new ParagraphStyleId { Val = "Normal" }),
+                StyledRun("Enfasi", "Testo normale con "),
+                StyledRun("Enfasi", "enfasi"),
+                StyledRun("Enfasi", " e testo normale.")));
+
+            // A direct w:i val="0" must win over the italics of the character style.
+            body.Append(new Paragraph(
+                new ParagraphProperties(
+                    new ParagraphStyleId { Val = "Heading1" }),
+                new Run(new Text("Disattivazione") { Space = SpaceProcessingModeValues.Preserve })));
+            body.Append(new Paragraph(
+                new ParagraphProperties(new ParagraphStyleId { Val = "Didascalia" }),
+                StyledRun("Enfasi", "Corsivo "),
+                PlainRun("non corsivo in didascalia")));
+
+            // Italic inherited through two levels of basedOn, so the run style itself
+            // states nothing and only the ancestor does.
+            body.Append(new Paragraph(
+                new ParagraphProperties(
+                    new ParagraphStyleId { Val = "Heading1" }),
+                new Run(new Text("Ereditarieta") { Space = SpaceProcessingModeValues.Preserve })));
+            body.Append(new Paragraph(
+                new ParagraphProperties(new ParagraphStyleId { Val = "Normal" }),
+                StyledRun("Indiretta", "Testo corsivo per ereditarieta.")));
+        }
+
+        return stream.ToArray();
+    }
+
+    private static Run StyledRun(string styleId, string text) => new(
+        new RunProperties(new RunStyle { Val = styleId }),
+        new Text(text) { Space = SpaceProcessingModeValues.Preserve });
+
+    private static Run PlainRun(string text) => new(
+        new RunProperties(new Italic { Val = false }),
+        new Text(text) { Space = SpaceProcessingModeValues.Preserve });
+
+    /// <summary>
+    /// Character styles are the shape Word writes: "Enfasi" states the italic itself, while
+    /// "Indiretta" only inherits it from "Enfasi" through basedOn.
+    /// </summary>
+    private static Styles BuildItalicStyles()
+    {
+        var styles = new Styles();
+
+        styles.Append(new Style(
+            new StyleName { Val = "Normal" })
+        {
+            Type = StyleValues.Paragraph,
+            StyleId = "Normal",
+        });
+
+        styles.Append(new Style(
+            new StyleName { Val = "Emphasis" },
+            new StyleRunProperties(new Italic()))
+        {
+            Type = StyleValues.Character,
+            StyleId = "Enfasi",
+        });
+
+        styles.Append(new Style(
+            new StyleName { Val = "Indiretta" },
+            new BasedOn { Val = "Enfasi" })
+        {
+            Type = StyleValues.Character,
+            StyleId = "Indiretta",
+        });
+
+        styles.Append(new Style(
+            new StyleName { Val = "caption" },
+            new StyleRunProperties(new Italic()))
+        {
+            Type = StyleValues.Paragraph,
+            StyleId = "Didascalia",
+        });
+
+        return styles;
+    }
 }

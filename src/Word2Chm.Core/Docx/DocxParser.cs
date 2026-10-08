@@ -37,6 +37,21 @@ public sealed class DocxParser
     /// </summary>
     private readonly Dictionary<(int NumId, int Level), int> _listCounters = new();
 
+    /// <summary>
+    /// Style definitions of the document being parsed, keyed by style id. Kept on the
+    /// instance because run formatting is read deep inside the run walkers, where threading
+    /// the map through every call would add noise for no benefit.
+    /// </summary>
+    private IReadOnlyDictionary<string, StyleInfo> _styleMap =
+        new Dictionary<string, StyleInfo>(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Italic stated by the paragraph style currently being walked, or null when it says
+    /// nothing. A run without its own w:i inherits this, which is how Word renders captions
+    /// and quotes: the style italicises them while the runs stay bare.
+    /// </summary>
+    private bool? _paragraphStyleItalic;
+
     public ParsedDocument Parse(string path)
     {
         using var stream = File.OpenRead(path);
@@ -56,6 +71,7 @@ public sealed class DocxParser
 
         var numberingMap = BuildNumberingMap(main);
         var styleMap = BuildStyleMap(main);
+        _styleMap = styleMap;
 
         result.Title = ReadCoreTitle(document) ?? fallbackTitle;
 
@@ -354,6 +370,14 @@ public sealed class DocxParser
         var inlines = new List<InlineNode>();
         lastImage = null;
         lastImageSize = (0, 0);
+
+        // The runs below carry no style of their own, so the paragraph style decides whether
+        // the text is italic (Word writes captions and quotes this way).
+        var paragraphStyleId = paragraph.ParagraphProperties?.ParagraphStyleId?.Val?.Value;
+        _paragraphStyleItalic = !string.IsNullOrEmpty(paragraphStyleId) &&
+            _styleMap.TryGetValue(paragraphStyleId!, out var paragraphStyle)
+                ? paragraphStyle.Italic
+                : null;
 
         foreach (var child in paragraph.ChildElements)
         {
@@ -915,15 +939,25 @@ public sealed class DocxParser
                 info2.FontName?.Contains("Courier", StringComparison.OrdinalIgnoreCase) == true);
     }
 
-    private static (bool Bold, bool Italic, bool Underline, bool Strike, bool Superscript, bool Subscript, string? StyleId) ReadRunFormat(Run run)
+    private (bool Bold, bool Italic, bool Underline, bool Strike, bool Superscript, bool Subscript, string? StyleId) ReadRunFormat(Run run)
     {
         var props = run.RunProperties;
         var styleId = props?.RunStyle?.Val?.Value;
         var vertical = props?.VerticalTextAlignment?.Val;
 
+        // Precedence mirrors Word: an explicit w:i on the run wins, then the character style
+        // it references, then the paragraph style. Without the style lookups a document that
+        // italicises through "Emphasis" or "caption" lost every one of those runs.
+        var italic = props?.Italic is not null
+            ? props.Italic.Val?.Value != false
+            : !string.IsNullOrEmpty(styleId) && _styleMap.TryGetValue(styleId!, out var charStyle) &&
+              charStyle.Italic is { } fromCharStyle
+                ? fromCharStyle
+                : _paragraphStyleItalic ?? false;
+
         return (
             props?.Bold is not null && props.Bold.Val?.Value != false,
-            props?.Italic is not null && props.Italic.Val?.Value != false,
+            italic,
             props?.Underline is not null && props.Underline.Val?.Value != UnderlineValues.None,
             props?.Strike is not null && props.Strike.Val?.Value != false,
             vertical?.Value == VerticalPositionValues.Superscript,
@@ -940,6 +974,10 @@ public sealed class DocxParser
             return map;
         }
 
+        var byId = styles.Elements<Style>()
+            .Where(s => !string.IsNullOrEmpty(s.StyleId?.Value))
+            .ToDictionary(s => s.StyleId!.Value!, StringComparer.Ordinal);
+
         foreach (var style in styles.Elements<Style>())
         {
             var id = style.StyleId?.Value;
@@ -954,10 +992,49 @@ public sealed class DocxParser
             // Word localises the displayed name ("Titolo 1" in an Italian document) while
             // the style id usually stays "Heading1". Both are checked so a document
             // authored in any language still produces headings.
-            map[id!] = new StyleInfo(outline, font, style.Type?.Value, style.StyleName?.Val?.Value);
+            map[id!] = new StyleInfo(
+                outline,
+                font,
+                style.Type?.Value,
+                style.StyleName?.Val?.Value,
+                ResolveStyleItalic(style, byId));
         }
 
         return map;
+    }
+
+    /// <summary>
+    /// Resolves whether a style italicises its runs, following the basedOn chain. Word
+    /// applies character formatting through styles such as "Emphasis" or "caption", and the
+    /// run itself carries no w:i, so reading only the run dropped that italic. Returns null
+    /// when neither the style nor any ancestor states it, which leaves the run untouched.
+    /// </summary>
+    private static bool? ResolveStyleItalic(Style style, IReadOnlyDictionary<string, Style> byId)
+    {
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        for (var current = style; current is not null; )
+        {
+            var id = current.StyleId?.Value;
+
+            // An explicit w:i wins, including w:val="0": Word uses it to switch off an
+            // italic inherited from an ancestor, so the walk must stop rather than climb.
+            if (current.StyleRunProperties?.Italic is { } italic)
+            {
+                return italic.Val?.Value != false;
+            }
+
+            if (string.IsNullOrEmpty(id) || !seen.Add(id!))
+            {
+                return null;
+            }
+
+            var basedOn = current.BasedOn?.Val?.Value;
+            current = !string.IsNullOrEmpty(basedOn) && byId.TryGetValue(basedOn!, out var parent)
+                ? parent
+                : null!;
+        }
+
+        return null;
     }
 
     private static Dictionary<int, List<NumberingLevel>> BuildNumberingMap(MainDocumentPart main)
@@ -1159,7 +1236,7 @@ public sealed class DocxParser
             (int)Math.Round(extent.Cy.Value / emuPerPixel));
     }
 
-    private sealed record StyleInfo(int OutlineLevel, string? FontName, StyleValues? Type, string? Name);
+    private sealed record StyleInfo(int OutlineLevel, string? FontName, StyleValues? Type, string? Name, bool? Italic);
 
     private sealed record NumberingLevel(int Level, bool Ordered, string? FormatName, string? MarkerText, int Start);
 }
