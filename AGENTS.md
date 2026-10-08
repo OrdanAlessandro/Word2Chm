@@ -50,6 +50,15 @@ si filtrano con `grep -v NETSDK1188`.
 
 ## Note di progettazione
 
+- **Ordine di docking in WinForms (barra strumenti vs pannello)**: il motore di layout
+  percorre i figli **dallo sfondo verso la fronte** (`DefaultLayout.LayoutDockedControls`
+  itera `for (i = Count - 1; i >= 0; i--)`), e l'indice 0 di `Controls` è la fronte
+  (`BringToFront` → `SetChildIndex(this, 0)`, `Controls.Add` → `SendToBack`). Quindi il
+  controllo `Dock = Fill` deve essere **in fronte** (indice 0) per essere disposto per
+  ultimo e prendere lo spazio rimasto sotto la barra: con il pannello dietro la barra, il
+  pannello viene disposto per primo con l'intera area e la barra (disegnata sopra) copre la
+  prima riga dei campi. In `MainForm` la barra è aggiunta per prima e il pannello è portato
+  in fronte con `root.BringToFront()`. Non serve invece alcun `BringToFront` sulla barra.
 - **Progetti `.w2c`**: i parametri della conversione si salvano in un file `.w2c`
   (`Word2Chm.Core.Project.ProjectFile`, JSON camelCase con `version`). Il file contiene
   **percorsi, non il documento**: si apre con "Apri..." o con il doppio click, e in quest'ultimo

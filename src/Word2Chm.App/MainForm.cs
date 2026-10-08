@@ -301,9 +301,13 @@ internal sealed class MainForm : Form
 
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         Controls.Add(root);
-        // Docked controls lay out in reverse z-order, so the bar has to be front-most to sit
-        // above the panel rather than under it.
-        _toolStrip.BringToFront();
+
+        // Docking runs over the children from the back of the z-order to the front, so the
+        // Fill panel has to be the front-most control: it is laid out last and takes what is
+        // left below the toolbar. Calling BringToFront on the toolbar instead would put the
+        // panel behind it and the toolbar would cover the first row of fields.
+        root.BringToFront();
+
         AcceptButton = _convertButton;
     }
 
