@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="winchm_template_style.css" rel="stylesheet" type="text/css">
+<script src="winchm_template_script.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+
+<body>
+
+<div id="winchm_template_top">
+	<div id="winchm_template_button"><a href="038-funzioni.html"><img src="btn_prev_n.gif"></a><a href="040-elencoparametrisupportati.html"><img src="btn_next_n.gif"></a></div>
+	<div id="winchm_template_navigation"><a href="000-skipperqt.html#skipperqt">SkipperQt</a> &gt; <a href="028-script.html#script">Script</a></div>
+	<div id="winchm_template_title">Parametri macchina e comandi specifici</div>
+</div>
+<div id="winchm_template_container">
+	<div id="winchm_template_content"><span id="parametri-macchina-e-comandi-specifici"></span>
+<p>In questa sezione vengono descritti i <strong>parametri macchina</strong> e i <strong>comandi specifici</strong> che possono essere utilizzati all&#8217;interno dello scripting batch di Skipper. Questi strumenti consentono di interagire direttamente con i componenti hardware e software della macchina, permettendo la lettura e la modifica dei parametri di configurazione, l&#39;esecuzione di operazioni automatiche e l&#39;interazione con le funzionalit&#224; avanzate di Skipper.</p>
+<p>I <strong>parametri macchina</strong> comprendono valori come la posizione delle origini, posizioni correnti degli assi, parametri degli accessori, e molte altre informazioni cruciali per il controllo e la gestione della macchina. I <strong>comandi specifici</strong> permettono di eseguire azioni come il caricamento di un file cnc, la richiesta di punti di tastatura, la gestione degli allarmi, ecc.</p>
+<h4 id="come-accedere-e-modificare-i-parametri-macchina"><em>Come accedere e modificare i parametri macchina</em></h4>
+<p>In Skipper, i parametri macchina sono organizzati in <strong>namespace</strong>. Un namespace &#232; un identificatore gerarchico che permette di strutturare i parametri in modo logico e facilmente accessibile, raggruppandoli in categorie specifiche. Ogni namespace rappresenta una sezione o una funzionalit&#224; della macchina, e i parametri specifici di quella sezione possono essere letti o modificati tramite il percorso completo del namespace.</p>
+<h4 id="struttura-dei-namespace"><em>Struttura dei namespace</em></h4>
+<p>I <strong>namespace</strong> sono organizzati come una serie di chiavi separate da punti (.). Ogni chiave rappresenta un livello gerarchico e consente di accedere a parametri specifici all&#39;interno di quella sezione. Per convenzione i namespace sono <em>CameCase</em> (prima lettera di ogni parola in maiuscolo), mentre i parametri finali <em>dromedaryCase</em><em> </em>(prima lettera minuscola, maiuscola tra le parole interne).</p>
+<p>Ad esempio, un parametro come Machine.Parameters.G54[0].x indica che si sta accedendo al valore della coordinata <strong>x</strong> dell&#39;origine predefinita G54 della macchina, sotto la sezione <strong>M</strong><strong>achine.</strong><strong>P</strong><strong>arameters</strong>.</p>
+<h4 id="accesso-ai-parametri"><em>Accesso ai parametri</em></h4>
+<p>Per <strong>leggere</strong> un parametro, &#232; sufficiente specificare il namespace completo della variabile desiderata. Ecco come accedere al valore di un parametro:</p>
+<p>var posizioneX = Machine.Parameters.G54[0].x;</p>
+<p>log(&quot;Posizione X: &quot; + posizioneX);</p>
+<p>In questo esempio, il valore della coordinata <strong>x</strong> dell&#39;origine viene letto dal parametro e assegnato alla variabile posizioneX.</p>
+<h4 id="modifica-dei-parametri"><em>Modifica dei parametri</em></h4>
+<p>Per <strong>modificare</strong> un parametro, si utilizza una sintassi simile a quella dell&#39;accesso, ma associando il valore desiderato al parametro specificato. Ecco un esempio di modifica:</p>
+<p>Machine.Parameters.G54[0].x = 100;  // Imposta la coordinata X dell&#39;origine a 100</p>
+<p>log(&quot;Nuova posizione X: &quot; + Machine.Parameters.G54[0].x);</p>
+<p>In questo caso, la posizione <strong>x</strong> dell&#39;origine viene impostata a <strong>100</strong>.</p>
+<h4 id="variabili-di-stato"><em>Variabili di stato</em></h4>
+<p>Oltre ai parametri della macchina, ci sono anche variabili predefinite che possono essere utilizzate per ottenere informazioni sullo stato del sistema, come ad esempio:</p>
+<ul>
+<li class="level-0"><strong>Machine.Axes.X.absolutePosition: </strong>posizione assoluta dell&#8217;asse X</li>
+<li class="level-0"><strong>Machine.Axes.X.</strong><strong>relative</strong><strong>Position: </strong>posizione relativa all&#8217;origine corrente dell&#8217;asse X</li>
+<li class="level-0"><strong>Machine.Axes.X.</strong><strong>encoderPosition</strong><strong>: </strong>posizione dell&#8217;encode dell&#8217;asse X</li>
+</ul>
+</div>	
+	<div id="winchm_template_footer">&#169; 2026 FARO srl. All rights reserved.</div>
+</div>
+
+</body>
+
+</html>

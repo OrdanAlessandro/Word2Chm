@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="winchm_template_style.css" rel="stylesheet" type="text/css">
+<script src="winchm_template_script.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+
+<body>
+
+<div id="winchm_template_top">
+	<div id="winchm_template_button"><a href="043-elencofunzionidicontrollomacchina.html"><img src="btn_prev_n.gif"></a><a href="045-funzionalitadiaccessoecontrollodipigrecogold.html"><img src="btn_next_n.gif"></a></div>
+	<div id="winchm_template_navigation"><a href="000-skipperqt.html#skipperqt">SkipperQt</a> &gt; <a href="028-script.html#script">Script</a></div>
+	<div id="winchm_template_title">Controllo della Batch in esecuzione</div>
+</div>
+<div id="winchm_template_container">
+	<div id="winchm_template_content"><span id="controllo-della-batch-in-esecuzione"></span>
+<p>Il <strong>namespace Batch</strong> racchiude le funzioni di accesso alla batch in esecuzione</p>
+<h4 id="batch-update"><em>Batch.Update()</em></h4>
+<p>Esegue un refresh del pannello Batch</p>
+<h4 id="batch-getitembyline-integer-linenumber-dep"><em>Batch.GetItemByLine(integer lineNumber)</em><em> [Dep]</em></h4>
+<p>Ritorna un elemento di tipo <a href="#proprieta-e-funzioni-di-un-elemento-batch-batchitem"><em>BatchItem</em></a><em> </em>associato alla riga batch specificata</p>
+<h4 id="batch-getitembyindex-integer-itemindex"><em>Batch.GetItemByIndex(integer itemIndex)</em></h4>
+<p>Ritorna un elemento di tipo <a href="#proprieta-e-funzioni-di-un-elemento-batch-batchitem"><em>BatchItem</em></a><em> </em>associato all&#8217;indice specificato. L&#8217;indice di un elemento corrisponde al numero riga &#8211; 1</p>
+<h4 id="batch-getitembyname-string-itemname"><em>Batch.GetItemBy</em><em>Name</em><em>(</em><em>string </em><em>itemName</em><em>)</em></h4>
+<p>Cerca un elemento di tipo <a href="#proprieta-e-funzioni-di-un-elemento-batch-batchitem"><em>BatchItem</em></a><em> </em>avente il nome specificato. Ritorna il primo trovato per ordine di riga oppure un elemento invalido se non trovato.</p>
+<h4 id="batch-stop"><em>Batch.</em><em>Stop</em><em>()</em></h4>
+<p>Comanda l&#8217;arresto dell&#8217;esecuzione della batch</p>
+<h4 id="batch-schedulenextitem-batchitem-nextitem-qt"><em>Batch.ScheduleNextItem(BatchItem nextItem) [Qt]</em></h4>
+<p>Imposta il prossimo elemento batch che sar&#224; eseguito dalla batch. Questa funzione permette si cambiare il flusso di esecuzione effettuando dei salti ad una riga particolare identificata dal riferimento all&#8217;elemento. Lo script continua la propria esecuzione fino al termine, quindi la batch prosegue dall&#8217;elemento indicato. Successivamente l&#8217;esecuzione prosegue con l&#8217;elemento successivo a <em>nextItem</em>.</p>
+<h4 id="batch-insertitem-string-filepath-qt"><em>Batch.InsertItem(string filePath) [Qt]</em></h4>
+<p>Inserisce il file specificato per percorso assoluto o relativo in coda alla batch</p>
+<h4 id="batch-insertitem-string-filepath-batchitem-parentitem-qt"><em>Batch.InsertItem(string filePath</em><em>,</em><em> </em><em>BatchItem</em><em> </em><em>p</em><em>a</em><em>rentI</em><em>tem</em><em>) [Qt]</em></h4>
+<p>Inserisce il file specificato per percorso assoluto o relativo in coda all&#8217;elemento parent specificato, se possibile, altrimenti in posizione immediatamente successiva</p>
+<h4 id="batch-insertitem-integer-targetindex-string-filepath-qt"><em>Batch.InsertItem(integer targetIndex,string filePath) [Qt]</em></h4>
+<p>Inserisce all&#8217;indice indicato il file specificato per percorso assoluto o relativo. Se targetIndex=-1 o &#232; superiore al numero di elementi della batch aggiunge l&#8217;elemento alla fine della batch, al livello 0. Se targetIndex &#232; un elemento esistente della batch, inserisce il nuovo elemento allo stesso livello di targetIndex, spostando l&#8217;elemento esistente in basso di una posizione.</p>
+<h4 id="batch-removeitem-integer-targetindex-qt"><em>Batch.</em><em> </em><em>RemoveItem</em><em>(integer targetIndex) [Qt]</em></h4>
+<p>Rimuove l&#8217;elemento specificato tramite indice. Ritorna true se l&#8217;elemento &#232; esistente, false altrimenti.</p>
+<h4 id="batch-clearrepetitions-qt"><em>Batch.</em><em> </em><em>ClearRepetitions</em><em>() [Qt]</em></h4>
+<p>Azzera il contatore ripetizioni dell&#8217;intera batch</p>
+<h4 id="batch-thisline"><em>Batch.thisLine</em></h4>
+<p>Ritorna un elemento di tipo <a href="#proprieta-e-funzioni-di-un-elemento-batch-batchscript"><em>BatchScript</em></a> associato allo script in esecuzione</p>
+<h4 id="variabili-globali-nella-batch-in-esecuzione"><em>V</em><em>ariabili globali nella Batch in esecuzione</em></h4>
+<p>La Batch dispone di una memoria globale dove &#232; possibile scrivere e leggere valori che restano disponibili al passaggio tra un elemento in esecuzione e un altro. Questo consente, ad esempio, di trasferire informazioni ad altri elementi o fornire una configurazione condivisa.</p>
+<p>La memoria globale viene resettata ad ogni nuovo start della batch, mentre si mantiene tra le ripetizioni.</p>
+<h5 id="batch-addvariable-string-variablename-type-value-qt">Batch.AddVariable(string <em>variableName</em><em>, </em>type <em>value</em>) [Qt]</h5>
+<p>Aggiunge una variabile globale alla batch corrente, identificata dal nome specificato e con in valore indicato. Se la variabile esiste gi&#224;, ne riassegna il valore</p>
+<h5 id="batch-readvariable-string-variablename-type-defaultvalue-qt">Batch.ReadVariable(string <em>variableName, </em>type <em>defaultValue</em>) [Qt]</h5>
+<p>Ritorna il valore della variabile globale identificata dal nome specificato. Se la variabile non esiste ritorna il valore di default indicato</p>
+<h5 id="batch-removevariable-string-variablename-qt">Batch.RemoveVariable(string <em>variableName</em>) [Qt]</h5>
+<p>Rimuove dalla memoria la variabile globale identificata dal nome specificato</p>
+<h5 id="batch-clearvariables-qt">Batch.ClearVariables() [Qt]</h5>
+<p>Rimuove dalla memoria tutte le variabili globali presenti</p>
+<h5 id="batch-getvariablenames-qt">Batch.GetVariableNames () [Qt]</h5>
+<p>Ritorna i nomi di tutte le variabili presenti</p>
+<h4 id="proprieta-e-funzioni-di-un-elemento-batch-batchitem"><em>Propriet&#224; e funzioni di un elemento batch </em><em>BatchItem</em></h4>
+<p>Ciascuna riga della batch possiede propriet&#224; e funzioni accessibili</p>
+<h5 id="sendparameters">SendParameters()</h5>
+<p>Invia in macchina i parametri associati all&#8217;elemento</p>
+<h5 id="enable-bool-enable">Enable(bool <em>enable</em>)</h5>
+<p>Abilita o disabilita l&#8217;elemento</p>
+<h5 id="getline">GetLine()</h5>
+<p>Ritorna il numero di riga nella batch dell&#8217;elemento</p>
+<h5 id="getindex">GetIndex()</h5>
+<p>Ritorna l&#8217;indica nella batch dell&#8217;elemento</p>
+<h5 id="getname-qt">GetName() [Qt]</h5>
+<p>Ritorna il nome dell&#8217;item, se settabile, o il nome del file senza percorso ed estensione, per item file</p>
+<h5 id="getparent-qt">GetParent() [Qt]</h5>
+<p>Ritorna l&#8217;elemento padre, se presente. Il padre dell&#8217;elemento radice &#232; un valore invalido</p>
+<h5 id="getchild-integer-subitemindex-qt">GetChild(integer <em>subItemIndex</em>) [Qt]</h5>
+<p>Ritorna il figlio di indice specificato dell&#8217;elemento corrente. Valido solo per elementi di tipo subBatch. Con <em>subItemIndex</em>=0 ritorna il primo figlio. Valori validi per <em>subItemIndex</em><em> </em>sono compresi tra 0 e GetChildCount()-1</p>
+<h5 id="getsibling-integer-relativeindex-qt">GetSibling(integer <em>relativeIndex</em>) [Qt]</h5>
+<p>Ritorna un elemento posizionato attorno all&#8217;elemento corrente e allo stesso livello di gerarchia. GetSibling(0) ritorna l&#8217;elemento stesso, GetSibling(-1) ritorna il precedente, se presente, GetSibling(1) il successivo.</p>
+<h5 id="getchildcount-qt">GetChildCount() [Qt]</h5>
+<p>Ritorna il numero di figlii dell&#8217;elemento corrente. Valido solo per elementi di tipo subBatch</p>
+<h5 id="currentrepetition-qt">currentRepetition [Qt]</h5>
+<p>Ritorna o imposta il numero di ripetizione corrente dell&#8217;elemento (numero di ripetizioni eseguite)</p>
+<h5 id="repetitions-qt">repetitions [Qt]</h5>
+<p>Ritorna o imposta il di ripetizioni da eseguire dell&#8217;elemento corrente. Impostare 0 per non contare le ripetizioni ed eseguire una sola volta, -1 per eseguire infinite ripetizioni, o un valore &gt;0 per eseguire esattamente il numero di ripetizioni indicate</p>
+<h5 id="mapindex">mapIndex</h5>
+<p>Ritorna o imposta l&#8217;indice di mappatura associato all&#8217;elemento</p>
+<h5 id="positionx">positionX</h5>
+<p>Ritorna o imposta la posizione X dell&#8217;origine associata all&#8217;elemento</p>
+<h5 id="positiony">positionY</h5>
+<p>Ritorna o imposta la posizione Y dell&#8217;origine associata all&#8217;elemento</p>
+<h5 id="originindex">originIndex</h5>
+<p>Ritorna o imposta l&#8217;indice dell&#8217;origine G54 associata all&#8217;elemento:</p>
+<ul>
+<li class="level-0">0=nessuna origine</li>
+<li class="level-0">1=G54</li>
+<li class="level-0">2=G54.1</li>
+<li class="level-0">3=G54.2</li>
+<li class="level-0">4=G54.3</li>
+<li class="level-0">5=G55</li>
+<li class="level-0">&#8230;</li>
+</ul>
+<h5 id="deltay">deltaY</h5>
+<p>Ritorna o imposta il parametro di shift Y associata all&#8217;elemento</p>
+<h5 id="zam">zam</h5>
+<p>Ritorna o imposta lo spessore del materiale associato all&#8217;elemento</p>
+<h5 id="dh">dH</h5>
+<p>Ritorna o imposta la variazione di spessore del materiale associato all&#8217;elemento. La variazione si applica a eventuali comandi G54/G55/G56 interni al file CNC o al valore Z misurato dal un processo di allineamento lastra</p>
+<h5 id="numofrepx">numOfRepX</h5>
+<p>Ritorna o imposta il numero di ripetizioni in X</p>
+<h5 id="numofrepy">numOfRepY</h5>
+<p>Ritorna o imposta il numero di ripetizioni in Y</p>
+<h5 id="toolintegritycheck">toolIntegrityCheck</h5>
+<p>Ritorna o imposta la tipologia di controllo integrit&#224; utensile abilitata per l&#8217;elemento</p>
+<ul>
+<li class="level-0">0=nessun controllo</li>
+<li class="level-0">1=controllo integrit&#224; semplice: esegue il controllo dell&#8217;utensile corrente a fine file generando un allarme bloccante se il controllo fallisce</li>
+<li class="level-0">2=controllo con cambio: esegue il controllo dell&#8217;utensile corrente a fine file marcando l&#8217;utensile come danneggiato nella tabella utensile e innescando, se previsto, il caricamento dell&#8217;utensile gemello</li>
+</ul>
+<h5 id="plateintegritycheck">plateIntegrityCheck</h5>
+<p>Ritorna o imposta il controllo integrit&#224; lastra per l&#8217;elemento</p>
+<ul>
+<li class="level-0">0=nessun controllo</li>
+<li class="level-0">&gt;0=indice della lastra di appartenenza della lavorazione. In caso di controllo integrit&#224; utensile di tipo 2, anche la lastra di in lavorazione viene marcata come danneggiata e verr&#224; automaticamente saltata dalle successive lavorazioni aventi lo stesso <em>plateIntegrityCheck</em></li>
+</ul>
+<h5 id="platealignmentindex">plateAlignmentIndex</h5>
+<p>Ritorna o imposta l&#8217;indice di allineamento lastra dell&#8217;elemento</p>
+<ul>
+<li class="level-0">0=nessun allineamento lastra utilizzato</li>
+<li class="level-0">&gt;0=indice dell&#8217;allineamento lastra da utilizzare</li>
+</ul>
+<h5 id="runevery">runEvery</h5>
+<p>Ritorna o imposta il controllo il parametro <em>esegui ogni n ripetizioni</em>. Se impostato ad un valore N diverso da zero allora l&#8217;elemento verr&#224; eseguito una volta ogni N ripetizioni della Batch</p>
+<h4 id="proprieta-e-funzioni-di-un-elemento-batch-batchscript"><em>Propriet&#224; e funzioni di un elemento batch </em><em>Batch</em><em>Script</em></h4>
+<p>Alle propriet&#224; dell&#8217;elemento base <a href="#proprieta-e-funzioni-di-un-elemento-batch-batchitem">BatchItem</a> aggiunge le seguenti funzioni</p>
+<h5 id="maskstopfrommachine-bool-mask">MaskStopFromMachine(bool <em>mask</em>)</h5>
+<p>Abilita o disabilita la mascheratura dello stop esecuzione script in caso di errore di esecuzione della macchina (stop da CN)</p>
+</div>	
+	<div id="winchm_template_footer">&#169; 2026 FARO srl. All rights reserved.</div>
+</div>
+
+</body>
+
+</html>

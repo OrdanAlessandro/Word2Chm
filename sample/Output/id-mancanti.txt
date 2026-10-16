@@ -1,0 +1,13 @@
+ID di contesto mancanti nel file .h
+====================================
+
+File .h utilizzato: D:\Progetti\SkipperQT\Manual\helpId.h
+
+I seguenti 1 simboli sono usati nel documento Word ma non sono definiti nel file .h:
+aggiungi le righe indicate al file .h e ripeti la conversione.
+
+  IDH_SPINDLE_GROUP
+
+Righe da aggiungere al file .h (sostituisci i valori numerici):
+
+#define IDH_SPINDLE_GROUP                        0

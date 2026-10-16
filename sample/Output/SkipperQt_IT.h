@@ -8,5 +8,7 @@
 #define IDH_EDIT_PARAMETERS                      1000   // Modificare i parametri del CN
 #define IDH_START_JOB                            1001   // Eseguire una lavorazione
 #define IDH_AXES                                 1002   // Assi
+#define IDH_BATCH                                1003   // Batch delle lavorazioni
+#define IDH_SCRIPT                               1004   // Script
 
 #endif // _SKIPPERQT_IT_H_

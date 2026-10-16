@@ -1,7 +1,198 @@
-<div class="page"><h3 id="batch-delle-lavorazioni">Batch delle lavorazioni</h3>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="winchm_template_style.css" rel="stylesheet" type="text/css">
+<script src="winchm_template_script.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+
+<body>
+
+<div id="winchm_template_top">
+	<div id="winchm_template_button"><a href="021-utilita.html"><img src="btn_prev_n.gif"></a><a href="023-mdimanualdatainput.html"><img src="btn_next_n.gif"></a></div>
+	<div id="winchm_template_navigation"><a href="000-skipperqt.html#skipperqt">SkipperQt</a> &gt; <a href="021-utilita.html#utilita">Utilit&#224;</a></div>
+	<div id="winchm_template_title">Batch delle lavorazioni</div>
+</div>
+<div id="winchm_template_container">
+	<div id="winchm_template_content"><span id="batch-delle-lavorazioni"></span>
 <p><strong>Il batch &#232; una lista di lavorazioni da eseguire in sequenza.</strong></p>
 <p><strong>Il programma invia al CN il file contenente la lavorazione e i parametri ad essa associati; comanda l&#8217;avvio della lavorazione e ne attende il completamento.</strong></p>
 <p><strong>I dati associati ad ogni lavorazione sono inviati al CN prima di iniziare la lavorazione.</strong></p>
 <p><strong>Una eventuale condizione di allarme</strong><strong> rilevata dal CN</strong><strong> interrompe il batch.</strong></p>
+<h4 id="creare-una-lista-di-lavorazioni"><em>Creare una lista di lavorazioni</em></h4>
+<p><em>Per aggiunge una nuova lavorazione alla lista:</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Fare clic sul pulsante </em><img src="assets/image28.png" alt=""/><em> .</em></li>
+<li class="level-0"><em>Nella finestra &#8220;</em><em><strong>Apri</strong></em><em>&#8221;, indicare nella casella </em><em><strong>Nome file</strong></em><em> il nome del file da aggiungere alla lista; il file deve avere estensione &#8220;</em><em><strong>cnc</strong></em><em>&#8221; come indicato nella casella </em><em><strong>Tipo file</strong></em><em>.</em></li>
+<li class="level-0"><em>Scegliere il pulsante </em><em><strong>Apri</strong></em><em>.</em></li>
+</ol>
+<p><em><strong>Note</strong></em><em>:</em></p>
+<ol style="list-style-type:lower-alpha">
+<li class="level-0"><em>la lavorazione viene aggiunta sempre </em><em>dopo la riga selezionata</em><em> e assume i parametri della lavorazione che la precede,se esiste;</em></li>
+<li class="level-0"><em>la lista pu&#242; contenere </em><em>un numero indefinito di</em><em> righe;</em></li>
+<li class="level-0"><em>fare clic sul pulsante </em><img src="assets/image29.png" alt=""/><em> per aggiungere </em><em>una lavorazione </em><em>senza copiare i parametri della riga che precede.</em></li>
+</ol>
+<h4 id="selezionare-una-lavorazione"><em>Selezionare una lavorazione</em></h4>
+<p><em>La selezione di una lavorazione &#232; necessaria per indicare al programma quale lavorazione deve essere modificata.</em></p>
+<p><em>Nella lista, fare clic sulla riga che contiene la lavorazione da modificare; la riga viene mostrata in azzurro per indicare che &#232; selezionata. </em></p>
+<p><em>Per selezionare contemporaneamente pi&#249; righe, mantenere premuto il tasto [Ctrl].</em></p>
+<h4 id="cancellare-una-lavorazione"><em>Cancellare una lavorazione</em></h4>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare clic sul pulsante </em><img src="assets/image30.png" alt=""/><em> .</em></li>
+</ol>
+<p><em><strong>Nota</strong></em><em>: la cancellazione di una riga che contiene un file batch, implica la cancellazione di tutte le lavorazioni  associate.</em></p>
+<h4 id="cambiare-l-ordine-delle-lavorazioni"><em>Cambiare l&#8217;ordine delle lavorazioni</em></h4>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione da spostare.</em></li>
+<li class="level-0"><em>Fare clic sul pulsante </em><img src="assets/image31.png" alt=""/><em> oppure </em><img src="assets/image32.png" alt=""/><em> per modificare l&#8217;ordine di esecuzione delle lavorazioni.</em></li>
+</ol>
+<p><em><strong>Nota</strong></em><em>: una riga che contiene un file batch non pu&#242; essere spostata.</em></p>
+<h4 id="salvare-una-lista-di-lavorazioni"><em>Salvare una lista di lavorazioni</em></h4>
+<p><em>Nella barra degli strumenti </em><img src="assets/image33.png" alt=""/></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Fare clic sul pulsante </em><img src="assets/image34.png" alt=""/><em>.</em></li>
+<li class="level-0"><em>Nella finestra &#8220;</em><em><strong>Salva</strong></em><em>&#8221;, indicare nella casella </em><em><strong>Nome file</strong></em><em> il nome del file; il file deve avere estensione &#8220;btc&#8221; come indicato nella casella </em><em><strong>Tipo file</strong></em><em>.</em></li>
+<li class="level-0"><em>Scegliere il pulsante </em><em><strong>Salva</strong></em><em>.</em></li>
+</ol>
+<h4 id="aprire-una-lista-di-lavorazioni"><em>Aprire una lista di lavorazioni</em></h4>
+<p><em>Nella barra degli strumenti </em><img src="assets/image33.png" alt=""/></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Fare clic sul pulsante </em><img src="assets/image35.png" alt=""/><em>.</em></li>
+<li class="level-0"><em>Nella finestra &#8220;</em><em><strong>Apri</strong></em><em>&#8221;, indicare nella casella </em><em><strong>Nome file</strong></em><em> il nome del file da leggere; il file deve avere estensione &#8220;btc&#8221; come indicato nella casella </em><em><strong>Tipo file</strong></em><em>.</em></li>
+<li class="level-0"><em>Scegliere il pulsante </em><em><strong>Apri</strong></em><em>.</em></li>
+</ol>
+<h4 id="aggiungere-alla-lista-un-file-batch-esistente"><em>Aggiungere alla lista un file batch esistente</em></h4>
+<p><em>Per aggiunge alla lista un file batch esistente:</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Fare clic sul pulsante </em><img src="assets/image36.png" alt=""/><em> .</em></li>
+<li class="level-0"><em>Nella finestra &#8220;Apri&#8221;, indicare nella casella </em><em><strong>Nome file</strong></em><em> il nome del file batch da aggiungere alla lista; il file deve avere estensione &#8220;btc&#8221; come indicato nella casella Tipo file.</em></li>
+<li class="level-0"><em>Scegliere il pulsante Apri.</em></li>
+</ol>
+<p><em>Le lavorazioni contenute nel file batch sono aggiunte sempre in coda alla lista.</em></p>
+<p><em><strong>Nota</strong></em><em>:</em></p>
+<ol style="list-style-type:lower-alpha">
+<li class="level-0"><em>Un file batch presente nella lista pu&#242; essere compresso (tutte le righe sono nascoste) o espanso (tutte le righe sono visibili) con doppio clic sul nome del file.</em></li>
+<li class="level-0"><em>La riga che contiene un file batch pu&#242; essere modificata solo nella colonna &#8220;ON&#8221; e nella colonna &#8220;Nrx&#8221;. </em></li>
+<li class="level-0"><em>Non &#232; possibile aggiungere alla lista un file batch contenente altri file batch.</em></li>
+</ol>
+<h4 id="modificare-il-nome-della-lavorazione"><em>Modificare il nome della lavorazione</em></h4>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare clic sul pulsante </em><img src="assets/image37.png" alt=""/><em>.</em></li>
+<li class="level-0"><em>Nella finestra &#8220;Apri&#8221;, indicare nella casella Nome file il nome del file; il file deve avere estensione &#8220;cnc&#8221; come indicato nella casella Tipo file.</em></li>
+<li class="level-0"><em>Scegliere il pulsante Apri.</em></li>
+</ol>
+<h4 id="espandere-una-lavorazione"><em>Espandere una </em><em>lavorazione</em></h4>
+<p>Per suddividere una lavorazione per utensile usato.</p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare clic sul pulsante </em><img src="assets/image38.png" alt=""/><em>.</em></li>
+</ol>
+<p><em>Il file della lavorazione deve includere pi&#249; lavorazioni eseguite con utensili diversi.</em></p>
+<p><em>Nella espansione del file vengono replicati  tutti i parametri associati al file da espandere.</em></p>
+<h4 id="modificare-la-posizione-iniziale-xy"><em>Modificare la posizione iniziale XY</em></h4>
+<p><em>La posizione iniziale indica il punto del piano di lavoro XY che corrisponde al punto di coordinate X = 0, Y = 0 della lavorazione.</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;X&#8221;; inserire il valore numerico in millimetri della posizione iniziale assoluta per l&#8217;asse X. </em></li>
+<li class="level-0"><em>Confermare con &#8220;INVIO&#8221;.</em></li>
+<li class="level-0"><em>Ripetere per l&#8217;asse Y.</em></li>
+</ol>
+<p><em><strong>Nota</strong></em><em>: </em></p>
+<ol style="list-style-type:lower-alpha">
+<li class="level-0"><em>Se i valori di posizione iniziale sono entrambi nulli, la lavorazione sar&#224; eseguita nella posizione iniziale impostata dalla lavorazione precedente.</em></li>
+<li class="level-0"><em>Se alla lavorazione &#232; associato un indice di allineamento lastra, la posizione iniziale dipender&#224; dai dati di allineamento.</em></li>
+</ol>
+<h4 id="modificare-la-posizione-iniziale-xy-da-altre-posizioni-iniziali"><em>Modificare la posizione iniziale XY da &#8220;altre posizioni iniziali&#8221;</em></h4>
+<p><em>Per assegnare la posizione iniziale XY scegliendo dalla tabella delle &#8220;altre posizioni iniziali&#8221;:</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare clic sul pulsante </em><img src="assets/image39.png" alt=""/><em>.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla riga desiderata nella lista proposta.</em></li>
+</ol>
+<h4 id="aggiungere-uno-spostamento-y"><em>Aggiungere uno spostamento Y</em></h4>
+<p><em>Lo spostamento aggiuntivo Y indica una variazione della posizione iniziale Y. Si usa quando sullo stesso materiale vengono eseguite lavorazioni distinte.</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>dY</strong></em><em>&#8221;; inserire il valore numerico in millimetri dello spostamento aggiuntivo Y.</em></li>
+<li class="level-0"><em>Confermare con &#8220;INVIO&#8221;.</em></li>
+</ol>
+<h4 id="modificare-lo-spessore-del-materiale-h"><em>Modificare lo spessore del materiale H</em></h4>
+<p><em>Lo spessore del materiale H indica una variazione della posizione iniziale Z. </em></p>
+<p><em>Durante la lavorazione, questo valore viene sommato al valore di preset dell&#8217;utensile in uso per determinare la nuova posizione Z = 0 della lavorazione.</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>H</strong></em><em>&#8221;; inserire il valore numerico in millimetri dello spessore del materiale H.</em></li>
+<li class="level-0"><em>Confermare con &#8220;INVIO&#8221;.</em></li>
+</ol>
+<p><em><strong>Nota</strong></em><em>:</em></p>
+<ol style="list-style-type:lower-alpha">
+<li class="level-0"><em>Se il valore dello spessore del materiale H &#232; nullo, la lavorazione sar&#224; eseguita con lo spessore impostata dalla lavorazione precedente.</em></li>
+<li class="level-0"><em>Se alla lavorazione &#232; associato un indice di allineamento lastra,lo  spessore del materiale H dipender&#224; dai dati di allineamento.</em></li>
+<li class="level-0"><em>Se il valore dello spessore del materiale H non &#232; nullo, lo spessore calcolato dall&#8217;allineamento lastra non viene usato.</em></li>
+</ol>
+<h4 id="ripetere-la-lavorazione"><em>Ripetere la lavorazione</em></h4>
+<p>Per ripetere una lavorazione &#232; necessario indicare il numero di ripetizioni lungo X e lungo Y e la relativa distanza.</p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>Xnr</strong></em><em>&#8221;; inserire il numero delle ripetizioni lungo X. Confermare con &#8220;INVIO&#8221;.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>Xdr</strong></em><em>&#8221;; inserire la distanza in millimetri tra una ripetizione e la successiva lungo X. Confermare con &#8220;INVIO&#8221;.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>Ynr</strong></em><em>&#8221;; inserire il numero delle ripetizioni lungo Y. Confermare con &#8220;INVIO&#8221;.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>Ydr</strong></em><em>&#8221;; inserire la distanza in millimetri tra una ripetizione e la successiva lungo Y. Confermare con &#8220;INVIO&#8221;.</em></li>
+</ol>
+<p><em><strong>Nota</strong></em><em>: i parametri delle ripetizioni vengono annullati dopo l&#8217;esecuzione di ogni lavorazione.</em></p>
+<h4 id="riprendere-la-lavorazione-da-una-ripetizione-diversa-dalla-prima"><em>Riprendere la lavorazione da una ripetizione</em><em> diversa dalla prima</em></h4>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>Nrp1</strong></em><em>&#8221;; inserire il numero della prima ripetizione. Confermare con &#8220;INVIO&#8221;.</em></li>
+</ol>
+<h4 id="allineamento-della-lastra"><em>Allineamento della lastra</em></h4>
+<p><em>Il CN &#232; in grado di eseguire il rilevamento della posizione di una lastra nel piano XY e dello spessore del materiale H.</em></p>
+<p><em>I dati di allineamento relativi ad un massimo di tre lastre sono mantenuti nel CN fino al suo spegnimento.</em></p>
+<p><em>Per associare una lavorazione ai dati di allineamento della lastra, &#232; necessario indicare il numero della lastra; la posizione iniziale XY e lo spessore del materiale H vengono modificati secondo i dati di allineamento.</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>Nlas</strong></em><em>&#8221;; inserire il numero della lastra. Confermare con &#8220;INVIO&#8221;.</em></li>
+</ol>
+<p><em><strong>Nota</strong></em><em>: se alla lavorazione &#232; associato un indice di allineamento lastra, la posizione iniziale e lo spessore del materiale H dipenderanno dai dati di allineamento.</em></p>
+<h4 id="modifica-dello-spessore-h-calcolato-dall-allineamento-lastra"><em>Modifica dello spessore H calcolato dall&#8217;allineamento lastra</em></h4>
+<p><em>Modifica il valore dello spessore del materiale H calcolato dall&#8217;allineamento lastra. </em></p>
+<p><em>Nel caso sia stato indicato un valore nella colonna H, questo parametro viene ignorato.</em></p>
+<p><em>Per modificare la variazione dello spessore:</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>dH</strong></em><em>&#8221;; inserire il valore numerico in millimetri di correzione. Confermare con &#8220;INVIO&#8221;.</em></li>
+</ol>
+<h4 id="sospendere-una-lavorazione"><em>Sospendere una lavorazione</em></h4>
+<p><em>Sospendere una lavorazione permette di annullare la lavorazione senza eliminarla dalla lista.</em></p>
+<p><em>Per sospendere una lavorazione:</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>Selezionare la lavorazione.</em></li>
+<li class="level-0"><em>Fare doppio clic sulla colonna &#8220;</em><em><strong>ON</strong></em><em>&#8221;;  compare la scritta &#8220;</em><em><strong>off</strong></em><em>&#8221; per indicare che la lavorazione &#232; sospesa.</em></li>
+</ol>
+<h4 id="eseguire-un-batch"><em>Eseguire un batch</em></h4>
+<p><em>Completata la lista, per avviare le lavorazioni fare clic sul pulsante </em><img src="assets/image40.png" alt=""/><em>.</em></p>
+<p><em>Nella lista, viene espansa ogni eventuale lavorazione batch e viene azzerata la colonna &#8220;time&#8221;.</em></p>
+<p><em>Al termine di ogni lavorazione, il valore &#8220;time&#8221; mostra il tempo impiegato. </em></p>
+<p><em><strong>Opzioni di esecuzione del batch</strong></em></p>
+<p><img src="assets/image41.png" alt=""/><em>Fare clic sul pulsante </em><img src="assets/image42.png" alt=""/><em> per abilitare le seguenti opzioni:</em></p>
+<ol style="list-style-type:decimal">
+<li class="level-0"><em>avvio della lavorazione: la spunta indica che all&#8217;avvio del batch viene avviata anche la prima lavorazione; diversamente, il CN attende lo start dall&#8217;operatore.</em></li>
+<li class="level-0"><em>Abilita off accessori: la spunta indica che &#232; richiesto lo spegnimento di tutti gli accessori al completamento del batch.</em></li>
+<li class="level-0"><em>Abilita il controllo lastra:  la spunta indica che &#232; richiesto il controllo lastra.</em></li>
+<li class="level-0"><em>Integrit&#224; lastra 1-10: la spunta indica che le rispettive lastre sono considerate integre.</em></li>
+</ol>
+<hr class="pagebreak">
+<h4 id="interrompere-un-batch"><em>Interrompere un batch</em></h4>
+<p><em>Fare clic sul pulsante </em><img src="assets/image43.png" alt=""/><em> per interrompere l&#8217;esecuzione del batch. Una lavorazione in corso viene completata.</em></p>
+<p><em>L&#8217;esecuzione di un batch viene interrotta da ogni condizione di allarme.</em></p>
+</div>	
+	<div id="winchm_template_footer">&#169; 2026 FARO srl. All rights reserved.</div>
 </div>
-<div class="footer">SKIPPER++</div>
+
+</body>
+
+</html>

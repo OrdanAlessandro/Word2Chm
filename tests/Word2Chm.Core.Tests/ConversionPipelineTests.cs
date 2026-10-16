@@ -485,6 +485,32 @@ public sealed class ConversionPipelineTests : IDisposable
 
     private static bool IsPureAscii(string text) => text.All(ch => ch <= 127);
 
+    [Theory]
+    [InlineData('\u2018')]
+    [InlineData('\u2019')]
+    public void UsesPlainApostrophesOnlyInNavigationLabels(char apostrophe)
+    {
+        var title = $"Impostazione dell{apostrophe}origine per gli assi XY";
+        var document = new HelpDocument();
+        document.Toc.Add(new TocNode { Title = title, Local = "assi.html#l\u2019origine" });
+        document.IndexEntries.Add(new IndexEntry
+        {
+            Keyword = title, SubKeyword = "Modalit\u00e0 dell" + apostrophe + "asse & opzioni", FileName = "assi.html",
+        });
+
+        var hhc = ChmProjectGenerator.GenerateHhc(document);
+        var hhk = ChmProjectGenerator.GenerateHhk(document);
+        Assert.Contains("value=\"Impostazione dell'origine per gli assi XY\"", hhc);
+        Assert.Contains("value=\"Impostazione dell'origine per gli assi XY\"", hhk);
+        Assert.Contains("Modalit&#224; dell'asse &amp; opzioni", hhk);
+        Assert.Contains("assi.html#l&#8217;origine", hhc);
+        Assert.Equal(title, document.Toc[0].Title);
+
+        var page = new HelpPage { Title = title };
+        var html = new HtmlGenerator().GeneratePage(page, document, "help.css", null);
+        Assert.Contains("dell&#" + (int)apostrophe + ";origine", html);
+    }
+
     [Fact]
     public void RecognizesHeadingsFromLocalizedStyleNames()
     {

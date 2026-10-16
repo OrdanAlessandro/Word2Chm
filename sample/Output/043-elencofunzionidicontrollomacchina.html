@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="winchm_template_style.css" rel="stylesheet" type="text/css">
+<script src="winchm_template_script.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+
+<body>
+
+<div id="winchm_template_top">
+	<div id="winchm_template_button"><a href="042-elencovariabiliinformative.html"><img src="btn_prev_n.gif"></a><a href="044-controllodellabatchinesecuzione.html"><img src="btn_next_n.gif"></a></div>
+	<div id="winchm_template_navigation"><a href="000-skipperqt.html#skipperqt">SkipperQt</a> &gt; <a href="028-script.html#script">Script</a></div>
+	<div id="winchm_template_title">Elenco funzioni di controllo macchina</div>
+</div>
+<div id="winchm_template_container">
+	<div id="winchm_template_content"><span id="elenco-funzioni-di-controllo-macchina"></span>
+<p>Il <strong>namespace Machine.Functions</strong> raccoglie un insieme di funzioni operative che consentono di eseguire comandi diretti sulla macchina CNC. Queste funzioni permettono di interagire in modo attivo con il controllo, gestendo operazioni comuni come il caricamento dei file di lavorazione, l&#8217;avvio o l&#8217;interruzione dei cicli, il salvataggio dei parametri e la gestione degli stati macchina.</p>
+<p>Queste funzioni sono particolarmente utili nello scripting batch, dove &#232; possibile automatizzare intere sequenze di lavoro, inserire logiche condizionali e programmare cicli personalizzati.</p>
+<h4 id="machine-functions-start-int-timeout"><em>Machine.Functions.Start(int timeou</em><em>t</em><em>)</em></h4>
+<p>Richiede l&#8217;avvio del ciclo macchina, equivalente alla pressione del pulsante Start</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Valore di ritorno</strong><strong>:</strong> true se l&#8217;operazione si &#232; completata con successo, false in caso di errore o timeout</p>
+<h4 id="machine-funtions-waitruncomplete-int-timeout"><em>Machine.Funtions.WaitRunComplete(int timeout</em><em>)</em></h4>
+<p>Attende il completamento del ciclo macchina corrente e il passaggio allo stato di attesa o di errore.</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Valore di ritorno</strong><strong>:</strong> true se l&#8217;operazione si &#232; completata con successo, false in caso di errore o timeout</p>
+<h4 id="machine-funtions-jog-int-timeout"><em>Machine.Funtions.Jog(int timeout</em><em>)</em></h4>
+<p>Richiede il passaggio allo stato di Jog, controllo manuale degli assi.</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Valore di ritorno</strong><strong>:</strong> true se l&#8217;operazione si &#232; completata con successo, false in caso di errore o timeout</p>
+<h4 id="machine-funtions-pause-int-timeout"><em>Machine.Funtions.</em><em>Pause</em><em>(int timeout)</em><em> </em></h4>
+<p>Se la macchina &#232; in ciclo (stato di Run) richiede il passaggio allo stato di pausa. </p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Valore di ritorno</strong><strong>:</strong> true se l&#8217;operazione si &#232; completata con successo, false in caso di errore o timeout</p>
+<h4 id="machine-funtions-home-int-timeout"><em>Machine.Funtions.</em><em>Home</em><em>(int timeout)</em></h4>
+<p>Richiede l&#8217;homing della macchina.</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Valore di ritorno</strong><strong>:</strong> true se l&#8217;operazione si &#232; completata con successo, false in caso di errore o timeout</p>
+<h4 id="machine-funtions-moveabsolute-string-position-int-timeout"><em>Machine.Funtions.</em><em>MoveAbsolute</em><em>(</em><em>string position,</em><em> </em><em>int timeout)</em></h4>
+<p>Effettua un movimento Jog alle posizioni assolute indicate.</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>position</em> (stringa): elenco di assi e posizioni del punto di arrivo del movimento, es &#8220;X10 Y0&#8221;</li>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Eccezioni</strong></p>
+<ul>
+<li class="level-0"><em>&#8220;</em><em>MoveAbs: wait timeout</em><em>&#8221;</em> in caso di timeout dell&#8217;operazione</li>
+<li class="level-0"><em>&quot;MoveAbs: command error&quot; </em>in caso di errore di comunicazione con la macchina</li>
+</ul>
+<h4 id="machine-funtions-saveparameters"><em>Machine.Funtions.SaveParameters()</em></h4>
+<p>Richiede il salvataggio parametri nella memoria permanente della macchina</p>
+<p><strong>Eccezioni</strong></p>
+<ul>
+<li class="level-0"><em>&#8220;</em><em>SaveCnParameters: IsConnected return false&quot;</em><em> </em>se la macchina risulta non connessa</li>
+<li class="level-0"><em>&quot;</em><em>SaveCnParameters: rq_save_parm return false</em><em>&quot; </em>in caso di errore di comunicazione con la macchina</li>
+</ul>
+<h4 id="machine-funtions-restart-int-timeout"><em>Machine.Funtions.</em><em>Restart</em><em>(int timeout)</em></h4>
+<p>Richiede il riavvio del firmware macchina (soft-reset)</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Valore di ritorno</strong><strong>:</strong> true se l&#8217;operazione si &#232; completata con successo, false in caso di errore o timeout</p>
+<h4 id="machine-funtions-waitconnectionlost-int-timeout"><em>Machine.Funtions.</em><em>WaitConnectionLost</em><em>(int timeout)</em></h4>
+<p>Attende la perdita di connessione con la macchina per il massimo tempo indicato</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Valore di ritorno</strong><strong>:</strong> true se l&#8217;operazione si &#232; completata con successo, false in caso di errore o timeout</p>
+<h4 id="machine-funtions-waitconnection-int-timeout"><em>Machine.Funtions.</em><em>WaitConnection</em><em>(int timeout)</em></h4>
+<p>Attende la riconnessione alla macchina per il massimo tempo indicato</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Valore di ritorno</strong><strong>:</strong> true se l&#8217;operazione si &#232; completata con successo, false in caso di errore o timeout</p>
+<h4 id="machine-funtions-presettool-int-toolnumber-int-timeout"><em>Machine.Funtions.</em><em>PresetTool</em><em>(int </em><em>toolNumber</em><em>,</em><em> </em><em>int timeout)</em></h4>
+<p>Richiede il preset dell&#8217;utensile specificato</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>toolNumber</em> (intero&gt;=0): numero dell&#8217;utensile da presettare o 0 per effettuare il preset dell&#8217;utensile corrente</li>
+<li class="level-0"><em>timeout</em> (intero&gt;=0): timeout in millisecond di attesa del completamento dell&#8217;operazione. Se uguale a 0 la funzione ritorna immediatamente</li>
+</ul>
+<p><strong>Valore di ritorno</strong><strong>:</strong> true se l&#8217;operazione si &#232; completata con successo, false in caso di errore o timeout</p>
+<h4 id="machine-funtions-getprobingpoint-int-index"><em>Machine.Funtions.</em><em>GetProbingPoint</em><em>(int </em><em>index</em><em>)</em></h4>
+<p>Richiede i valori del punto di tastatura di indice specificato</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>index</em> (intero&gt;=0): indice del punto da ottenere</li>
+</ul>
+<p><strong>Valore di ritorno:</strong> <a href="050-tipididatospecifici.html#probepoint"><em>ProbePoint</em></a> di indice richiesto</p>
+<h4 id="machine-funtions-getvisionpoint-int-index"><em>Machine.Funtions.</em><em>GetVisionPoint</em><em>(int </em><em>index</em><em>)</em></h4>
+<p>Richiede i valori del punto di visione di indice specificato</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>index</em> (intero&gt;=0): indice del punto da ottenere</li>
+</ul>
+<p><strong>Valore di ritorno:</strong> <a href="050-tipididatospecifici.html#visionpoint"><em>Vision</em><em>Point</em></a> di indice richiesto</p>
+<h4 id="machine-funtions-cleariso"><em>Machine.Funtions.</em><em> </em><em>ClearIso()</em></h4>
+<p>Cancella la memoria ISO della macchina</p>
+<p><strong>Eccezioni</strong></p>
+<ul>
+<li class="level-0"><em>&#8220;</em><em>No machine connected</em><em>&quot;</em><em> </em>se la macchina risulta non connessa</li>
+<li class="level-0"><em>&quot;</em><em>Machine not ready</em><em>&quot; </em>in caso di errore di comunicazione con la macchina o se la macchina non &#232; pronta a cancellare il file ISO (es se in ciclo)</li>
+</ul>
+<h4 id="machine-funtions-loadfile-string-filepath"><em>Machine.Funtions.</em><em>LoadFile</em><em>(</em><em>string filePath</em><em>)</em></h4>
+<p>Inizia il caricamento del file avente il percorso specificato</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>filePath </em>(stringa): percorso del file ISO da caricare</li>
+</ul>
+<h4 id="machine-funtions-loadstring-string-filecontent"><em>Machine.Funtions.</em><em>LoadString</em><em>(</em><em>string fileContent</em><em>)</em></h4>
+<p>Inizia il caricamento del file ISO specificato come contenuto</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>fileContent</em> (stringa): testo del contenuto del file ISO da caricare</li>
+</ul>
+<h4 id="machine-funtions-loadfirmware-string-filepath"><em>Machine.Funtions.</em><em>LoadFirmware</em><em>(</em><em>string filePath</em><em>)</em></h4>
+<p>Inizia il caricamento del firmware avente il percorso specificato</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>filePath </em>(stringa): percorso del file LDR da caricare</li>
+</ul>
+<h4 id="machine-funtions-backup"><em>Machine.Funtions.Backup()</em></h4>
+<p>Crea un backup della configurazione completa della macchina nella cartella backup di Skipper. La cartella macchina in Skipper non viene modificata</p>
+<h4 id="machine-funtions-saveallonpc"><em>Machine.Funtions.</em><em> </em><em>Save</em><em>AllOnPc</em><em> ()</em></h4>
+<p>Scarica parametri, sottoprogrammi e reference aggiornando i file corrispondenti nella cartella macchina di Skipper</p>
+<h4 id="machine-funtions-saveparametersonpc"><em>Machine.Funtions.SaveParameters</em><em>OnPc</em><em>()</em></h4>
+<p>Salva i parametri correnti nel file utente della macchina, lasciando inalterati i file reference e sottoprogrammi</p>
+</div>	
+	<div id="winchm_template_footer">&#169; 2026 FARO srl. All rights reserved.</div>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="winchm_template_style.css" rel="stylesheet" type="text/css">
+<script src="winchm_template_script.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+
+<body>
+
+<div id="winchm_template_top">
+	<div id="winchm_template_button"><a href="036-operatoridiassegnazione.html"><img src="btn_prev_n.gif"></a><a href="038-funzioni.html"><img src="btn_next_n.gif"></a></div>
+	<div id="winchm_template_navigation"><a href="000-skipperqt.html#skipperqt">SkipperQt</a> &gt; <a href="028-script.html#script">Script</a></div>
+	<div id="winchm_template_title">Strutture di controllo</div>
+</div>
+<div id="winchm_template_container">
+	<div id="winchm_template_content"><span id="strutture-di-controllo"></span>
+<p>Le strutture di controllo consentono di gestire il flusso di esecuzione dello script in base a condizioni o ripetizioni. Il linguaggio batch di Skipper supporta le principali strutture tipiche della programmazione imperativa, ereditate da JavaScript.</p>
+<h4 id="condizionali"><em>Condizionali</em></h4>
+<p>Le istruzioni condizionali permettono di eseguire blocchi di codice solo se una determinata condizione &#232; verificata.</p>
+<p><strong>if</strong><strong>, </strong><strong>else if</strong><strong>, </strong><strong>else</strong></p>
+<p>var quota = 15;</p>
+<p>if (quota &gt; 20) {</p>
+<p>    log(&quot;Quota troppo alta&quot;);</p>
+<p>} else if (quota &gt;= 10) {</p>
+<p>    log(&quot;Quota corretta&quot;);</p>
+<p>} else {</p>
+<p>    log(&quot;Quota troppo bassa&quot;);</p>
+<p>}</p>
+<ul>
+<li class="level-0">La condizione tra parentesi tonde deve restituire un valore booleano (true o false).</li>
+<li class="level-0">I blocchi di codice sono racchiusi tra parentesi graffe {}.</li>
+</ul>
+<p><strong>Uso del </strong><strong>!</strong><strong> (NOT logico)</strong></p>
+<p>var tastatoreAttivo = false;</p>
+<p>if (!tastatoreAttivo) {</p>
+<p>    attivaTastatore();</p>
+<p>}</p>
+<h4 id="cicli"><em>Cicli</em></h4>
+<p>I cicli permettono di eseguire una stessa porzione di codice pi&#249; volte, finch&#233; una condizione &#232; vera o per un numero definito di iterazioni.</p>
+<p>for</p>
+<p>for (var i = 0; i &lt; 5; i++) {</p>
+<p>    log(&quot;Iterazione &quot; + i);</p>
+<p>}</p>
+<ul>
+<li class="level-0">Inizializzazione: var i = 0</li>
+<li class="level-0">Condizione di continuazione: i &lt; 5</li>
+<li class="level-0">Incremento: i++</li>
+</ul>
+<p><strong>while</strong></p>
+<p>var quota = 0;</p>
+<p>while (quota &lt; 10) {</p>
+<p>    quota += 2;</p>
+<p>    log(&quot;Quota attuale: &quot; + quota);</p>
+<p>}</p>
+<ul>
+<li class="level-0">Il ciclo continua finch&#233; la condizione &#232; vera.</li>
+</ul>
+<p><strong>do...while</strong></p>
+<p>var tentativi = 0;</p>
+<p>do {</p>
+<p>    log(&quot;Tentativo: &quot; + tentativi);</p>
+<p>    tentativi++;</p>
+<p>} while (tentativi &lt; 3);</p>
+<ul>
+<li class="level-0">Il blocco viene eseguito almeno una volta, anche se la condizione &#232; falsa al primo controllo.</li>
+</ul>
+<h4 id="comandi-di-controllo-del-flusso"><em>Comandi di controllo del flusso</em></h4>
+<h5 id="break">break</h5>
+<p>Interrompe l&#8217;esecuzione del ciclo corrente:</p>
+<p>for (var i = 0; i &lt; 10; i++) {</p>
+<p>    if (i == 5) break;</p>
+<p>    log(&quot;i = &quot; + i);</p>
+<p>}</p>
+<h5 id="continue">continue</h5>
+<p>Salta l&#8217;iterazione corrente e passa alla successiva:</p>
+<p>for (var i = 0; i &lt; 5; i++) {</p>
+<p>    if (i == 2) continue;</p>
+<p>    log(&quot;Valore: &quot; + i);</p>
+<p>}</p>
+<h5 id="switch">Switch</h5>
+<p>Il costrutto <em>switch</em> permette di eseguire blocchi diversi di codice in base al valore di una variabile o di un&#39;espressione. &#200; utile quando si devono gestire pi&#249; condizioni in modo compatto e leggibile.</p>
+<p><strong>Sintassi base:</strong></p>
+<p>var codiceErrore = 2;</p>
+<p>switch (codiceErrore) {</p>
+<p>    case 1:</p>
+<p>        log(&quot;Errore di inizializzazione&quot;);</p>
+<p>        break;</p>
+<p>    case 2:</p>
+<p>        log(&quot;Errore di connessione&quot;);</p>
+<p>        break;</p>
+<p>    case 3:</p>
+<p>        log(&quot;Errore di misura&quot;);</p>
+<p>        break;</p>
+<p>    default:</p>
+<p>        log(&quot;Errore sconosciuto&quot;);</p>
+<p>        break;</p>
+<p>}</p>
+<ul>
+<li class="level-0">Ogni case viene confrontato con il valore di codiceErrore.</li>
+<li class="level-0">L&#8217;istruzione break impedisce che vengano eseguiti anche i blocchi successivi (&quot;fall-through&quot;).</li>
+<li class="level-0">Il blocco default viene eseguito se nessun case corrisponde.</li>
+</ul>
+<p><strong>Nota</strong>: lo switch &#232; particolarmente utile quando si leggono parametri macchina che possono assumere uno tra pi&#249; stati distinti e noti.</p>
+</div>	
+	<div id="winchm_template_footer">&#169; 2026 FARO srl. All rights reserved.</div>
+</div>
+
+</body>
+
+</html>

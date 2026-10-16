@@ -418,8 +418,8 @@ partial class MainForm
 		_optionsPanel.AutoSize = true;
 		_root.SetColumnSpan(_optionsPanel, 2);
 		_optionsPanel.Controls.Add(_compileChm);
-		_optionsPanel.Controls.Add(_openOutput);
 		_optionsPanel.Controls.Add(_openChm);
+		_optionsPanel.Controls.Add(_openOutput);
 		_optionsPanel.Dock = DockStyle.Fill;
 		_optionsPanel.Location = new Point(165, 358);
 		_optionsPanel.Name = "_optionsPanel";
@@ -441,20 +441,20 @@ partial class MainForm
 		// _openOutput
 		// 
 		_openOutput.AutoSize = true;
-		_openOutput.Location = new Point(119, 3);
+		_openOutput.Location = new Point(276, 3);
 		_openOutput.Name = "_openOutput";
 		_openOutput.Size = new Size(157, 19);
-		_openOutput.TabIndex = 1;
+		_openOutput.TabIndex = 2;
 		_openOutput.Text = "Apri la cartella al termine";
 		_openOutput.UseVisualStyleBackColor = true;
 		//
 		// _openChm
 		//
 		_openChm.AutoSize = true;
-		_openChm.Location = new Point(282, 3);
+		_openChm.Location = new Point(119, 3);
 		_openChm.Name = "_openChm";
 		_openChm.Size = new Size(151, 19);
-		_openChm.TabIndex = 2;
+		_openChm.TabIndex = 1;
 		_openChm.Text = "Apri il CHM al termine";
 		_openChm.UseVisualStyleBackColor = true;
 		// 

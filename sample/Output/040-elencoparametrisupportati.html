@@ -1,0 +1,939 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="winchm_template_style.css" rel="stylesheet" type="text/css">
+<script src="winchm_template_script.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+
+<body>
+
+<div id="winchm_template_top">
+	<div id="winchm_template_button"><a href="039-parametrimacchinaecomandispecifici.html"><img src="btn_prev_n.gif"></a><a href="041-elencovariabilidistato.html"><img src="btn_next_n.gif"></a></div>
+	<div id="winchm_template_navigation"><a href="000-skipperqt.html#skipperqt">SkipperQt</a> &gt; <a href="028-script.html#script">Script</a></div>
+	<div id="winchm_template_title">Elenco parametri supportati</div>
+</div>
+<div id="winchm_template_container">
+	<div id="winchm_template_content"><span id="elenco-parametri-supportati"></span>
+<p>Tutti i parametri macchina sono raggruppati nel namespace <strong>Machine.Parameters</strong> che, di conseguenza, va anteposto al nome dei parametri qui elencati</p>
+<h4 id="machine-parameters-axis"><em>Machine.Parameters.</em><em>Axis</em></h4>
+<p>Nel linguaggio di scripting di Skipper, il <strong>namespace </strong><strong>Parameters.</strong><strong>Axis</strong> consente di accedere ai parametri degli assi. Ogni asse della macchina &#232; rappresentato da un proprio <strong>namespace secondario</strong>, che contiene i parametri relativi a quel particolare asse.</p>
+<p>Ad esempio, l&#8217;offset di home dell&#8217;asse A pu&#242; essere ottenuta attraverso il namespace <strong>Axis.</strong><strong>A</strong><strong>.</strong><strong>homeOffset</strong></p>
+<p><strong>Sintassi di accesso:</strong></p>
+<p>// Imposta la 0 la posizione di offset di home dell&#8217;asse A</p>
+<p>Axis.A.homeOffset = 0;</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>homeOffset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset di home dell&#8217;asse</p>
+</td>
+</tr>
+<tr>
+<td><p>rotationOffset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione di home asse di rotazione, presente solo su assi di rotazione ABC&#8230;</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-blade"><em>Machine.Parameters.Blade</em></h4>
+<p>Il <strong>namespace Machine.Parameters.Blade</strong> raccoglie i parametri relativi all&#8217;accessorio lama da taglio</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>offsetX</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset X rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>offsetY</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset Y rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>preset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Preset della lama</p>
+</td>
+</tr>
+<tr>
+<td><p>disableDevice</p>
+</td>
+<td><p>Booleano</p>
+</td>
+<td><p>Consente di disabilitare l&#8217;accessorio, mascherando gli allarmi</p>
+</td>
+</tr>
+<tr>
+<td><p>enableCorrection</p>
+</td>
+<td><p>Booleano</p>
+</td>
+<td><p>Abilita la compensazione automatica dell&#8217;eccentricit&#224; della lama nell&#8217;asse di orientamento C</p>
+</td>
+</tr>
+<tr>
+<td><p>eccentricityX</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Valore di eccentricit&#224; X</p>
+</td>
+</tr>
+<tr>
+<td><p>eccentricityY</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Valore di eccentricit&#224; Y</p>
+</td>
+</tr>
+<tr>
+<td><p>bladeCycles</p>
+</td>
+<td><p>Intero</p>
+</td>
+<td><p>Contatore del numero di cicli eseguiti dalla lama</p>
+</td>
+</tr>
+<tr>
+<td><p>maxBladeCycles</p>
+</td>
+<td><p>Intero</p>
+</td>
+<td><p>Massimo numeri di cicli consentiti prima di segnalare l&#8217;allarme fine vita lama</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-feedrate"><em>Machine.Parameters.</em><em>Feedrate</em></h4>
+<p>Questo namespace raggruppa i parametri di velocit&#224; predefinite, utilizzate nei movimenti rapidi o di taglio in assenza di comandi di velocit&#224; F.</p>
+<h5 id="machine-parameters-feedrate-cut">Machine.Parameters.Feedrate.Cut</h5>
+<p>Parametri di velocit&#224; nei movimenti in lavorazione G1, G2, G3, &#8230;</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>common</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Velocit&#224; comune in lavorazione degli assi diversi da Z espresso in unit&#224; al secondo</p>
+</td>
+</tr>
+<tr>
+<td><p>z</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Velocit&#224; specifica per l&#8217;asse Z per i movimenti in lavorazione, espressa in mm/s</p>
+</td>
+</tr>
+</table>
+<h5 id="machine-parameters-feedrate-rapid">Machine.Parameters.Feedrate.Rapid</h5>
+<p>Parametri di velocit&#224; nei movimenti in rapido G0</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>common</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Velocit&#224; comune in rapido degli assi diversi da Z espresso in unit&#224; al secondo</p>
+</td>
+</tr>
+<tr>
+<td><p>z</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Velocit&#224; specifica per l&#8217;asse Z per i movimenti in rapido, espressa in mm/s</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-g54-g55-g56"><em>Machine.Parameters.G54</em><em>[]</em><em>-G55</em><em>[]</em><em>-G56</em><em>[]</em></h4>
+<p>Le origini predefinite, come G54, G55, G56, sono utilizzate nel linguaggio ISO per definire diverse posizioni di riferimento durante la lavorazione CNC. Ogni origine predefinita pu&#242; includere fino a quattro posizioni (ad esempio, G54, G54.1, G54.2, G54.3), che corrispondono a differenti riferimenti spaziali, come le coordinate X, Y, Z e lo spessore del materiale.</p>
+<p>Nel linguaggio di scripting le varianti di ciascun comando di orgine (ad esempio, G54, G54.1, G54.2, G54.3) sono indicizzate come elementi di un array, dove il numero dopo il punto rappresenta l&#39;indice del vettore.</p>
+<p>Esempio:</p>
+<ul>
+<li class="level-0"><strong>G54</strong> &#232; rappresentato come G54[0]</li>
+<li class="level-0"><strong>G54.1</strong> &#232; rappresentato come G54[1]</li>
+<li class="level-0"><strong>G54.2</strong> &#232; rappresentato come G54[2]</li>
+<li class="level-0"><strong>G54.3</strong> &#232; rappresentato come G54[3]</li>
+</ul>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+<td></td>
+</tr>
+<tr>
+<td><p>x</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione X</p>
+</td>
+<td></td>
+</tr>
+<tr>
+<td><p>y</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Y</p>
+</td>
+<td></td>
+</tr>
+<tr>
+<td><p>z</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Z</p>
+</td>
+<td></td>
+</tr>
+<tr>
+<td><p>h</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td colspan="2"><p>Spessore del materiale che varia la quota Z=0 di lavorazione</p>
+</td>
+</tr>
+<tr>
+<td><p>a</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione A</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>b</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione B</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>c</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione C</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>v</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione V</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>w</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione W</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>u</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione U</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+</table>
+<p>Questa struttura consente di accedere facilmente alle diverse posizioni di origine in modo semplice e ordinato, utilizzando l&#8217;indice appropriato per ciascuna.</p>
+<p>// Accesso alla coordinata X di G54.2</p>
+<p>var xG542 = G54[2].x;</p>
+<p>In questo esempio, G54[2] rappresenta la terza posizione dell&#39;origine G54 (G54.2), e x accede alla coordinata X di quella posizione.</p>
+<h4 id="machine-parameters-kinematics"><em>Machine.Parameters.Kinematics</em></h4>
+<p>ll namespace Machine.Parameters.Kinematics raggruppa i parametri per il settaggio della cinematica macchina</p>
+<h5 id="machine-parameters-kinematics-feedratemodulation">Machine.Parameters.Kinematics.FeedrateModulation</h5>
+<p>Identifica i parametri utilizzati per abilitare e configurare la <strong>modulazione</strong><strong> della velocit&#224; di avanzamento</strong><strong> </strong>su macchina a 5 assi, una funzionalit&#224; fondamentale per il mantenimento corretto della velocit&#224; utensile-materiale.</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>enable</p>
+</td>
+<td><p>Booleano</p>
+</td>
+<td><p>Abilitazione della modulazione di velocit&#224;</p>
+</td>
+</tr>
+<tr>
+<td><p>centerX</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione X del centro di rotazione della macchina</p>
+</td>
+</tr>
+<tr>
+<td><p>centerY</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Y del centro di rotazione della macchina</p>
+</td>
+</tr>
+<tr>
+<td><p>centerZ</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Z del centro di rotazione della macchina</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-lensclamp"><em>Machine.Parameters.LensClamp</em></h4>
+<p>Il <strong>namespace </strong><strong>LensClamp</strong> consente di gestire i parametri relativi alla <strong>multilavorazione</strong>, una funzione che abilita la ripetizione automatica e ciclica del file CNC caricato nella macchina. Questa opzione &#232; utile quando si desidera eseguire lo stesso programma CNC pi&#249; volte senza doverlo far ripartire manualmente, ottimizzando il processo produttivo.</p>
+<p>Nel linguaggio di scripting, &#232; possibile specificare vari parametri per la multilavorazione, come il numero massimo di cicli da eseguire o, in alternativa, abilitare la ripetizione <strong>illimitata</strong> del ciclo.</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>enable</p>
+</td>
+<td><p>Booleano</p>
+</td>
+<td><p>Abilita o disabilita la multilavorazione</p>
+</td>
+</tr>
+<tr>
+<td><p>maxCycles</p>
+</td>
+<td><p>Intero</p>
+</td>
+<td><p>Numero massimo di ripetizioni, indicare 0 per ripetizioni illimitate</p>
+</td>
+</tr>
+<tr>
+<td><p>completedCycles</p>
+</td>
+<td><p>Intero</p>
+</td>
+<td><p>Numero di ripetizioni del ciclo completate finora</p>
+</td>
+</tr>
+</table>
+<p><strong>Sintassi di accesso e configurazione:</strong></p>
+<p>//Abilitare la multilavorazione</p>
+<p>Machine.Multi.enable = true;</p>
+<p>//Impostare un numero massimo di ripetizioni a 10</p>
+<p>Machine.Multi.maxCycles = 10;</p>
+<p>//Azzerare il contatore ripetizioni</p>
+<p>Machine.Multi.completedCycles = 0;</p>
+<h4 id="machine-parameters-multi"><em>Machine.Parameters.Multi</em></h4>
+<p>Il <strong>namespace Multi</strong> consente di gestire i parametri relativi alla <strong>multilavorazione</strong>, una funzione che abilita la ripetizione automatica e ciclica del file CNC caricato nella macchina. Questa opzione &#232; utile quando si desidera eseguire lo stesso programma CNC pi&#249; volte senza doverlo far ripartire manualmente, ottimizzando il processo produttivo.</p>
+<p>Nel linguaggio di scripting, &#232; possibile specificare vari parametri per la multilavorazione, come il numero massimo di cicli da eseguire o, in alternativa, abilitare la ripetizione <strong>illimitata</strong> del ciclo.</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>enable</p>
+</td>
+<td><p>Booleano</p>
+</td>
+<td><p>Abilita o disabilita la multilavorazione</p>
+</td>
+</tr>
+<tr>
+<td><p>maxCycles</p>
+</td>
+<td><p>Intero</p>
+</td>
+<td><p>Numero massimo di ripetizioni, indicare 0 per ripetizioni illimitate</p>
+</td>
+</tr>
+<tr>
+<td><p>completedCycles</p>
+</td>
+<td><p>Intero</p>
+</td>
+<td><p>Numero di ripetizioni del ciclo completate finora</p>
+</td>
+</tr>
+</table>
+<p><strong>Sintassi di accesso e configurazione:</strong></p>
+<p>//Abilitare la multilavorazione</p>
+<p>Machine.Multi.enable = true;</p>
+<p>//Impostare un numero massimo di ripetizioni a 10</p>
+<p>Machine.Multi.maxCycles = 10;</p>
+<p>//Azzerare il contatore ripetizioni</p>
+<p>Machine.Multi.completedCycles = 0;</p>
+<h4 id="machine-parameters-multispindle-t1-t2-t3-t4"><em>Machine.Parameters.MultiSpindle</em><em>.T1/T2/T3/T4</em></h4>
+<p>Il <strong>namespace Machine.Parameters.</strong><strong>MultiSpindle</strong> raccoglie i parametri relativi alla configurazione multimandrino. </p>
+<ul>
+<li class="level-0"><strong>Machine.Parameters.MultiSpindle</strong><strong>.T1 </strong>accede ai parametri del T1</li>
+<li class="level-0"><strong>Machine.Parameters.</strong><strong>MultiSpindle.T2 </strong>accede ai parametri del T2</li>
+<li class="level-0"><strong>Machine.Parameters.</strong><strong>MultiSpindle.T3 </strong>accede ai parametri del T3</li>
+<li class="level-0"><strong>Machine.Parameters.</strong><strong>MultiSpindle.T4 </strong>accede ai parametri del T4</li>
+</ul>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>offsetX</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset X rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>offsetY</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset Y rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>preset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Preset del mandrino</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-origin"><em>Machine.Parameters.Origin</em></h4>
+<p>Origine correntemente in uso nella macchina, rispetto alla quale sono riferite le posizioni relative degli assi</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>x</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione X</p>
+</td>
+</tr>
+<tr>
+<td><p>y</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Y</p>
+</td>
+</tr>
+<tr>
+<td><p>z</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Z</p>
+</td>
+</tr>
+<tr>
+<td><p>a</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione A</p>
+</td>
+</tr>
+<tr>
+<td><p>b</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione B</p>
+</td>
+</tr>
+<tr>
+<td><p>c</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione C</p>
+</td>
+</tr>
+<tr>
+<td><p>v</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione V</p>
+</td>
+</tr>
+<tr>
+<td><p>w</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione W</p>
+</td>
+</tr>
+<tr>
+<td><p>u</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione U</p>
+</td>
+</tr>
+<tr>
+<td><p>h</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Spessore del materiale che varia la quota Z=0 di lavorazione</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-presetsensor"><em>Machine.Parameters.</em><em>PresetSensor</em></h4>
+<p>Il <strong>namespace Machine.Parameters.</strong> <strong>PresetSensor</strong><strong> </strong>raccoglie i parametri relativi al dispositivo preset per la misurazione della lunghezza utensili.</p>
+<h5 id="machine-parameters-presetsensor-position">Machine.Parameters.PresetSensor.Position</h5>
+<p>Posizione del sensore in coordinate macchina</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>x</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione X del sensore</p>
+</td>
+</tr>
+<tr>
+<td><p>y</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Y del sensore</p>
+</td>
+</tr>
+<tr>
+<td><p>z</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Z di avvicinamento al sensore</p>
+</td>
+</tr>
+<tr>
+<td><p>limit</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Z limite di ricerca sensore</p>
+</td>
+</tr>
+<tr>
+<td><p>h</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Altezza del sensore di preset</p>
+</td>
+</tr>
+</table>
+<h5 id="machine-parameters-presetsensor-lastmeasure">Machine.Parameters.PresetSensor.lastMeasure</h5>
+<p>Ultima misura in mm effettuata durante l&#8217;operazione di preset di un utensile</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>lastMeasure</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Ultima misura in mm effettuata durante l&#8217;operazione di preset di un utensile</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-probe3d"><em>Machine.Parameters.Probe3D</em></h4>
+<p>Il <strong>namespace Machine.Parameters.Probe3D</strong> raccoglie i parametri relativi al tastatore 3D, uno strumento utilizzato per operazioni di misura, calibrazione automatica e rilevamento di superfici o riferimenti pezzo. I parametri disponibili consentono di definire la posizione fisica del tastatore rispetto al mandrino e il preset.</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>offsetX</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset X rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>offsetY</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset Y rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>preset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Preset del tastatore</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-lineargauge"><em>Machine.Parameters.</em><em>LinearGauge</em></h4>
+<p>Il <strong>namespace Machine.Parameters.</strong><strong>LinearGauge</strong> raccoglie i parametri relativi al tastatore calibro lineare, uno strumento utilizzato per operazioni di misura, calibrazione automatica e rilevamento di superfici o riferimenti pezzo. I parametri disponibili consentono di definire la posizione fisica del tastatore rispetto al mandrino e il preset.</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>offsetX</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset X rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>offsetY</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset Y rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>preset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Preset del tastatore</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-lineargauge-automaticpreset-qt"><em>Machine.Parameters.LinearGauge.AutomaticPreset </em><em>[Qt]</em></h4>
+<p>Il <strong>namespace Machine.Parameters.</strong><strong>LinearGauge</strong><strong>.AutomaticPreset</strong> raccoglie i parametri relativi alla funzionalit&#224; di preset automatico calibro lineare</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>enable</p>
+</td>
+<td><p>Booleano</p>
+</td>
+<td><p>Abilita la funzionalit&#224; di preset automatico</p>
+</td>
+</tr>
+<tr>
+<td><p>x</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione X del sensore</p>
+</td>
+</tr>
+<tr>
+<td><p>y</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Y del sensore</p>
+</td>
+</tr>
+<tr>
+<td><p>a</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione A del sensore (se asse presente)</p>
+</td>
+</tr>
+<tr>
+<td><p>b</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione B del sensore (se asse presente)</p>
+</td>
+</tr>
+<tr>
+<td><p>z</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Z di avvicinamento al sensore</p>
+</td>
+</tr>
+<tr>
+<td><p>limit</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Z limite di ricerca sensore</p>
+</td>
+</tr>
+<tr>
+<td><p>h</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Altezza del sensore di preset</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-lensgauge"><em>Machine.Parameters.</em><em>LensGauge</em></h4>
+<p>Il <strong>namespace Machine.Parameters.</strong><strong>LensGauge</strong> raccoglie i parametri relativi al tastatore lenti. I parametri disponibili consentono di definire la posizione fisica del tastatore rispetto al mandrino e il preset.</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>offsetX</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset X rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>offsetY</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset Y rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>preset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Preset del tastatore</p>
+</td>
+</tr>
+<tr>
+<td><p>readOffset1</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset lettura compressione del tastatore 1 (superiore o front)</p>
+</td>
+</tr>
+<tr>
+<td><p>readOffset2</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset lettura compressione del tastatore 2 (inferiore o back)</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-settings"><em>Machine.Parameters.Settings</em></h4>
+<p>Raggruppa le impostazioni della macchina</p>
+<h5 id="machine-parameters-settings-startupfeedrateoverride">Machine.Parameters.Settings.startupFeedrateOverride</h5>
+<p>In Skipper, &#232; possibile modificare la velocit&#224; di avanzamento della macchina tramite un <strong>override percentuale</strong>. Questo parametro permette di regolare la velocit&#224; di esecuzione delle operazioni senza dover modificare i valori di velocit&#224; definiti nel programma CNC, consentendo un controllo dinamico e flessibile durante la lavorazione. Il parametro <strong>startupFeedrateOverride</strong> consente di forzare l&#8217;override ad un determinato valore all&#8217;avvio del ciclo di lavorazione.</p>
+<h4 id="machine-parameters-spindletilting"><em>Machine.Parameters.</em><em>SpindleTilting</em></h4>
+<p>Il <strong>namespace Machine.Parameters.SpindleTilting</strong> raccoglie i parametri relativi al dispositivo di inclinazione (tilting) del mandrino.</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>offsetX</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset X del centro di rotazione rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>offsetY</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset Y del centro di rotazione rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>offsetZ</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Z del centro rotazione rispetto il piano Z0</p>
+</td>
+</tr>
+</table>
+<h4 id="machine-parameters-vision"><em>Machine.Parameters.Vision</em></h4>
+<p>Il <strong>namespace Machine.Parameters.</strong><strong>Vision</strong> raccoglie i parametri relativi all&#8217;accessorio camera per visione in macchina</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>offsetX</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset X rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>offsetY</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Offset Y rispetto al mandrino (T1)</p>
+</td>
+</tr>
+<tr>
+<td><p>preset</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Preset della camera (definisce la distanza focale)</p>
+</td>
+</tr>
+</table>
+</div>	
+	<div id="winchm_template_footer">&#169; 2026 FARO srl. All rights reserved.</div>
+</div>
+
+</body>
+
+</html>

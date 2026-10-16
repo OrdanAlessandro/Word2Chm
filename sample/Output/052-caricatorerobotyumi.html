@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="winchm_template_style.css" rel="stylesheet" type="text/css">
+<script src="winchm_template_script.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+
+<body>
+
+<div id="winchm_template_top">
+	<div id="winchm_template_button"><a href="051-plugin.html"><img src="btn_prev_n.gif"></a><a href="053-macchinacnc.html"><img src="btn_next_n.gif"></a></div>
+	<div id="winchm_template_navigation"><a href="000-skipperqt.html#skipperqt">SkipperQt</a> &gt; <a href="051-plugin.html#plugin">Plugin</a></div>
+	<div id="winchm_template_title">Caricatore robot Yumi</div>
+</div>
+<div id="winchm_template_container">
+	<div id="winchm_template_content"><span id="caricatore-robot-yumi"></span>
+<p>L&#8217;interfacciamento tra l&#8217;ambiente di controllo Skipper e il robot Yumi viene fornito come plugin di estensione di Skipper. Il plugin arricchisce il programma di due funzionalit&#224;:</p>
+<ul>
+<li class="level-0">Il pannello HMI <em>Robot </em><em>Yu</em><em>mi</em> nel gruppo <em>Accessori</em></li>
+<li class="level-0">Funzionalit&#224; di selezione automatica delle ricette al caricamento di un file cnc</li>
+</ul>
+<p>Dal pannello HMI si ha accesso all&#8217;archivio delle ricette e a strumenti rapidi per il controllo del ciclo robot: l&#8217;avvio, l&#8217;arresto e la ripartenza. &#200; inoltre visualizzato il log di sistema di Yumi per avere un rapido riscontro di eventuali segnalazioni. La comunicazione tra Skipper e robot viene effettuata attraverso la sua interfaccia Robot Web Services 2.0 API, pertanto &#232; necessario predisporre una connessione ethernet tra il PC e la rete pubblica del controller.</p>
+<figure><img src="assets/image80.png" alt=""/></figure>
+<h4 id="ricette-robot"><em>Ricette robot</em></h4>
+<p>Il programma robot &#232; organizzato in due parti, una statica e una dinamica.</p>
+<p> La parte statica &#232; permanentemente caricata in RAPID e definisce l&#8217;insieme di tutte le funzionalit&#224; disponibili del robot: tutte le sequenze di prelievo e deposito implementabili, procedure di homing, ecc. Il ciclo robot &#232; definito dalla scelta delle sequenze da richiamare sulla base del valore di variabili e parametri, tramite le quali &#232; possibile configurare il tipo di lente o mascherina da caricare. A loro volta le varie sequenze sono funzione di punti e offset configurabili, in modo da essere adattabili alle diverse esigenze. La parte statica del programma &#232; quindi realizzata per essere indipendente dall&#8217;hardware del robot e pertanto pu&#242; essere mantenuta uguale.</p>
+<p>La parte dinamica, che costituisce la <em>ricetta</em> vera e propria, &#232; il modulo <em>RECIPE</em>. In esso sono definite tutte le variabili, i robtargets e gli offset che consentono di personalizzare e specificare il flusso del programma statico. Tutte le possibili variazioni di modello, di prelievo, deposito e caricamento devono essere realizzabili tramite l&#8217;opportuna modifica delle variabili definite nel modulo RECIPE.</p>
+<p>L&#8217;insieme dei salvataggi su file .mod delle varie implementazioni del modulo RECIPE, costituisce l&#8217;archivio delle ricette. Ciascuna ricetta, quindi, altro non &#232; che UN file .mod che definisce una particolare istanza del modulo RECIPE.</p>
+<h4 id="archivio-ricette"><em>Archivio ricette</em></h4>
+<p><img src="assets/image81.png" alt=""/>Nelle impostazioni del pannello Robot Yumi, in Skipper, viene definita la posizione della cartella dell&#8217;archivio ricette, che pu&#242; trovarsi sul PC o su unit&#224; di rete condivisa. La posizione di default dell&#8217;archivio ricette &#232; la sottocartella <em>YumiRecipes</em><em> </em>del percorso di installazione di Skipper. A partire da questa posizione il programma effettua una ricerca di file .mod e sottocartelle creando un albero di ricette navigabile e modificabile direttamente da programma. L&#8217;archivio ricette organizzato a file consente una rapida copia da un PC all&#8217;altro, la creazione, cancellazione, cambio di nome dei file mod e delle cartelle si ripercuote immediatamente in una variazione della struttura dell&#8217;archivio, senza necessit&#224; di operazioni ulteriori da parte dell&#8217;operatore. Un secondo archivio, di default ricercato nella sottocartella <em>YumiTemplates</em>, definisce i modelli base da utilizzare per la creazione di nuove ricette. Facendo click sul pulsante di aggiornamento, visibile nella parte alta del pannello, viene effettuata una procedura globale di aggiornamento dello stato:</p>
+<ul>
+<li class="level-0">Verifica della comunicazione con Yumi, richiesta della ricetta corrente e dei parametri</li>
+<li class="level-0">Richiesta dei parametri di ripetizione dalla macchina CN</li>
+<li class="level-0">Aggiornamento della visualizzazione dell&#8217;archivio ricette</li>
+</ul>
+<figure><img src="assets/image82.png" alt=""/></figure>
+<h4 id="creazione-ricetta"><em>Creazione ricetta</em></h4>
+<p>La creazione di una nuova ricetta pu&#242; essere effettuata in tre modi:</p>
+<ol style="list-style-type:decimal">
+<li class="level-0">Click con il tasto destro sulla cartella padre dell&#8217;archivio, in cui si intende inserire la nuova ricetta, e selezione dell&#8217;opzione <em>Nuova ricetta</em><em>. </em>Da qui si &#232; guidati nella scelta del Template di partenza da utilizzare. </li>
+</ol>
+<p><img src="assets/image83.png" alt=""/><img src="assets/image84.png" alt=""/></p>
+<ol start="2" style="list-style-type:decimal">
+<li class="level-0">Copia diretta di un file mod nella cartella delle ricette. Come specificato nel paragrafo precedente, tutti i file mod e le cartelle individuate all&#8217;interno del percorso impostato per l&#8217;archivio ricette viene visualizzato all&#8217;interno dell&#8217;archivio stesso</li>
+<li class="level-0">Creazione di una nuova ricetta come copia della ricetta corrente, facendo click sul pulsante <em>Salva ricetta con nome&#8230;</em><em> </em>si viene guidati nella scelta del file .mod di destinazione, all&#8217;interno della cartella dell&#8217;archivio ricette.</li>
+</ol>
+<h4 id="modifica-di-una-ricetta"><em>Modifica di una ricetta</em></h4>
+<p>La modifica di una ricetta pu&#242; essere effettuata tramite gli strumenti messi a disposizione da ABB, Flex Pendant o Robot Studio. Come indicato nel primo paragrafo, l&#8217;unico modulo modificabile per la differenziazione di una ricetta &#232; il modulo RECIPE! Pertanto, per effettuare modifiche, &#232; necessario innanzi tutto caricare la ricetta di interesse nel controller. Per rendere permanenti le modifiche effettuate si possono utilizzare i pulsanti <em>Salva ricetta</em> e <em>Salva ricetta con nome&#8230;</em>: il primo effettua il download dal robot della ricetta corrente e la sua sovrascrittura nell&#8217;archivio; il secondo crea invece una nuova ricetta a partire dalle modifiche effettuate. La ricetta originale risulter&#224; invariata.</p>
+<figure><img src="assets/image85.png" alt=""/></figure>
+<h4 id="cancellazione-di-una-ricetta"><em>Cancellazione di una ricetta</em></h4>
+<p>Per cancellare una ricetta si pu&#242; fare utilizzare l&#8217;apposita funzione del menu visualizzato facendo click con il tasto destro, oppure cancellare direttamente il file dalla cartella dell&#8217;archivio</p>
+<h4 id="caricamento-di-una-ricetta"><em>Caricamento di una ricetta</em></h4>
+<p>Le ricette possono essere caricate nel controller del robot in pi&#249; modi:</p>
+<ol style="list-style-type:decimal">
+<li class="level-0">In maniera manuale, facendo doppio click sulla ricetta nell&#8217;archivio ricette, confermando alla successiva richiesta di consenso</li>
+</ol>
+<figure><img src="assets/image86.png" alt=""/></figure>
+<ol start="2" style="list-style-type:decimal">
+<li class="level-0">In maniera manuale, facendo click con il tasto destro su una ricetta in archivio e selezionando l&#8217;opzione<em> Carica ricetta</em></li>
+</ol>
+<figure><img src="assets/image87.png" alt=""/></figure>
+<ol start="3" style="list-style-type:decimal">
+<li class="level-0">In maniera automatica, inserendo il comando di caricamento della ricetta nel file cnc di lavorazione. Questo pu&#242; essere fatto aggiungendo in cima alla lista percorsi di PigrecoGold un blocco di codice ISO contenente i comandi di caricamento. I comandi di caricamento vengono prodotti automaticamente dall&#8217;archivio ricette, scegliendo l&#8217;opzione <em>Copia comando di caricamento</em><em>, </em>che inserisce nella clipboard di windows i comandi di caricamento specifici per la ricetta scelta,</li>
+</ol>
+<figure><img src="assets/image88.png" alt=""/></figure>
+<p>quindi incollando il testo in un blocco iso posto in cima alla lista percorsi</p>
+<figure><img src="assets/image89.png" alt=""/></figure>
+<p>Il comando di caricamento viene interpretato in fase di invio diretto o  caricamento del file cnc.</p>
+<h4 id="parametri-modificabili"><em>Parametri modificabili</em></h4>
+<p>Per consentire il settaggio fine di alcune impostazioni, o contemplare una naturale variabilit&#224; delle lenti, &#232; stato predisposto un meccanismo per presentare in Skipper alcune variabili di interesse della ricetta. Tutte le variabili presenti nel modulo RECIPE che iniziano con il prefisso <em>sk_</em><em> </em>vengono visualizzate e sono modificabili nel pannello <em>Parametri della ricetta</em><em>. </em>Modificando il valore di una variabile questa cambia di colore rispettando la convenzione<em> </em>utilizzata in Skipper per tutti i parametri</p>
+<figure><img src="assets/image90.png" alt=""/></figure>
+<ul>
+<li class="level-0">Blu: indica che il valore &#232; stato modificato ma non ancora applicato alla ricetta corrente. Premere <img src="assets/image91.png" alt=""/> per confermare e inviare la modifica al robot. Il valore diventa quindi rosso</li>
+<li class="level-0">Rosso: indica che il valore &#232; stato applicato alla ricetta corrente, la quale avr&#224; il valore impostato come valore corrente, ma questo &#232; diverso dal valore iniziale, settato al caricamento. La modifica resta quindi valida fino al primo riavvio del ciclo da main. Premere <img src="assets/image92.png" alt=""/> per salvare il valore modifica in maniera permanente: viene modificato il valore iniziale della variabile e, se confermato nel messaggio di richiesta, salvata la ricetta in archivio.</li>
+<li class="level-0">Nero: indica che il valore visualizzato &#232; uguale al valore corrente e al valore iniziale. Non c&#8217;&#232; alcuna modifica alla variabile</li>
+</ul>
+<h4 id="interfaccia-grafica"><em>Interfaccia grafica</em></h4>
+<h5 id="controllo-del-ciclo">Controllo del ciclo</h5>
+<figure><img src="assets/image93.png" alt=""/></figure>
+<p>Consente di avviare, fermare, riavviare il ciclo robot. Tramite il pulsante<em> Rilascia Write Access</em> Skipper effettua il rilascio, qualora l&#8217;abbia acquisito, del controllo in scrittura sul robot, consentendo la connessione ad altri software, come Robot Studio</p>
+<h5 id="contatore-pezzi">Contatore pezzi</h5>
+<figure><img src="assets/image94.png" alt=""/></figure>
+<p>Il numero di pezzi da lavorare viene impostato come contatore cicli della macchina CN. Impostando il <em>Numero di pezzi da lavorare</em> a 0, la macchina effettuare un numero illimitato di cicli, fin quanto il robot sar&#224; in grado di servirla. Valori diversi da 0 comportano un numero di cicli necessario a portare il contatore <em>Numero di pezzi lavorati</em> ad un valore maggiore o uguale a <em>Numero di pezzi da lavorare</em><em>.</em> In qualsiasi momento &#232; possibile modificare i valori dei contatori e inviarli alla macchina premendo il pulsante<em> Invia parametri</em></p>
+<h5 id="log-degli-eventi-robot">Log degli eventi Robot</h5>
+<figure><img src="assets/image95.png" alt=""/></figure>
+<p>Riporta il registro degli eventi, accessibile anche da Flex Pendant</p>
+<h5 id="pannello-impostazioni">Pannello Impostazioni</h5>
+<figure><img src="assets/image96.png" alt=""/></figure>
+<p>Da qui &#232; possibile modificare i parametri di connessione al robot e la posizione dell&#8217;archivio ricette. Tutti i valori, a parte l&#8217;indirizzo IP per la connessione, sono gi&#224; inizializzati ai valori di default.</p>
+<p><em>Abilitato:</em> abilita o disabilita l&#8217;interfaccia di comunicazione con Yumi. Pu&#242; essere utilizzato per disabilitare temporaneamente la comunicazione con il robot in caso di guasto o non utilizzo, allo scopo di evitare la segnalazione di errori di comunicazione ad ogni avvio del programma</p>
+<p><em>Indirizzo IP:</em> indirizzo IP del controller del robot</p>
+<p><em>Nome utente:</em> nome utente da utilizzare per la connessione al robot. Il nome utente di default &#232; <em>Default User</em></p>
+<p><em>Password:</em> password da utilizzare per la connessione al robot. La password di default &#232; <em>robotics</em></p>
+<p><em>Timeout comunicazione:</em> tempo in secondi oltre il quale vengono interrotti i tentativi di comunicazione con il robot</p>
+<p><em>Test comunicazione:</em> effettua un test di comunicazione ritornando l&#8217;esito dell&#8217;operazione</p>
+<p><em>Cartella ricette:</em> percorso alla cartella nella quale vengono ricercate le ricette da visualizzare nell&#8217;archivio. Pu&#242; essere un percorso assoluto o relativo alla cartella di installazione di Skipper. La posizione predefinita della cartella &#232; <em>.\YumiRecipe</em><em>s, </em>posta all&#8217;interno della cartella di installazione di Skipper</p>
+<p><em>Cartella template ricette:</em><em> </em>percorso alla cartella nella quale vengono ricercate le ricette da visualizzare nell&#8217;elenco dei template. Pu&#242; essere un percorso assoluto o relativo alla cartella di installazione di Skipper. La posizione predefinita della cartella &#232; <em>.\Yumi</em><em>Templates, </em>posta all&#8217;interno della cartella di installazione di Skipper</p>
+<p><em>Ricarica ricette:</em> opzione che viene utilizzata durante il caricamento automatico delle ricette da file cnc. Qualora la ricetta da caricare sia gi&#224; presente nel robot, specifica se questa debba essere ricaricata, con conseguente riavvio del ciclo, oppure no</p>
+</div>	
+	<div id="winchm_template_footer">&#169; 2026 FARO srl. All rights reserved.</div>
+</div>
+
+</body>
+
+</html>

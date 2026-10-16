@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="winchm_template_style.css" rel="stylesheet" type="text/css">
+<script src="winchm_template_script.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="help.css">
+</head>
+
+<body>
+
+<div id="winchm_template_top">
+	<div id="winchm_template_button"><a href="069-elencodeicomandiiso.html"><img src="btn_prev_n.gif"></a><a href="071-funzionimiscellanee.html"><img src="btn_next_n.gif"></a></div>
+	<div id="winchm_template_navigation"><a href="053-macchinacnc.html#macchina-cnc">Macchina CNC</a> &gt; <a href="069-elencodeicomandiiso.html#elenco-dei-comandi-iso">Elenco dei Comandi ISO</a></div>
+	<div id="winchm_template_title">Funzioni Preparatorie</div>
+</div>
+<div id="winchm_template_container">
+	<div id="winchm_template_content"><span id="funzioni-preparatorie"></span>
+<table>
+<tr>
+<td><p><em><strong>G00</strong></em><em> </em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em><strong> </strong></em><em>	</em><em><strong>G00 {X, Y, Z, A, B, C}</strong></em></p>
+<p><em>posizionamento in rapido; movimento </em><em>interpolato </em><em>alla massima velocit&#224; </em><em>programmata</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G01</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>: </em><em>	</em><em><strong>G01</strong></em><em><strong> {X, Y, Z, A, B, C</strong></em><em><strong>}</strong></em></p>
+<p><em>interpolazione lineare: movimento di uno o pi&#249; assi alla velocit&#224; programmata con la funzione F (Feed)</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G02</strong></em></p>
+</td>
+<td><p><em>Sintassi: </em><em>	</em><em><strong>G02 {X, Y, I</strong></em><em><strong>, J}</strong></em><em>	</em><em>	</em><em>nel</em><em> piano di interpolazione XY</em></p>
+<p><em>	</em><em>	</em><em><strong>G02</strong></em><em><strong> {X, Z, I, K}</strong></em><em>	</em><em>	</em><em>nel</em><em> piano di interpolazione X</em><em>Z</em></p>
+<p><em>	</em><em>	</em><em><strong>G02 {Y, Z, J, K}</strong></em><em>	</em><em>	</em><em>nel</em><em> piano d</em><em>i interpolazione </em><em>Y</em><em>Z</em></p>
+<p><em>interpolazione circolare oraria: movimento di due assi lungo un arco in senso orario.</em></p>
+<p><em>X Y e Z sono le coordinate del punto finale dell&#39;arco;</em></p>
+<p><em>I,J e K sono le differenze tra il centro dell&#39;arco e il punto iniziale</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G0</strong></em><em><strong>3</strong></em></p>
+</td>
+<td><p><em>Sintassi: </em><em>	</em><em><strong>G0</strong></em><em><strong>3</strong></em><em><strong> {X, Y, I</strong></em><em><strong>, J}</strong></em><em>	</em><em>	</em><em>nel</em><em> piano di interpolazione XY</em></p>
+<p><em>	</em><em>	</em><em><strong>G03 {X, Z, I, K}</strong></em><em>	</em><em>	</em><em>nel</em><em> piano di interpolazione X</em><em>Z</em></p>
+<p><em>	</em><em>	</em><em><strong>G03 {Y, Z, J, K}</strong></em><em>	</em><em>	</em><em>nel</em><em> piano d</em><em>i interpolazione </em><em>Y</em><em>Z</em></p>
+<p><em>interpolazione circolare </em><em>antioraria</em><em>: movimento di due assi lungo un arco in senso </em><em>antiorario</em><em>.</em></p>
+<p><em>X Y e Z sono le coordinate del punto finale dell&#39;arco;</em></p>
+<p><em>I,J e K sono le differenze tra il centro dell&#39;arco e il punto iniziale</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G04</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G04 {X}</strong></em></p>
+<p><em>	</em><em>	</em><em><strong>G04 {P}</strong></em></p>
+<p><em> sosta temporizzata: sosta per il tempo specificato dalle funzioni X </em><em>o</em><em> P che indicano i secondi di pausa; X ammette il punto decimale</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G12</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G12 </strong></em><em><strong>{X, Y,</strong></em><em><strong> Z,</strong></em><em><strong> I, J</strong></em><em><strong>, T</strong></em><em><strong>}</strong></em></p>
+<p><em>interpolazione </em><em>elicoidale</em><em> oraria</em><em> dove Z &#232; la profondit&#224; finale e T &#232; il numero di giri.</em></p>
+<p><em>Solo nel </em><em>piano di interpolazione XY</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G1</strong></em><em><strong>3</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G1</strong></em><em><strong>3</strong></em><em><strong>{X, Y,</strong></em><em><strong> Z,</strong></em><em><strong> I, J</strong></em><em><strong>, T</strong></em><em><strong>}</strong></em></p>
+<p><em>interpolazione </em><em>elicoidale</em><em> </em><em>anti</em><em>oraria</em><em> dove Z &#232; la profondit&#224; finale e T &#232; il numero di giri</em></p>
+<p><em>Solo nel </em><em>piano di interpolazione XY</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G14</strong></p>
+</td>
+<td><p><em>Sintassi:</em></p>
+<p><em>riga 1</em><em>	</em><em>	</em><em><strong>G14 D1 X&#8230; </strong></em><em><strong>Y&#8230;</strong></em></p>
+<p><em>riga 2</em><em>	</em><em>	</em><em><strong>G14 D1 X&#8230; Y&#8230;</strong></em></p>
+<p><em>riga 3</em><em>	</em><em>	</em><em><strong>G14 D1 X&#8230; </strong></em><em><strong>Y&#8230;</strong></em></p>
+<p><em>Esegue la  tastatura di una superficie delimitata da tre punti.</em></p>
+<p>I&#8217;esecuzione della riga 3 comanda la tastatura nei tre punti indicati e il successivo calcolo dei coefficienti del piano a cui i tre punti appartengono. I dati sono memorizzati secondo l&#8217;indice D (da 1 a 20).</p>
+<p>La tastatura viene eseguita secondo i parametri del tastatore:</p>
+<p>offset XY del tastatore</p>
+<p>preset Z del tastatore</p>
+<p>abbassamento Z in rapido</p>
+<p>limite di discesa Z</p>
+<p>e considera il valore dello <strong>spessore materiale.</strong></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1</strong><strong>5</strong></p>
+</td>
+<td><p><em>Sintassi: </em><em>	</em><strong>G15 D1</strong></p>
+<p>Abilita la variazione della quota Z in relazione ai dati memorizzati secondo l&#8217;indice D.</p>
+<p>Per ogni successivo comando G01 la variazione della quota Z &#232; calcolata tenendo conto della posizione XY e dei coefficienti del piano determinati dalla precedente G14</p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1</strong><strong>7</strong></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G1</strong></em><em><strong>7</strong></em></p>
+<p><em>piano di interpolazione XY</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1</strong><strong>8</strong></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G1</strong></em><em><strong>8</strong></em></p>
+<p><em>piano di interpolazione </em><em>ZX</em></p>
+</td>
+</tr>
+<tr>
+<td><p><strong>G1</strong><strong>9</strong></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G1</strong></em><em><strong>9</strong></em></p>
+<p><em>piano di interpolazione </em><em>Y</em><em>Z</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G52</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G52 {X, Y, Z}</strong></em></p>
+<p><em> traslazione assoluta rispetto allo zero macchina</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G5</strong></em><em><strong>3</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G53</strong></em><em>:</em></p>
+<p><em>cancellazione </em><em>dello </em><em>spostamento origine; ripristina la posizione iniziale degli assi</em><em> XY</em><em>.</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G54</strong></em></p>
+<p><em><strong>G55</strong></em></p>
+<p><em><strong>G56</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G54, </strong></em><em>	</em><em><strong>G54.1, </strong></em><em>	</em><em><strong>G54.2, </strong></em><em>	</em><em><strong>G54.3</strong></em></p>
+<p><em>	</em><em>	</em><em><strong>G55,</strong></em><em> </em><em>	</em><em><strong>G55.1, </strong></em><em>	</em><em><strong>G55.2, </strong></em><em>	</em><em><strong>G55.3</strong></em></p>
+<p><em>	</em><em>	</em><em><strong>G56:</strong></em><em>, </em><em>	</em><em><strong>G56.1, </strong></em><em>	</em><em><strong>G56.2, </strong></em><em>	</em><em><strong>G56.3</strong></em></p>
+<p><em>spostamento </em><em>dell&#8217;</em><em>origine</em><em> per gli assi XY</em><em>; assume i valori predefiniti come nuova posizione iniziale degli assi XY;</em></p>
+<p><em>se il valore predefinito Z &#232; diverso da 0, </em><em>modifica la posizione iniziale per l&#8217;asse Z;</em></p>
+<p><em>il valore predefinito H modifica lo spessore materiale (zam = Ram +H) e di conseguenza la posizione iniziale Z  (zpi = preset utensile &#8211; zam)</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G58</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G58 X0</strong></em><em>: specchiatura rispetto all&#8217;asse X</em></p>
+<p><em>	</em><em>	</em><em><strong>G58 Y0</strong></em><em>:</em><em> specchiatura rispetto all&#8217;asse Y</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G59</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G59</strong></em><em><strong> {X, Y, H, A, B}</strong></em></p>
+<p><em>spostamento </em><em>relativo </em><em>dell&#8217;</em><em>origine</em><em> per l&#8217;asse indicato</em><em>; </em></p>
+<p><em>un valore H modifica lo spessore materiale  (zam = zam +H) e di conseguenza la posizione iniziale Z  (zpi = preset utensile &#8211; zam)</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G73</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G73 D</strong></em></p>
+<p><em> rotazione angolare nel piano XY; D indica i gradi e i millesimi di grado</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G80</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G80</strong></em></p>
+<p><em> annullamento cicli fissi</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G81</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G81 {R, Z}</strong></em></p>
+<p><em><strong>	</strong></em><em><strong>	</strong></em><em><strong>{X, Y}</strong></em></p>
+<p><em><strong>	</strong></em><em><strong>	</strong></em><em><strong>&#8230;&#8230;</strong></em></p>
+<p><em><strong>	</strong></em><em><strong>	</strong></em><em><strong>G80</strong></em></p>
+<p><em> ciclo fisso di foratura in unica passata (R &#232; il piano di ritorno in coordinate assolute, Z la profondit&#224; finale del foro)</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G83</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G83 {R, Z, Q}</strong></em></p>
+<p><em><strong>	</strong></em><em><strong>	</strong></em><em><strong>{X, Y}</strong></em></p>
+<p><em><strong>	</strong></em><em><strong>	</strong></em><em><strong>&#8230;&#8230;</strong></em></p>
+<p><em><strong>	</strong></em><em><strong>	</strong></em><em><strong>G80</strong></em></p>
+<p><em>ciclo fisso di foratura in pi&#249; passate (R &#232; il piano di ritorno in coordinate assolute, Z la profondit&#224; finale del foro, Q l&#39;incremento ad ogni passata positivo)</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G90</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G90</strong></em></p>
+<p><em>programmazione in coordinate assolute</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G9</strong></em><em><strong>1</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G9</strong></em><em><strong>1</strong></em></p>
+<p><em>programmazione in coordinate </em><em>relative</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G114</strong></em></p>
+</td>
+<td><p><em>Sintassi:</em><em>	</em><em>	</em><em><strong>G1</strong></em><em><strong>1</strong></em><em><strong>4 D1 X&#8230; Y&#8230;</strong></em></p>
+<p><em>Esegue la  tastatura nel punto XY indicato e salva la variazione Z </em>secondo l&#8217;indice D (da 1 a 20).</p>
+<p>La tastatura viene eseguita secondo i parametri del tastatore e considera il valore dello <strong>spessore materiale.</strong></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G115</strong></em></p>
+</td>
+<td><p><em>Sintassi: </em><em>	</em><strong>G</strong><strong>1</strong><strong>15 D1</strong></p>
+<p>Abilita la variazione della quota Z in relazione ai dati memorizzati secondo l&#8217;indice D.</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p><strong>Comandi di tastatura (disponibili in base al tipo di macchina, agli accessori montati e alla versione firmware. Verificare preventivamente con il fornitore della macchina)</strong></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G120</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G121</strong></em><em><strong> </strong></em><em><strong>XYZ&#8230; P {F}</strong></em></p>
+<p><em>Movimento in tastatura con dispositivo tastatore a contatto elettrico. Viene effettuato un movimento di ricerca contatto dalla posizione corrente a quella indicata nel comando. Se il contatto &#232; rilevato, viene effettuato un movimento di ritorno al punto di partenza, in caso contrario viene generato un errore.</em></p>
+<p><em>Il parametro P&gt;=0 indica la posizione a cui salvare la tastatura acquisita e da cui poterla richiamare</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G121</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G121</strong></em><em><strong> </strong></em><em><strong>PR{Q}</strong></em></p>
+<p><em>Movimento di tastatura foro. La posizione di partenza deve essere gi&#224; all&#8217;interno del foro ad una quota Z adeguata ad un buon contatto. La macchina effettua movimenti di ricerca contatto lungo X e lungo Y, effettuando se necessario pi&#249; ripetizioni della misura al fine di raggiungere la precisione richiesta.</em></p>
+<p><em>Il parametro P&gt;=0 indica la posizione a cui salvare la posizione del centro acquisita e da cui poterla richiamare</em></p>
+<p><em>Il parametro R&gt;0 indica il raggio di massima ricerca del contatto, oltre il quale viene generato un errore</em></p>
+<p><em>Il parametro facoltativo Q, 0&lt;Q&lt;R, indica il raggio di avvicinamento in rapido ai bordi del foro. Pu&#242; essere utilizzato per velocizzare la tastatura di fori molto grandi</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G122</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G122 ZPRQ</strong></em></p>
+<p><em>Movimento di tastatura cilindo. La posizione di partenza deve essere all&#8217;incirca al centro del cilindro da tastare, ad una quota Z di sicurezza che consenta movimenti sopra il pezzo. La macchina effettua movimenti di ricerca contatto lungo X e lungo Y, effettuando se necessario pi&#249; ripetizioni della misura al fine di raggiungere la precisione richiesta.</em></p>
+<p><em>Il parametro P&gt;=0 indica la posizione a cui salvare la posizione del centro acquisita e da cui poterla richiamare</em></p>
+<p><em>Il parametro R&gt;(raggio teorico cilindro) indica il raggio di partenza di ricerca del contatto</em></p>
+<p><em>Il parametro Q, 0&lt;=Q&lt;R indica il raggio di massima ricerca del contatto e oltre il quale viene generato un errore</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G123</strong></em></p>
+</td>
+<td><p><em>Comando analogo a G120 ma dedicato al tastatore 3D Exagon</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G124/G125</strong></em></p>
+</td>
+<td><p><em>Comando analogo a G120 ma dedicato al calibro lineare, utilizzabile per tastatura Z</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G951</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G951</strong></em></p>
+<p><em> incrementa il conteggio pezzi</em></p>
+</td>
+</tr>
+<tr>
+<td><p><em><strong>G1001</strong></em></p>
+</td>
+<td><p><em>Sintassi</em><em> </em><em>:</em><em>	</em><em><strong>G1001 {X,Y,Z,A,B,H}</strong></em></p>
+<p><em> comando non standard ISO per la gestione delle posizioni iniziali di lavorazione. Il comando G1001 deve essere messo all&#8217;inizio del file iso. I parametri X, Y, Z, A, B e H sono opzionali. Quando viene caricata una lavorazione che contiene questo comando, Skipper informa l&#8217;operatore visualizzando i parametri X, Y, Z, A, B e H</em></p>
+</td>
+</tr>
+</table>
+</div>	
+	<div id="winchm_template_footer">&#169; 2026 FARO srl. All rights reserved.</div>
+</div>
+
+</body>
+
+</html>

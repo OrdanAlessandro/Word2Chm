@@ -167,7 +167,7 @@ public static class ChmProjectGenerator
     {
         var indent = new string(' ', depth * 2);
         builder.Append(indent).AppendLine("<LI> <OBJECT type=\"text/sitemap\">");
-        builder.Append(indent).AppendLine($"  <param name=\"Name\" value=\"{Escape(node.Title)}\">");
+        builder.Append(indent).AppendLine($"  <param name=\"Name\" value=\"{EscapeNavigationLabel(node.Title)}\">");
         if (!string.IsNullOrEmpty(node.Local))
         {
             builder.Append(indent).AppendLine($"  <param name=\"Local\" value=\"{Escape(node.Local)}\">");
@@ -219,7 +219,7 @@ public static class ChmProjectGenerator
             // The parent node is itself a link when the keyword has a plain target.
             var primary = plainTargets.FirstOrDefault();
             builder.AppendLine("  <LI> <OBJECT type=\"text/sitemap\">");
-            builder.AppendLine($"    <param name=\"Name\" value=\"{Escape(group.Key)}\">");
+            builder.AppendLine($"    <param name=\"Name\" value=\"{EscapeNavigationLabel(group.Key)}\">");
             if (primary.FileName is not null)
             {
                 builder.AppendLine($"    <param name=\"Local\" value=\"{Escape(Local(primary.FileName, primary.Anchor))}\">");
@@ -291,7 +291,7 @@ public static class ChmProjectGenerator
         builder.AppendLine("    <LI> <OBJECT type=\"text/sitemap\">");
         if (name is not null)
         {
-            builder.AppendLine($"      <param name=\"Name\" value=\"{Escape(name)}\">");
+            builder.AppendLine($"      <param name=\"Name\" value=\"{EscapeNavigationLabel(name)}\">");
         }
 
         builder.AppendLine($"      <param name=\"Local\" value=\"{Escape(Local(fileName, anchor))}\">");
@@ -337,6 +337,11 @@ public static class ChmProjectGenerator
         ["ja"] = "0x411 Japanese (Japan)",
         ["ko"] = "0x412 Korean (Korea)",
     };
+
+    // The native HTML Help navigation pane can display typographic apostrophe entities
+    // as missing glyphs. Normalize labels only; topic text and link targets stay intact.
+    private static string EscapeNavigationLabel(string value) =>
+        Escape(value.Replace('\u2018', '\'').Replace('\u2019', '\''));
 
     private static string Escape(string value)
     {
