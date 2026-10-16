@@ -1,4 +1,6 @@
 ## Build output
+.nuget/
+.dotnet-cli/
 bin/
 obj/
 *.user
