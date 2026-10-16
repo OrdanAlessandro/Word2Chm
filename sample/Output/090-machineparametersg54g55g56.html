@@ -1,0 +1,128 @@
+<div class="page"><h4 id="machine-parameters-g54-g55-g56">Machine.Parameters.G54[]-G55[]-G56[]</h4>
+<p>Le origini predefinite, come G54, G55, G56, sono utilizzate nel linguaggio ISO per definire diverse posizioni di riferimento durante la lavorazione CNC. Ogni origine predefinita pu&#242; includere fino a quattro posizioni (ad esempio, G54, G54.1, G54.2, G54.3), che corrispondono a differenti riferimenti spaziali, come le coordinate X, Y, Z e lo spessore del materiale.</p>
+<p>Nel linguaggio di scripting le varianti di ciascun comando di orgine (ad esempio, G54, G54.1, G54.2, G54.3) sono indicizzate come elementi di un array, dove il numero dopo il punto rappresenta l&#39;indice del vettore.</p>
+<p>Esempio:</p>
+<ul>
+<li class="level-0"><strong>G54</strong> &#232; rappresentato come G54[0]</li>
+</ul>
+<ul>
+<li class="level-0"><strong>G54.1</strong> &#232; rappresentato come G54[1]</li>
+</ul>
+<ul>
+<li class="level-0"><strong>G54.2</strong> &#232; rappresentato come G54[2]</li>
+</ul>
+<ul>
+<li class="level-0"><strong>G54.3</strong> &#232; rappresentato come G54[3]</li>
+</ul>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+<td></td>
+</tr>
+<tr>
+<td><p>x</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione X</p>
+</td>
+<td></td>
+</tr>
+<tr>
+<td><p>y</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Y</p>
+</td>
+<td></td>
+</tr>
+<tr>
+<td><p>z</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione Z</p>
+</td>
+<td></td>
+</tr>
+<tr>
+<td><p>h</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td colspan="2"><p>Spessore del materiale che varia la quota Z=0 di lavorazione</p>
+</td>
+</tr>
+<tr>
+<td><p>a</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione A</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>b</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione B</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>c</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione C</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>v</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione V</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>w</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione W</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+<tr>
+<td><p>u</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione U</p>
+</td>
+<td><p>Solo su FW FDC da 20251110</p>
+</td>
+</tr>
+</table>
+<p>Questa struttura consente di accedere facilmente alle diverse posizioni di origine in modo semplice e ordinato, utilizzando l&#8217;indice appropriato per ciascuna.</p>
+<p>// Accesso alla coordinata X di G54.2</p>
+<p>var xG542 = G54[2].x;</p>
+<p>In questo esempio, G54[2] rappresenta la terza posizione dell&#39;origine G54 (G54.2), e x accede alla coordinata X di quella posizione.</p>
+</div>
+<div class="footer">SKIPPER++</div>

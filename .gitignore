@@ -1,0 +1,18 @@
+## Build output
+bin/
+obj/
+*.user
+*.suo
+
+## Rider / VS
+.idea/
+.vs/
+
+## Test artifacts
+TestResults/
+*.trx
+*.coverage
+
+## Generated help projects (sample outputs)
+out/
+*-chm/

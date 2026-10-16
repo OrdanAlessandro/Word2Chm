@@ -1,0 +1,17 @@
+<div class="page"><h4 id="ambito-delle-variabili">Ambito delle variabili</h4>
+<p>Tutte le variabili dichiarate con var hanno <strong>ambito di funzione</strong> o <strong>globale</strong>, a seconda del punto in cui sono definite:</p>
+<ul>
+<li class="level-0">Le variabili dichiarate <strong>all&#8217;interno di una funzione</strong> sono locali alla funzione stessa.</li>
+</ul>
+<ul>
+<li class="level-0">Le variabili dichiarate <strong>all&#8217;esterno di qualsiasi funzione</strong> sono visibili globalmente in tutto lo script.</li>
+</ul>
+<p>var globale = 100;</p>
+<p>function esempio() {</p>
+<p>    var locale = 50;</p>
+<p>    log(&quot;Variabile locale: &quot; + locale);</p>
+<p>}</p>
+<p>log(&quot;Variabile globale: &quot; + globale);</p>
+<p><strong>Nota:</strong> si consiglia di evitare conflitti di nomi tra variabili locali e globali per prevenire comportamenti inattesi.</p>
+</div>
+<div class="footer">SKIPPER++</div>

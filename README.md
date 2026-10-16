@@ -1,0 +1,173 @@
+# Word2Chm
+
+Converte un documento Word (`.docx`) in una guida HTML Help (`.chm`) con WinForms
+(C# / .NET 8). La struttura del documento viene preservata: titoli, elenchi,
+tabelle, immagini, collegamenti e segnalibri.
+
+## Come funziona
+
+- **Una pagina HTML per ogni Titolo 1.** Il livello che genera una nuova pagina è
+  configurabile (1-6).
+- **ID di contesto espliciti.** Gli ID vengono scritti nel titolo con un marcatore
+  `Titolo {#IDH_NOME}`. Il marcatore viene rimosso dal testo visibile. Poiché gli ID
+  sono definiti a mano, restano stabili anche quando la struttura o la lingua del
+  documento cambiano.
+- **Valori numerici dal file `.h` dell'utente.** Il numero non è generato: viene letto
+  dal `#define` corrispondente nel header C++ indicato nella GUI (campo "File ID (.h)").
+  Lo stesso file può definire gli ID con `#define IDH_X 1000` oppure con un `enum`
+  (anche `enum class`), e i due stili possono convivere; in un `enum` un enumeratore
+  senza `=` vale il precedente più uno, come per il compilatore C++ (il primo, se non ha
+  valore, vale 0), e sono accettate espressioni costanti (`1 << 4`, `IDH_BASE | 0x2`,
+  `(2 + 3) * 4`). Un unico header può
+  quindi servire tutte le edizioni linguistiche mantenendo gli ID
+  identici. I simboli usati nel documento ma assenti dall'header vengono elencati in
+  `id-mancanti.txt` e la conversione si completa comunque, così si sistemano tutti in
+  un solo passaggio. Un marcatore `{#IDH_NOME=1234}` di vecchi documenti è ancora
+  riconosciuto e rimosso, ma il valore inline viene ignorato.
+  Attenzione al valore di partenza: HTML Help accetta ID da **1** in su (sono interi
+  senza segno a 4 byte) e lo **0 non è valido**, quindi un `enum` che parte da 0 assegna
+  0 al primo simbolo e la relativa chiamata `HtmlHelp` non aprirà nulla; conviene farlo
+  partire da 1 o più (negli esempi di questo progetto da 1000).
+- **Indice `.hhk` dalle voci di indice di Word.** I campi `XE` del documento
+  alimentano il file di indice, incluse le sottovoci (`XE "parola" \t "sottovoce"`).
+
+## Output prodotti
+
+Per un documento `guida.docx` vengono generati, nella cartella di output:
+
+| File | Contenuto |
+| --- | --- |
+| `NNN-titolo.html` | Una pagina per ogni Titolo 1 |
+| `index.html` | Pagina iniziale con l'indice |
+| `help.css` | Foglio di stile condiviso |
+| `assets/*` | Immagini estratte dal documento |
+| `guida.hhp` | Progetto di HTML Help Workshop, con `[FILES]`, `[ALIAS]`, `[MAP]` |
+| `guida.hhc` | Indice (Contents) |
+| `guida.hhk` | Indice analitico (Index), solo se ci sono voci `XE` |
+| `SkipperQtHelp_IT.chm` | Guida compilata, solo se `hhc.exe` è disponibile |
+| `id-mancanti.txt` | Simboli assenti dall'header `.h`, solo se ce ne sono |
+
+Il nome del `.chm` è configurabile (campo "File CHM") e non deriva dal nome base,
+così il file caricato dall'applicazione host conserva sempre lo stesso nome.
+
+La casella **Apri il CHM al termine** apre automaticamente la guida prodotta solo
+dopo una compilazione riuscita. La scelta viene salvata nel progetto `.w2c` e
+nelle impostazioni utente; un problema di apertura viene riportato nel log.
+
+Con il campo "Copia il .chm in" si indica dove copiare il `.chm` compilato al termine
+della conversione: una cartella esistente (o un percorso che termina con il separatore)
+riceve il file con il suo nome, altrimenti il valore è il percorso del file di
+destinazione e, se manca, l'estensione `.chm` viene aggiunta. Il `.chm` resta comunque
+nella cartella di output. Se la copia non riesce (destinazione non scrivibile, disco
+pieno) la conversione non viene persa: il file compilato resta nella cartella di output
+e il problema compare tra gli avvisi. La copia ha senso solo insieme alla compilazione,
+quindi la GUI rifiuta la combinazione "copia impostata" e "compila disattivato".
+
+## Requisiti
+
+- Windows per l'interfaccia WinForms, i test e la compilazione CHM.
+- .NET 8 SDK
+- `hhc.exe` per compilare effettivamente il `.chm` (HTML Help Workshop, oppure il
+  Windows SDK). È facoltativo: senza di esso vengono comunque generati tutti i file
+  di progetto.
+
+## Modificare l'interfaccia in Visual Studio
+
+Aprire `Word2Chm.sln`, espandere il progetto `Word2Chm.App` e fare clic destro su
+`MainForm.cs` → **Visualizza finestra di progettazione** (oppure `Maiusc+F7`).
+Controlli e layout sono definiti in `MainForm.Designer.cs`, con le risorse in
+`MainForm.resx`; la logica applicativa e i gestori degli eventi restano in
+`MainForm.cs`. Il costruttore senza argomenti non carica impostazioni né progetti,
+così il Designer può istanziare il form senza accedere ai file dell'utente.
+
+Il percorso di `hhc.exe` può essere passato esplicitamente oppure viene ricercato
+automaticamente nella variabile d'ambiente `HHC_PATH`, nelle cartelle di
+installazione di HTML Help Workshop, nel Windows SDK e accanto all'eseguibile.
+
+## Progetti `.w2c`
+
+La GUI mette in cima quattro comandi con icona e testo: **Nuovo**, **Apri...**,
+**Salva** e **Salva con nome...**. Salvare scrive un file `.w2c` con tutti i parametri
+della conversione (documento, header `.h`, cartella di output, nome e destinazione del
+`.chm`, livello di pagina, corpo, piè di pagina, template, percorso di `hhc.exe` e stato
+dei flag "Compila" e "Apri l'output"). Le icone sono PNG da 16px in
+`src/Word2Chm.App/icons`; se un file manca resta il testo, quindi il comando è comunque
+riconoscibile.
+
+Il `.w2c` contiene **percorsi, non il documento**: documento, header, cartella di output
+e destinazione della copia vengono salvati relativi al file di progetto quando stanno
+nella stessa cartella, così spostando o copiando la cartella su un'altra macchina i
+percorsi restano validi. Il percorso di `hhc.exe` resta assoluto, perché appartiene alla
+macchina e non al progetto.
+
+Il file si apre dal comando **Apri...** oppure con il doppio click: l'applicazione
+registra l'associazione `.w2c` per l'utente corrente al primo avvio (in
+`HKCU\Software\Classes`, senza richiedere privilegi di amministratore). Se la macchina
+impedisce la scrittura nel registro, il comando **Apri...** funziona comunque.
+
+Il titolo della finestra mostra il nome del progetto aperto e un `*` quando ci sono
+modifiche non salvate; chiudendo o aprendo un altro progetto l'applicazione chiede se
+salvarle.
+
+## Uso
+
+GUI:
+
+```
+dotnet run --project src/Word2Chm.App
+```
+
+La GUI può anche aprire direttamente un progetto:
+
+```
+dotnet run --project src/Word2Chm.App -- C:\docs\guida.w2c
+```
+
+Da codice:
+
+```csharp
+var result = new ConversionPipeline().Run(new ConversionOptions
+{
+    DocxPath = @"C:\docs\guida.docx",
+    OutputDirectory = @"C:\docs\guida-chm",
+    ContextIdHeaderPath = @"C:\src\helpId.h",          // obbligatorio: fornisce i numeri
+    Build = new BuildOptions { PageLevel = 6 },
+    TemplateDirectory = @"C:\docs\template\fixedtop",   // opzionale
+    ChmCopyPath = @"C:\app\Help\",                       // opzionale: copia il .chm qui
+    Compile = new CompileOptions { HhcPath = @"C:\Program Files (x86)\HTML Help Workshop\hhc.exe" },
+});
+```
+
+`PageLevel` è il livello di titolo che apre una nuova pagina HTML. Il default 6
+significa "una pagina per ogni voce del sommario": ogni titolo che compare nel menu
+ha il proprio file, quindi il viewer non mostra più un capitolo intero come un unico
+documento lungo. Abbassandolo si accorpano i sottotitoli nella pagina del titolo
+superiore; con 1 un intero capitolo finisce in un'unica pagina. I titoli che non
+hanno testo proprio (etichette di sezione) non generano una pagina ma un'ancora
+della pagina padre, così il menu non si riempie di voci di una riga.
+
+`TemplateDirectory` è opzionale: se indicata, le pagine vengono avvolte nello skin
+WinCHM (`fixedtop.htm`) con menu di navigazione e pulsanti avanti/indietro. Nella
+GUI il percorso viene rilevato automaticamente accanto all'eseguibile.
+
+Nel codice C++:
+
+```cpp
+#include "helpId.h"   // lo stesso header fornito alla conversione
+HtmlHelp(hwnd, L"SkipperQtHelp_IT.chm", HH_HELP_CONTEXT, IDH_INSTALLAZIONE);
+```
+
+## Struttura del repository
+
+- `src/Word2Chm.Core` — parser DOCX, modello intermedio, generatori (HTML, CSS,
+  `.hhp`, `.hhc`, `.hhk`), file di progetto `.w2c` e invocazione di `hhc.exe`.
+- `src/Word2Chm.App` — interfaccia WinForms, con le icone della barra in
+  `src/Word2Chm.App/icons` e l'icona dell'applicazione in `app.ico`.
+- `tests/Word2Chm.Core.Tests` — test sulla pipeline completa; il documento di prova
+  viene costruito a runtime, quindi non serve alcun binario di fixture.
+
+## Test
+
+```
+dotnet test
+```

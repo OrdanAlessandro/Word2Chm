@@ -1,0 +1,67 @@
+<div class="page"><h3 id="test-di-un-parametro-e-modifica-del-flusso-del-sottoprogramma">Test di un parametro e modifica del flusso del sottoprogramma</h3>
+<p>Nei firmware pi&#249; recenti sono disponibili 10 parametri personalizzabili e persistenti nella memoria flash. A ciascun parametro &#232; associato un indice compreso tra 0 e 9, un nome e il tipo di dato rappresentato (numerico, booleano, opzione). Il valore assegnato ai parametri pu&#242; essere testato all&#8217;interno di un sottoprogramma e in base a questo variarne l&#8217;esecuzione. Indipendentemente dal tipo di dato rappresentato il valore di un parametro &#232; sempre numerico: nel caso booleano sar&#224; &#8220;TRUE&#8221; se diverso da 0, &#8220;FALSE&#8221; se uguale a 0; nel caso opzione sar&#224; &#8220;SI&#8221; se diverso da 0, &#8220;NO&#8221; se uguale a 0.</p>
+<p>Per testare il valore di un parametro all&#8217;interno di un sottoprogramma si utilizza la funzione <em>#TST Px</em><em> </em>con x posto all&#8217;indice del parametro a cui fare accesso. Il comando copia il valore del parametro in una variabile interna testabile con le istruzioni di flusso:</p>
+<table>
+<tr>
+<td><p><strong>Funzione di flusso</strong></p>
+</td>
+<td><p><strong>Condizione</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>#IF</p>
+<p>#IFNOT</p>
+<p>#ELSEIF</p>
+<p>#ELSEIFNOT</p>
+</td>
+<td><p>EQ</p>
+</td>
+<td><p>Il precedente test ha dato un risultato = 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; &#8220;=0&#8221;, &#8220;FALSE&#8221; o &#8220;NO&#8221;</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>NE</p>
+</td>
+<td><p>Il precedente test ha dato un risultato &#8800; 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; &#8220;&#8800;0&#8221;, &#8220;TRUE&#8221; o &#8220;SI&#8221;</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>GT</p>
+</td>
+<td><p>Il precedente test ha dato un risultato &gt; 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; &#8220;&gt;0&#8221;, &#8220;TRUE&#8221; o &#8220;SI&#8221;</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>GE</p>
+</td>
+<td><p>Il precedente test ha dato un risultato &#8805; 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; &#8220;&#8805;0&#8221;, sempre verificata per tipo di dato booleano e opzione</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>LT</p>
+</td>
+<td><p>Il precedente test ha dato un risultato &lt; 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; &#8220;&lt;0&#8221; , mai verificata per tipo di dato booleano e opzione</p>
+</td>
+</tr>
+<tr>
+<td></td>
+<td><p>LE</p>
+</td>
+<td><p>Il precedente test ha dato un risultato &#8804; 0</p>
+<p>Nel caso di istruzione #TST Px la condizione &#232; verificata se Px &#232; &#8220;&#8804;0&#8221;, &#8220;FALSE&#8221; o &#8220;NO&#8221;</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="footer">SKIPPER++</div>

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Word2Chm.Core\Word2Chm.Core.csproj" />
+    <ProjectReference Include="..\Word2Chm.FakeHhc\Word2Chm.FakeHhc.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <Target Name="CopyFakeHhc" AfterTargets="Build">
+    <ItemGroup>
+      <FakeHhcFiles Include="$(MSBuildThisFileDirectory)..\Word2Chm.FakeHhc\bin\$(Configuration)\net8.0\Word2Chm.FakeHhc.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FakeHhcFiles)" DestinationFolder="$(OutDir)FakeHhc" />
+  </Target>
+
+</Project>

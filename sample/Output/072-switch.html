@@ -1,0 +1,30 @@
+<div class="page"><h5 id="switch">Switch</h5>
+<p>Il costrutto <em>switch</em> permette di eseguire blocchi diversi di codice in base al valore di una variabile o di un&#39;espressione. &#200; utile quando si devono gestire pi&#249; condizioni in modo compatto e leggibile.</p>
+<p><strong>Sintassi base:</strong></p>
+<p>var codiceErrore = 2;</p>
+<p>switch (codiceErrore) {</p>
+<p>    case 1:</p>
+<p>        log(&quot;Errore di inizializzazione&quot;);</p>
+<p>        break;</p>
+<p>    case 2:</p>
+<p>        log(&quot;Errore di connessione&quot;);</p>
+<p>        break;</p>
+<p>    case 3:</p>
+<p>        log(&quot;Errore di misura&quot;);</p>
+<p>        break;</p>
+<p>    default:</p>
+<p>        log(&quot;Errore sconosciuto&quot;);</p>
+<p>        break;</p>
+<p>}</p>
+<ul>
+<li class="level-0">Ogni case viene confrontato con il valore di codiceErrore.</li>
+</ul>
+<ul>
+<li class="level-0">L&#8217;istruzione break impedisce che vengano eseguiti anche i blocchi successivi (&quot;fall-through&quot;).</li>
+</ul>
+<ul>
+<li class="level-0">Il blocco default viene eseguito se nessun case corrisponde.</li>
+</ul>
+<p><strong>Nota</strong>: lo switch &#232; particolarmente utile quando si leggono parametri macchina che possono assumere uno tra pi&#249; stati distinti e noti.</p>
+</div>
+<div class="footer">SKIPPER++</div>

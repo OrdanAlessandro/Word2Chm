@@ -1,0 +1,136 @@
+<div class="page"><h4 id="system-getcurrenttimeformat-string-format">System.GetCurrentTimeFormat(string format)</h4>
+<p>Ritorna una stringa contenente data o ora correnti formattata secondo quanto richiesto</p>
+<p><strong>Parametri</strong></p>
+<ul>
+<li class="level-0"><em>format</em> (stringa): formato del timestamp da generare composto dai seguenti specificatori</li>
+</ul>
+<table>
+<tr>
+<th><p><strong>Specificatore</strong></p>
+</th>
+<th><p><strong>Significato</strong></p>
+</th>
+<th><p><strong>Esempio</strong></p>
+</th>
+</tr>
+<tr>
+<td><p>dddd</p>
+</td>
+<td><p>Giorno della settimana (completo)</p>
+</td>
+<td><p>&quot;Monday&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>ddd</p>
+</td>
+<td><p>Giorno della settimana (abbreviato)</p>
+</td>
+<td><p>&quot;Mon&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>dd</p>
+</td>
+<td><p>Giorno del mese</p>
+</td>
+<td><p>&quot;07&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>MMMM</p>
+</td>
+<td><p>Mese (completo)</p>
+</td>
+<td><p>&quot;April&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>MMM</p>
+</td>
+<td><p>Mese (abbreviato)</p>
+</td>
+<td><p>&quot;Apr&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>MM</p>
+</td>
+<td><p>Mese numerico</p>
+</td>
+<td><p>&quot;04&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>yyyy</p>
+</td>
+<td><p>Anno con 4 cifre</p>
+</td>
+<td><p>&quot;2025&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>yy</p>
+</td>
+<td><p>Anno con 2 cifre</p>
+</td>
+<td><p>&quot;25&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>HH</p>
+</td>
+<td><p>Ore (00-23h)</p>
+</td>
+<td><p>&quot;07&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>hh</p>
+</td>
+<td><p>Ore (00-12h) se con AM/PM</p>
+</td>
+<td><p>&quot;07&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>mm</p>
+</td>
+<td><p>Minuti</p>
+</td>
+<td><p>&quot;09&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>ss</p>
+</td>
+<td><p>Secondi</p>
+</td>
+<td><p>&quot;08&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>zzz</p>
+</td>
+<td><p>Millesimi di secondo</p>
+</td>
+<td><p>&quot;260&quot;</p>
+</td>
+</tr>
+<tr>
+<td><p>A</p>
+</td>
+<td><p>AM o PM</p>
+</td>
+<td><p>&quot;PM&quot;</p>
+</td>
+</tr>
+</table>
+<p><strong>Valore di ritorno</strong><strong>:</strong> stringa contenente data e ora correnti con il formato prescelto</p>
+<p><strong>Esempio:</strong></p>
+<p>System.GetCurrentTimeFormat(&#8220;dd/MM/yyyy HH:mm:ss.zzz&#8221;)</p>
+<p>//Ritorna &#8220;16/04/2025 11:36:15.125&#8221;</p>
+<p>System.GetCurrentTimeFormat(&#8220;dd-MM-yyyy HH.mm.ss,zzz&#8221;)</p>
+<p>//Ritorna &#8220;16-04-2025 11.36.15,125&#8221;</p>
+</div>
+<div class="footer">SKIPPER++</div>

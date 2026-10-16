@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <AssemblyTitle>Word2Chm</AssemblyTitle>
+    <Product>Word2Chm</Product>
+    <Version>1.0.0</Version>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- Also shown by Explorer for the .w2c files the app registers itself for. -->
+    <ApplicationIcon>app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Shipped alongside the executable so the window icon does not depend on extraction. -->
+    <None Include="app.ico" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Toolbar icons, one file per command; see MainForm.BuildIconList. -->
+    <None Include="icons\*.png" CopyToOutputDirectory="PreserveNewest" Link="icons\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Word2Chm.Core\Word2Chm.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!-- Bundle the WinCHM skin next to the executable so it is found without a manual path. -->
+  <ItemGroup>
+    <None Include="..\..\template\fixedtop\**\*" Link="template\fixedtop\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,46 @@
+<div class="page"><h4 id="machine-parameters-multi">Machine.Parameters.Multi</h4>
+<p>Il <strong>namespace</strong><strong> Multi</strong> consente di gestire i parametri relativi alla <strong>multilavorazione</strong>, una funzione che abilita la ripetizione automatica e ciclica del file CNC caricato nella macchina. Questa opzione &#232; utile quando si desidera eseguire lo stesso programma CNC pi&#249; volte senza doverlo far ripartire manualmente, ottimizzando il processo produttivo.</p>
+<p>Nel linguaggio di scripting, &#232; possibile specificare vari parametri per la multilavorazione, come il numero massimo di cicli da eseguire o, in alternativa, abilitare la ripetizione <strong>illimitata</strong> del ciclo.</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>enable</p>
+</td>
+<td><p>Booleano</p>
+</td>
+<td><p>Abilita o disabilita la multilavorazione</p>
+</td>
+</tr>
+<tr>
+<td><p>maxCycles</p>
+</td>
+<td><p>Intero</p>
+</td>
+<td><p>Numero massimo di ripetizioni, indicare 0 per ripetizioni illimitate</p>
+</td>
+</tr>
+<tr>
+<td><p>completedCycles</p>
+</td>
+<td><p>Intero</p>
+</td>
+<td><p>Numero di ripetizioni del ciclo completate finora</p>
+</td>
+</tr>
+</table>
+<p><strong>Sintassi di accesso e configurazione:</strong></p>
+<p>//Abilitare la multilavorazione</p>
+<p>Machine.Multi.enable = true;</p>
+<p>//Impostare un numero massimo di ripetizioni a 10</p>
+<p>Machine.Multi.maxCycles = 10;</p>
+<p>//Azzerare il contatore ripetizioni</p>
+<p>Machine.Multi.completedCycles = 0;</p>
+</div>
+<div class="footer">SKIPPER++</div>

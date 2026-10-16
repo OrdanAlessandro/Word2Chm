@@ -1,0 +1,44 @@
+<div class="page"><h4 id="machine-status-axis">Machine.Status.Axis</h4>
+<p>Nel linguaggio di scripting di Skipper, il <strong>namespace</strong><strong> </strong><strong>Machine.Status.Axis</strong><strong> </strong>consente di accedere ai valori correnti degli assi, come le posizioni comandate e le posizioni effettive lette dagli encoder. Ogni asse della macchina &#232; rappresentato da un proprio <strong>namespace</strong><strong> secondario</strong>, che contiene i valori  relativi a quel particolare asse.</p>
+<p>Ad esempio, la posizione assoluta di un asse X pu&#242; essere ottenuta attraverso il namespace <strong>Machine.Status.Axis</strong><strong>.X.absolutePosition</strong>, che rappresenta la posizione fisica dell&#39;asse X rispetto al sistema di riferimento della macchina.</p>
+<p><strong>Sintassi di accesso:</strong></p>
+<p>// Leggere la posizione assoluta dell&#39;asse X</p>
+<p>var posizioneX = Machine.Status.Axis.X.absolutePosition;</p>
+<p>log(&quot;Posizione assoluta dell&#39;asse X: &quot; + posizioneX);</p>
+<p>Ciascun asse definisce le seguenti variabili in sola lettura</p>
+<table>
+<tr>
+<td><p><strong>Nome</strong></p>
+</td>
+<td><p><strong>Tipo</strong></p>
+</td>
+<td><p><strong>Descrizione</strong></p>
+</td>
+</tr>
+<tr>
+<td><p>absolutePosition</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione assoluta dell&#8217;asse in coordinate macchina e riferite alla posizione di Home</p>
+</td>
+</tr>
+<tr>
+<td><p>relativePosition</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione dell&#8217;asse relativa all&#8217;origine corrente</p>
+</td>
+</tr>
+<tr>
+<td><p>encoderPosition</p>
+</td>
+<td><p>Numerico</p>
+</td>
+<td><p>Posizione dell&#8217;asse determinata dall&#8217;encoder (dove presente)</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="footer">SKIPPER++</div>
