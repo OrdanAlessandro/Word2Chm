@@ -106,39 +106,22 @@ public sealed class ConversionPipelineTests : IDisposable
         });
     }
 
-    /// <summary>
-    /// A stand-in for hhc.exe that succeeds and produces the .chm the pipeline expects next to
-    /// the .hhp, so the post-compilation steps can be exercised on Linux too. Pass
-    /// <paramref name="exitCode"/> to rehearse a compiler whose exit code is not zero even
-    /// though it wrote the file, which is what the real hhc.exe does.
-    /// </summary>
-    private string WriteFakeHhc(int exitCode = 0) =>
-        WriteScript("fake-hhc", $"""
-            chm="$(sed -n 's/^Compiled file=//p' "$1" | tr -d '\r')"
-            [ -n "$chm" ] || exit 1
-            printf 'fake chm' > "$chm"
-            exit {exitCode}
-            """);
+    /// <summary>A Windows executable simulating hhc.exe, including its success exit code 1.</summary>
+    private string WriteFakeHhc(int exitCode = 0) => WriteCompiler(exitCode.ToString());
 
-    /// <summary>A compiler that fails without producing any .chm.</summary>
-    private string WriteFailingHhc() =>
-        WriteScript("failing-hhc", "exit 1");
+    private string WriteFailingHhc() => WriteCompiler("fail");
 
-    private string WriteScript(string name, string body)
+    private string WriteCompiler(string mode)
     {
-        var path = Path.Combine(_workDirectory, name);
-        File.WriteAllText(path, "#!/bin/sh\n" + body + "\n");
-
-        if (!OperatingSystem.IsWindows())
+        var directory = Path.Combine(_workDirectory, "compiler " + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        foreach (var source in Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "FakeHhc")))
         {
-            File.SetUnixFileMode(
-                path,
-                UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+            File.Copy(source, Path.Combine(directory, Path.GetFileName(source)));
         }
-
-        return path;
+        File.WriteAllText(Path.Combine(directory, "mode.txt"), mode);
+        return Path.Combine(directory, "Word2Chm.FakeHhc.exe");
     }
-
     /// <summary>Writes the fixedtop skin into the test directory and returns its folder.</summary>
     private string WriteTemplate()
     {
@@ -419,7 +402,7 @@ public sealed class ConversionPipelineTests : IDisposable
         Assert.Contains("name=\"Name\" value=\"hardware\"", hhk);
 
         // The "requisiti" node is itself a link, so the plain target is not lost.
-        Assert.Contains("name=\"Local\" value=\"001-requisiti.html#requisiti\"", hhk);
+        Assert.Contains("name=\"Local\" value=\"001-requisiti.html\"", hhk);
     }
 
     private static int CountOccurrences(string haystack, string needle)
@@ -798,6 +781,28 @@ public sealed class ConversionPipelineTests : IDisposable
     }
 
     [Fact]
+    public void DoesNotCompileOrCopyWhenThePreviousChmIsLocked()
+    {
+        var first = RunPipeline(hhcPath: WriteFakeHhc(), chmFileName: "manuale.chm");
+        var stale = first.ChmPath!;
+        File.WriteAllText(stale, "vecchio");
+        var compiler = WriteFailingHhc();
+        var destination = Path.Combine(_workDirectory, "dist", "manuale.chm");
+
+        // Windows denies deletion while a viewer holds a handle without FileShare.Delete.
+        using var locked = new FileStream(stale, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var result = RunPipeline(hhcPath: compiler, chmFileName: "manuale.chm", chmCopyPath: destination);
+
+        Assert.False(result.Compilation.Success);
+        Assert.Null(result.ChmPath);
+        Assert.Null(result.CopiedChmPath);
+        Assert.Contains("Impossibile eliminare il CHM precedente", result.Compilation.Output);
+        Assert.False(File.Exists(Path.Combine(Path.GetDirectoryName(compiler)!, "started.txt")));
+        Assert.False(File.Exists(destination));
+        Assert.Equal("vecchio", File.ReadAllText(stale));
+    }
+
+    [Fact]
     public void UsesTheHeaderWrittenAsAnEnum()
     {
         // The header can define the IDs with an enum instead of #define; implicit enumerators
@@ -898,6 +903,26 @@ public sealed class ConversionPipelineTests : IDisposable
 
         // The project stylesheet is still linked, or tables and code lose their formatting.
         Assert.Contains("help.css", page);
+    }
+
+    [Fact]
+    public void PageOpeningLinksDoNotNavigateToAnEmptyAnchor()
+    {
+        var result = RunPipeline(templateDirectory: WriteTemplate(), pageLevel: 2);
+        var hhc = File.ReadAllText(Path.Combine(result.OutputDirectory, "guida.hhc"));
+        var index = File.ReadAllText(Path.Combine(result.OutputDirectory, "index.html"));
+        foreach (var page in result.Document.Pages.Where(p => p.Anchor is not null))
+        {
+            var anchoredRoot = page.FileName + "#" + page.Anchor;
+            Assert.DoesNotContain("value=\"" + anchoredRoot + "\"", hhc);
+            Assert.DoesNotContain("href=\"" + anchoredRoot + "\"", index);
+            Assert.All(page.IndexEntries, entry => Assert.NotEqual(page.Anchor, entry.Anchor));
+            foreach (var otherPage in result.Document.Pages)
+            {
+                Assert.DoesNotContain(otherPage.Ancestors, ancestor => ancestor.Local == anchoredRoot);
+            }
+        }
+        Assert.Contains("value=\"" + result.Document.Pages[0].FileName + "\"", hhc);
     }
 
     [Fact]
@@ -1054,15 +1079,17 @@ public sealed class ConversionPipelineTests : IDisposable
         Assert.Single(lists);
 
         // One list means the items number themselves natively, with no reliance on start.
-        Assert.Equal(3, System.Text.RegularExpressions.Regex.Matches(html, "<li").Count);
+        Assert.Equal(3, System.Text.RegularExpressions.Regex.Matches(html, @"<li(?:\s|>)").Count);
         Assert.DoesNotContain("start=", html);
     }
 
-    [Fact]
-    public void WritesTheConfiguredBodyFontSizeToTheStylesheet()
+    [Theory]
+    [InlineData(6, false)]
+    [InlineData(8.5, true)]
+    [InlineData(14, true)]
+    public void WritesTheConfiguredBodyFontSizeToTheStylesheet(double size, bool useTemplate)
     {
-        // Regression: the body size was hardcoded at 10.5pt, so the setting had no effect
-        // and the WinCHM skin kept overriding the content div with its own 8.5pt.
+        // Regression: the configured value reached the CSS, but MSHTML ignored var(...).
         var path = Path.Combine(_workDirectory, "font.docx");
         File.WriteAllBytes(path, DocxFixture.CreateSample());
 
@@ -1071,19 +1098,31 @@ public sealed class ConversionPipelineTests : IDisposable
             DocxPath = path,
             OutputDirectory = Path.Combine(_workDirectory, "font-out"),
             BaseName = "guida",
-            Build = new BuildOptions { PageLevel = 1, BodyFontSizePt = 14 },
+            Build = new BuildOptions { PageLevel = 1, BodyFontSizePt = size },
+            TemplateDirectory = useTemplate ? WriteTemplate() : null,
             Compile = new CompileOptions(),
         });
 
         var css = File.ReadAllText(Path.Combine(result.OutputDirectory, "help.css"));
 
-        Assert.Contains("--body-font-size: 14pt;", css);
-        Assert.Contains("font-size: var(--body-font-size);", css);
+        var points = size.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "pt";
+        Assert.Matches(@"body\s*\{[^}]*font-size:\s*" + System.Text.RegularExpressions.Regex.Escape(points) + ";", css);
+        Assert.DoesNotContain("var(--body-font-size)", css);
 
         // The skin sizes its content div with an id selector, which outranks body.
-        Assert.Contains("#winchm_template_content { font-size: var(--body-font-size); }", css);
+        Assert.Contains("#winchm_template_content { font-size: " + points + "; }", css);
+        Assert.Matches(@"table\s*\{[^}]*font-size:\s*" + System.Text.RegularExpressions.Regex.Escape(points) + ";", css);
 
-        // Headings stay relative, so enlarging the body must not change them.
+        var html = File.ReadAllText(Path.Combine(result.OutputDirectory, result.Document.Pages[0].FileName));
+        Assert.Contains("href=\"help.css\"", html);
+        if (useTemplate)
+        {
+            // Project CSS must follow the skin stylesheet so its content size wins.
+            Assert.True(html.IndexOf("winchm_template_style.css", StringComparison.Ordinal) <
+                        html.IndexOf("help.css", StringComparison.Ordinal));
+        }
+
+        // Preserve the existing heading proportions.
         Assert.Contains("h1 { font-size: 1.9em;", css);
     }
 
@@ -1103,7 +1142,8 @@ public sealed class ConversionPipelineTests : IDisposable
         });
 
         var css = File.ReadAllText(Path.Combine(result.OutputDirectory, "help.css"));
-        Assert.Contains("--body-font-size: 10.5pt;", css);
+        Assert.Contains("font-size: 10.5pt;", css);
+        Assert.DoesNotContain("var(--body-font-size)", css);
     }
 
     [Fact]

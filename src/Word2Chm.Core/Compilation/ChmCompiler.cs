@@ -23,8 +23,7 @@ public sealed class CompileResult
 
 /// <summary>
 /// Invokes HTML Help Workshop (hhc.exe) on a generated .hhp file. Compilation is
-/// Windows-only in practice, but the process handling is platform-neutral so that
-/// a compatible compiler (for example chmcmd) can be substituted.
+/// performed on Windows using the native compiler executable.
 /// </summary>
 public sealed class ChmCompiler
 {
@@ -61,10 +60,15 @@ public sealed class ChmCompiler
         {
             File.Delete(chmPath);
         }
-        catch (Exception)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // If it cannot be removed, the check below will simply see it; the compilation
-            // itself is unaffected.
+            return new CompileResult
+            {
+                Success = false,
+                ExitCode = -1,
+                Output = $"Impossibile eliminare il CHM precedente \"{chmPath}\": {ex.Message}. Chiudi la guida e riprova.",
+                WorkingDirectory = workingDirectory,
+            };
         }
 
         var output = new StringBuilder();

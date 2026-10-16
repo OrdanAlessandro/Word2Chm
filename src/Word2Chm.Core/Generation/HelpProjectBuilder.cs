@@ -115,6 +115,7 @@ public sealed class HelpProjectBuilder
                     document.Pages.Add(current);
 
                     heading.Anchor = slugger.Slug(heading.Title);
+                    current.Anchor = heading.Anchor;
                     var pageTarget = (current, heading.Anchor);
                     headingTargets[block] = pageTarget;
                     RegisterBookmarks(block, pageTarget);
@@ -196,6 +197,31 @@ public sealed class HelpProjectBuilder
         // page, which keeps the heading as an anchor there, while an explicit context ID
         // or index keyword still forces a real page because something links to it by name.
         CollapseContentlessPages(document, headingTargets, localsWithChildren);
+
+        // A page's opening heading is already at the top. Navigating to its empty anchor
+        // inside the skin can make MSHTML scroll past introductory lists to the next table.
+        // Normalize only surviving page roots: collapsed headings still need their anchors.
+        var pageRoots = document.Pages.Where(p => p.Anchor is not null)
+            .ToDictionary(p => p.FileName + "#" + p.Anchor, p => p.FileName, StringComparer.Ordinal);
+        string? PageLink(string? local) => local is not null && pageRoots.TryGetValue(local, out var file)
+            ? file : local;
+        void NormalizeToc(IEnumerable<TocNode> nodes)
+        {
+            foreach (var node in nodes)
+            {
+                node.Local = PageLink(node.Local);
+                NormalizeToc(node.Children);
+            }
+        }
+        NormalizeToc(document.Toc);
+        foreach (var page in document.Pages)
+        {
+            for (var i = 0; i < page.Ancestors.Count; i++)
+            {
+                var (title, local) = page.Ancestors[i];
+                page.Ancestors[i] = (title, PageLink(local));
+            }
+        }
 
         foreach (var (keyword, block) in pendingIndexEntries)
         {

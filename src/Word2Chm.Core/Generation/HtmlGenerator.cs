@@ -65,9 +65,15 @@ public sealed class HtmlGenerator
 
         if (template is null)
         {
-            builder.Insert(0, "<div class=\"page\">");
+            builder.Insert(0, "<!DOCTYPE html>" + Environment.NewLine +
+                "<html lang=\"" + EscapeAttribute(document.Language) + "\"><head>" + Environment.NewLine +
+                "<meta charset=\"utf-8\">" + Environment.NewLine +
+                "<title>" + WebUtility.HtmlEncode(page.Title) + "</title>" + Environment.NewLine +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + EscapeAttribute(cssPath) + "\">" + Environment.NewLine +
+                "</head><body><div class=\"page\">");
             builder.AppendLine("</div>");
             builder.AppendLine("<div class=\"footer\">" + WebUtility.HtmlEncode(document.Footer) + "</div>");
+            builder.AppendLine("</body></html>");
             return ToAsciiSafe(builder.ToString());
         }
 

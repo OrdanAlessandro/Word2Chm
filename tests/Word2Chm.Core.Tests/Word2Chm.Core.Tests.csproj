@@ -23,6 +23,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Word2Chm.Core\Word2Chm.Core.csproj" />
+    <ProjectReference Include="..\Word2Chm.FakeHhc\Word2Chm.FakeHhc.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
+
+  <Target Name="CopyFakeHhc" AfterTargets="Build">
+    <ItemGroup>
+      <FakeHhcFiles Include="$(MSBuildThisFileDirectory)..\Word2Chm.FakeHhc\bin\$(Configuration)\net8.0\Word2Chm.FakeHhc.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FakeHhcFiles)" DestinationFolder="$(OutDir)FakeHhc" />
+  </Target>
 
 </Project>

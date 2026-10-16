@@ -50,6 +50,10 @@ Per un documento `guida.docx` vengono generati, nella cartella di output:
 Il nome del `.chm` è configurabile (campo "File CHM") e non deriva dal nome base,
 così il file caricato dall'applicazione host conserva sempre lo stesso nome.
 
+La casella **Apri il CHM al termine** apre automaticamente la guida prodotta solo
+dopo una compilazione riuscita. La scelta viene salvata nel progetto `.w2c` e
+nelle impostazioni utente; un problema di apertura viene riportato nel log.
+
 Con il campo "Copia il .chm in" si indica dove copiare il `.chm` compilato al termine
 della conversione: una cartella esistente (o un percorso che termina con il separatore)
 riceve il file con il suo nome, altrimenti il valore è il percorso del file di
@@ -61,10 +65,20 @@ quindi la GUI rifiuta la combinazione "copia impostata" e "compila disattivato".
 
 ## Requisiti
 
+- Windows per l'interfaccia WinForms, i test e la compilazione CHM.
 - .NET 8 SDK
 - `hhc.exe` per compilare effettivamente il `.chm` (HTML Help Workshop, oppure il
   Windows SDK). È facoltativo: senza di esso vengono comunque generati tutti i file
   di progetto.
+
+## Modificare l'interfaccia in Visual Studio
+
+Aprire `Word2Chm.sln`, espandere il progetto `Word2Chm.App` e fare clic destro su
+`MainForm.cs` → **Visualizza finestra di progettazione** (oppure `Maiusc+F7`).
+Controlli e layout sono definiti in `MainForm.Designer.cs`, con le risorse in
+`MainForm.resx`; la logica applicativa e i gestori degli eventi restano in
+`MainForm.cs`. Il costruttore senza argomenti non carica impostazioni né progetti,
+così il Designer può istanziare il form senza accedere ai file dell'utente.
 
 Il percorso di `hhc.exe` può essere passato esplicitamente oppure viene ricercato
 automaticamente nella variabile d'ambiente `HHC_PATH`, nelle cartelle di

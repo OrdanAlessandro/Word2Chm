@@ -40,6 +40,7 @@ public sealed class ProjectFileTests : IDisposable
         HhcPath = "/tmp/non-importa/hhc.exe",
         CompileChm = true,
         OpenOutputOnFinish = true,
+        OpenChmOnFinish = true,
     };
 
     [Fact]
@@ -57,6 +58,7 @@ public sealed class ProjectFileTests : IDisposable
         Assert.Equal("Pie di pagina", loaded.Footer);
         Assert.True(loaded.CompileChm);
         Assert.True(loaded.OpenOutputOnFinish);
+        Assert.True(loaded.OpenChmOnFinish);
     }
 
     [Fact]

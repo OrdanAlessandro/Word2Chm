@@ -9,26 +9,8 @@ using Word2Chm.Core.Project;
 
 namespace Word2Chm.App;
 
-internal sealed class MainForm : Form
+internal sealed partial class MainForm : Form
 {
-    private readonly TextBox _docxPath = new();
-    private readonly TextBox _outputDirectory = new();
-    private readonly TextBox _baseName = new();
-    private readonly TextBox _chmFileName = new();
-    private readonly TextBox _chmCopyPath = new();
-    private readonly TextBox _contextIdHeaderPath = new();
-    private readonly NumericUpDown _pageLevel = new();
-    private readonly NumericUpDown _bodyFontSize = new();
-    private readonly TextBox _templateDirectory = new();
-    private readonly TextBox _footer = new();
-    private readonly TextBox _hhcPath = new();
-    private readonly CheckBox _compileChm = new();
-    private readonly CheckBox _openOutput = new();
-    private readonly TextBox _log = new();
-    private readonly Button _convertButton = new();
-    private readonly ProgressBar _progress = new();
-    private readonly ToolStrip _toolStrip = new();
-
     private CancellationTokenSource? _cancellation;
 
     /// <summary>
@@ -39,24 +21,36 @@ internal sealed class MainForm : Form
     private string? _projectPath;
     private string _savedProjectJson = string.Empty;
 
-    public MainForm(string? projectPath = null)
+    private readonly string? _startupProjectPath;
+
+    // Visual Studio instantiates this constructor without reading settings or opening files.
+    public MainForm()
     {
-        Text = "Word2Chm - Da Word a guida HTML Help (.chm)";
-        MinimumSize = new Size(760, 620);
-        StartPosition = FormStartPosition.CenterScreen;
-        Font = new Font("Segoe UI", 9F);
-        ApplyWindowIcon();
+        InitializeComponent();
+    }
 
-        BuildToolStrip();
-        BuildLayout();
-        LoadDefaults();
-        _savedProjectJson = CurrentProject().Serialize();
+    public MainForm(string? projectPath) : this()
+    {
+        _startupProjectPath = projectPath;
+    }
 
-        if (!string.IsNullOrWhiteSpace(projectPath))
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        if (DesignMode || System.ComponentModel.LicenseManager.UsageMode ==
+            System.ComponentModel.LicenseUsageMode.Designtime)
         {
-            OpenProjectAtStartup(projectPath);
+            return;
         }
 
+        ApplyWindowIcon();
+        LoadToolbarIcons();
+        LoadDefaults();
+        _savedProjectJson = CurrentProject().Serialize();
+        if (!string.IsNullOrWhiteSpace(_startupProjectPath))
+        {
+            OpenProjectAtStartup(_startupProjectPath);
+        }
         UpdateTitle();
     }
 
@@ -105,18 +99,20 @@ internal sealed class MainForm : Form
     /// suggests. Icons are 16px PNGs shipped next to the executable; a missing file only
     /// costs the picture, since every command keeps its label.
     /// </summary>
-    private void BuildToolStrip()
+    private void LoadToolbarIcons()
     {
-        _toolStrip.GripStyle = ToolStripGripStyle.Hidden;
-        _toolStrip.RenderMode = ToolStripRenderMode.System;
-        _toolStrip.Padding = new Padding(8, 4, 8, 4);
-        _toolStrip.ImageList = BuildIconList();
-        var hasIcons = _toolStrip.ImageList.Images.Count > 0;
-        _toolStrip.Items.Add(ToolItem("Nuovo", "new", hasIcons, NewProject));
-        _toolStrip.Items.Add(ToolItem("Apri...", "open", hasIcons, OpenProject));
-        _toolStrip.Items.Add(ToolItem("Salva", "save", hasIcons, () => SaveProject(saveAs: false)));
-        _toolStrip.Items.Add(ToolItem("Salva con nome...", "save-as", hasIcons, () => SaveProject(saveAs: true)));
-        Controls.Add(_toolStrip);
+        // The Designer may omit the container when there are no design-time components.
+        // Runtime-created icons still need an owner that disposes them with the form.
+        components ??= new System.ComponentModel.Container();
+        var icons = BuildIconList();
+        components.Add(icons);
+        _toolStrip.ImageList = icons;
+        foreach (ToolStripItem item in _toolStrip.Items)
+        {
+            item.DisplayStyle = icons.Images.ContainsKey(item.ImageKey)
+                ? ToolStripItemDisplayStyle.ImageAndText
+                : ToolStripItemDisplayStyle.Text;
+        }
     }
 
     private static ImageList BuildIconList()
@@ -151,180 +147,17 @@ internal sealed class MainForm : Form
         return list;
     }
 
-    private static ToolStripButton ToolItem(string text, string imageKey, bool hasIcons, Action onClick)
-    {
-        var item = new ToolStripButton(text) { ImageKey = imageKey };
-        item.DisplayStyle = hasIcons
-            ? ToolStripItemDisplayStyle.ImageAndText
-            : ToolStripItemDisplayStyle.Text;
-        item.TextImageRelation = TextImageRelation.ImageBeforeText;
-        item.Click += (_, _) => onClick();
-        return item;
-    }
-
-    private void BuildLayout()
-    {
-        var root = new TableLayoutPanel
-        {
-            Dock = DockStyle.Fill,
-            ColumnCount = 3,
-            Padding = new Padding(12),
-        };
-        root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
-        root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
-
-        var row = 0;
-
-        // Input DOCX.
-        root.Controls.Add(Label("Documento Word:"), 0, row);
-        _docxPath.Dock = DockStyle.Fill;
-        root.Controls.Add(_docxPath, 1, row);
-        var browseDocx = Button("Sfoglia...", BrowseDocx);
-        root.Controls.Add(browseDocx, 2, row++);
-
-        // Output directory.
-        root.Controls.Add(Label("Cartella di output:"), 0, row);
-        _outputDirectory.Dock = DockStyle.Fill;
-        root.Controls.Add(_outputDirectory, 1, row);
-        var browseOutput = Button("Sfoglia...", BrowseOutput);
-        root.Controls.Add(browseOutput, 2, row++);
-
-        // Base name.
-        root.Controls.Add(Label("Nome base:"), 0, row);
-        _baseName.Dock = DockStyle.Fill;
-        root.Controls.Add(_baseName, 1, row++);
-
-        // Header with the ID definitions. The document names the symbols, the numbers come
-        // from this file, so the same IDs hold across every language edition.
-        root.Controls.Add(Label("File ID (.h):"), 0, row);
-        _contextIdHeaderPath.Dock = DockStyle.Fill;
-        root.Controls.Add(_contextIdHeaderPath, 1, row);
-        var browseHeader = Button("Sfoglia...", BrowseContextIdHeader);
-        root.Controls.Add(browseHeader, 2, row++);
-
-        // Name of the compiled .chm.
-        root.Controls.Add(Label("File CHM:"), 0, row);
-        _chmFileName.Dock = DockStyle.Fill;
-        root.Controls.Add(_chmFileName, 1, row);
-        root.SetColumnSpan(_chmFileName, 2);
-        row++;
-
-        // Where to drop a copy of the compiled .chm for the host application.
-        root.Controls.Add(Label("Copia il .chm in:"), 0, row);
-        _chmCopyPath.Dock = DockStyle.Fill;
-        root.Controls.Add(_chmCopyPath, 1, row);
-        var browseChmCopy = Button("Sfoglia...", BrowseChmCopyPath);
-        root.Controls.Add(browseChmCopy, 2, row++);
-
-        // Page level.
-        root.Controls.Add(Label("Nuova pagina al livello:"), 0, row);
-        _pageLevel.Dock = DockStyle.Left;
-        _pageLevel.Minimum = 1;
-        _pageLevel.Maximum = 6;
-        _pageLevel.Width = 120;
-        root.Controls.Add(_pageLevel, 1, row++);
-
-        // Body text size.
-        root.Controls.Add(Label("Dimensione testo (pt):"), 0, row);
-        _bodyFontSize.Dock = DockStyle.Left;
-        _bodyFontSize.Minimum = 6;
-        _bodyFontSize.Maximum = 24;
-        _bodyFontSize.DecimalPlaces = 1;
-        _bodyFontSize.Increment = 0.5m;
-        _bodyFontSize.Width = 120;
-        root.Controls.Add(_bodyFontSize, 1, row++);
-
-        // WinCHM skin.
-        root.Controls.Add(Label("Template (skin):"), 0, row);
-        _templateDirectory.Dock = DockStyle.Fill;
-        root.Controls.Add(_templateDirectory, 1, row);
-        var browseTemplate = Button("Sfoglia...", BrowseTemplate);
-        root.Controls.Add(browseTemplate, 2, row++);
-
-        // Footer.
-        root.Controls.Add(Label("Piè di pagina:"), 0, row);
-        _footer.Dock = DockStyle.Fill;
-        root.Controls.Add(_footer, 1, row);
-        root.SetColumnSpan(_footer, 2);
-        row++;
-
-        // hhc.exe.
-        root.Controls.Add(Label("hhc.exe:"), 0, row);
-        _hhcPath.Dock = DockStyle.Fill;
-        root.Controls.Add(_hhcPath, 1, row);
-        var browseHhc = Button("Rileva", DetectHhc);
-        root.Controls.Add(browseHhc, 2, row++);
-
-        // Options.
-        var options = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true };
-        _compileChm.Text = "Compila il .chm";
-        _compileChm.Checked = true;
-        _compileChm.AutoSize = true;
-        _openOutput.Text = "Apri la cartella al termine";
-        _openOutput.AutoSize = true;
-        options.Controls.Add(_compileChm);
-        options.Controls.Add(_openOutput);
-        root.Controls.Add(options, 1, row++);
-
-        // Convert button.
-        _convertButton.Text = "Converti";
-        _convertButton.AutoSize = true;
-        _convertButton.Click += async (_, _) => await RunConversionAsync();
-        root.Controls.Add(_convertButton, 1, row++);
-
-        // Log.
-        root.Controls.Add(Label("Log:"), 0, row);
-        _log.Multiline = true;
-        _log.ReadOnly = true;
-        _log.ScrollBars = ScrollBars.Both;
-        _log.WordWrap = false;
-        _log.Font = new Font("Consolas", 8.5F);
-        _log.Dock = DockStyle.Fill;
-
-        _progress.Dock = DockStyle.Bottom;
-        _progress.Style = ProgressBarStyle.Marquee;
-        _progress.Visible = false;
-
-        var logPanel = new Panel { Dock = DockStyle.Fill };
-        logPanel.Controls.Add(_log);
-        logPanel.Controls.Add(_progress);
-        root.Controls.Add(logPanel, 1, row);
-        root.SetColumnSpan(logPanel, 2);
-
-        // Every row sizes to its content except the log, which takes the remaining height.
-        root.RowCount = row + 1;
-        for (var i = 0; i < row; i++)
-        {
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        }
-
-        root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        Controls.Add(root);
-
-        // Docking runs over the children from the back of the z-order to the front, so the
-        // Fill panel has to be the front-most control: it is laid out last and takes what is
-        // left below the toolbar. Calling BringToFront on the toolbar instead would put the
-        // panel behind it and the toolbar would cover the first row of fields.
-        root.BringToFront();
-
-        AcceptButton = _convertButton;
-    }
-
-    private static Label Label(string text) => new()
-    {
-        Text = text,
-        AutoSize = true,
-        Anchor = AnchorStyles.Left,
-        TextAlign = ContentAlignment.MiddleLeft,
-    };
-
-    private static Button Button(string text, Action onClick)
-    {
-        var button = new Button { Text = text, AutoSize = true };
-        button.Click += (_, _) => onClick();
-        return button;
-    }
+    private void NewProject_Click(object? sender, EventArgs e) => NewProject();
+    private void OpenProject_Click(object? sender, EventArgs e) => OpenProject();
+    private void SaveProject_Click(object? sender, EventArgs e) => SaveProject(saveAs: false);
+    private void SaveProjectAs_Click(object? sender, EventArgs e) => SaveProject(saveAs: true);
+    private void BrowseDocx_Click(object? sender, EventArgs e) => BrowseDocx();
+    private void BrowseOutput_Click(object? sender, EventArgs e) => BrowseOutput();
+    private void BrowseHeader_Click(object? sender, EventArgs e) => BrowseContextIdHeader();
+    private void BrowseChmCopy_Click(object? sender, EventArgs e) => BrowseChmCopyPath();
+    private void BrowseTemplate_Click(object? sender, EventArgs e) => BrowseTemplate();
+    private void DetectHhc_Click(object? sender, EventArgs e) => DetectHhc();
+    private async void Convert_Click(object? sender, EventArgs e) => await RunConversionAsync();
 
     private void LoadDefaults()
     {
@@ -343,6 +176,7 @@ internal sealed class MainForm : Form
         _chmCopyPath.Text = settings.ChmCopyPath ?? string.Empty;
         _footer.Text = settings.Footer ?? HelpDocument.DefaultFooter;
         _hhcPath.Text = settings.HhcPath ?? HhcLocator.Locate() ?? string.Empty;
+        _openChm.Checked = settings.OpenChmOnFinish;
 
         if (string.IsNullOrEmpty(_hhcPath.Text))
         {
@@ -362,6 +196,7 @@ internal sealed class MainForm : Form
         ChmCopyPath = Blank(_chmCopyPath.Text),
         Footer = _footer.Text,
         HhcPath = _hhcPath.Text,
+        OpenChmOnFinish = _openChm.Checked,
     }.Save();
 
     private static string? Blank(string? value) =>
@@ -386,6 +221,7 @@ internal sealed class MainForm : Form
         _hhcPath.Text = project.HhcPath ?? string.Empty;
         _compileChm.Checked = project.CompileChm;
         _openOutput.Checked = project.OpenOutputOnFinish;
+        _openChm.Checked = project.OpenChmOnFinish;
 
         _projectPath = project.SourcePath;
         _savedProjectJson = CurrentProject().Serialize();
@@ -409,6 +245,7 @@ internal sealed class MainForm : Form
         HhcPath = Blank(_hhcPath.Text),
         CompileChm = _compileChm.Checked,
         OpenOutputOnFinish = _openOutput.Checked,
+        OpenChmOnFinish = _openChm.Checked,
     };
 
     /// <summary>
@@ -442,6 +279,7 @@ internal sealed class MainForm : Form
         _hhcPath.Text = HhcLocator.Locate() ?? string.Empty;
         _compileChm.Checked = true;
         _openOutput.Checked = false;
+        _openChm.Checked = false;
 
         _projectPath = null;
         _savedProjectJson = CurrentProject().Serialize();
@@ -540,6 +378,56 @@ internal sealed class MainForm : Form
         }
     }
 
+    /// <summary>Uses the current path, or its nearest existing parent, to open a picker.</summary>
+    private static string ExistingDialogDirectory(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return string.Empty;
+        }
+
+        try
+        {
+            var directory = Path.GetFullPath(path.Trim());
+            while (!Directory.Exists(directory))
+            {
+                directory = Path.GetDirectoryName(directory);
+                if (string.IsNullOrEmpty(directory))
+                {
+                    return string.Empty;
+                }
+            }
+            return directory;
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or IOException)
+        {
+            return string.Empty;
+        }
+    }
+
+    private static void InitializeFileDialog(FileDialog dialog, string currentPath)
+    {
+        dialog.RestoreDirectory = true;
+        dialog.InitialDirectory = ExistingDialogDirectory(currentPath);
+        if (string.IsNullOrWhiteSpace(currentPath) || Directory.Exists(currentPath.Trim()))
+        {
+            return;
+        }
+
+        try
+        {
+            var name = Path.GetFileName(currentPath.Trim());
+            if (!string.IsNullOrEmpty(name) && name.IndexOfAny(Path.GetInvalidFileNameChars()) < 0)
+            {
+                dialog.FileName = name;
+            }
+        }
+        catch (ArgumentException)
+        {
+            // Ignore an invalid, partially typed path when initializing the picker.
+        }
+    }
+
     /// <summary>
     /// Asks before throwing away edits. Returns true when it is safe to continue.
     /// </summary>
@@ -587,6 +475,7 @@ internal sealed class MainForm : Form
             Filter = "Documenti Word (*.docx)|*.docx|Tutti i file (*.*)|*.*",
             Title = "Seleziona il documento Word",
         };
+        InitializeFileDialog(dialog, _docxPath.Text);
 
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
@@ -607,7 +496,11 @@ internal sealed class MainForm : Form
 
     private void BrowseOutput()
     {
-        using var dialog = new FolderBrowserDialog { Description = "Seleziona la cartella di output" };
+        using var dialog = new FolderBrowserDialog
+        {
+            Description = "Seleziona la cartella di output",
+            SelectedPath = ExistingDialogDirectory(_outputDirectory.Text),
+        };
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
             _outputDirectory.Text = dialog.SelectedPath;
@@ -620,8 +513,8 @@ internal sealed class MainForm : Form
         {
             Filter = "File header (*.h)|*.h|Tutti i file (*.*)|*.*",
             Title = "Seleziona il file .h con le definizioni degli ID",
-            FileName = _contextIdHeaderPath.Text,
         };
+        InitializeFileDialog(dialog, _contextIdHeaderPath.Text);
 
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
@@ -643,6 +536,7 @@ internal sealed class MainForm : Form
             FileName = ChmProjectNames.NormalizeChmFileName(_chmFileName.Text),
             OverwritePrompt = false,
         };
+        InitializeFileDialog(dialog, _chmCopyPath.Text);
 
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
@@ -655,7 +549,7 @@ internal sealed class MainForm : Form
         using var dialog = new FolderBrowserDialog
         {
             Description = "Seleziona la cartella del template (contiene fixedtop.htm)",
-            SelectedPath = Directory.Exists(_templateDirectory.Text) ? _templateDirectory.Text : string.Empty,
+            SelectedPath = ExistingDialogDirectory(_templateDirectory.Text),
         };
 
         if (dialog.ShowDialog(this) == DialogResult.OK)
@@ -714,7 +608,8 @@ internal sealed class MainForm : Form
 
         // The fields are the project, so the conversion input is derived from the same
         // snapshot the file commands use; there is no second place where they could drift.
-        var options = CurrentProject().ToConversionOptions();
+        var project = CurrentProject();
+        var options = project.ToConversionOptions();
 
         _cancellation = new CancellationTokenSource();
         var token = _cancellation.Token;
@@ -727,6 +622,10 @@ internal sealed class MainForm : Form
             if (_openOutput.Checked)
             {
                 OpenInExplorer(result.OutputDirectory);
+            }
+            if (project.OpenChmOnFinish && result.Compilation.Success && result.ChmPath is not null)
+            {
+                OpenChm(result.ChmPath);
             }
         }
         catch (DocxUnreadableException ex)
@@ -746,6 +645,19 @@ internal sealed class MainForm : Form
             _cancellation.Dispose();
             _cancellation = null;
             SetBusy(false);
+        }
+    }
+
+    private void OpenChm(string path)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+        }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or
+                                   InvalidOperationException or IOException or UnauthorizedAccessException)
+        {
+            AppendLog("AVVISO: il CHM è stato compilato ma non è stato possibile aprirlo: " + ex.Message);
         }
     }
 
@@ -918,6 +830,7 @@ internal sealed class AppSettings
     public string? DocxPath { get; set; }
     public string? OutputDirectory { get; set; }
     public string? HhcPath { get; set; }
+    public bool OpenChmOnFinish { get; set; }
     public int PageLevel { get; set; } = BuildOptions.DefaultPageLevel;
 
     /// <summary>

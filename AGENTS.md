@@ -4,39 +4,23 @@ Contesto operativo per il repository Word2Chm.
 
 ## Ambiente
 
-Il .NET 8 SDK è installato in `/workspace/.dotnet` e non è nel `PATH`.
-`libicu` non è disponibile, quindi il runtime gira in invariant globalization:
-va impostato `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1`.
-
-Attenzione: l'ambiente viene azzerato periodicamente e `$HOME` non è stabile, quindi
-l'SDK va tenuto fuori da `$HOME` (in `/workspace/.dotnet`, che sopravvive al reset)
-e reinstallato con:
-
-```bash
-curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 8.0 --install-dir /workspace/.dotnet --no-path
-```
-
-```bash
-export PATH="/workspace/.dotnet:$PATH"
-export DOTNET_ROOT=/workspace/.dotnet
-export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-```
+Il progetto si sviluppa e si verifica su **Windows**, con PowerShell e un SDK .NET
+compatibile con il target .NET 8 installato e disponibile nel PATH.
+Non sono richieste variabili di ambiente per invariant globalization.
 
 ## Comandi
 
-```bash
-dotnet build Word2Chm.sln -c Release   # build completa
-dotnet test                            # test della pipeline
+```powershell
+dotnet build Word2Chm.sln -c Release
+dotnet test Word2Chm.sln -c Release
 ```
 
-I warning `NETSDK1188` sul locale `cs`/`de`/`it` ecc. provengono dalle risorse del
-pacchetto `Microsoft.TestPlatform.TestHost` e non sono problemi del codice:
-si filtrano con `grep -v NETSDK1188`.
+I test del compilatore usano `tests/Word2Chm.FakeHhc`, un eseguibile .NET costruito
+insieme ai test: non richiedono shell Unix né HTML Help Workshop installato.
 
 ## Vincoli di piattaforma
 
-- `src/Word2Chm.App` è WinForms (`net8.0-windows`). Compila su Linux grazie a
-  `EnableWindowsTargeting`, ma non può essere eseguito qui.
+- `src/Word2Chm.App` è WinForms (`net8.0-windows`) e si esegue su Windows.
 - La compilazione del `.chm` richiede `hhc.exe` (solo Windows). Senza di esso la
   pipeline genera comunque tutti i file di progetto.
 - **`hhc.exe` esce con codice 1 quando la compilazione riesce** (il suo flag interno
@@ -50,6 +34,15 @@ si filtrano con `grep -v NETSDK1188`.
 
 ## Note di progettazione
 
+- **Dimensione del testo CHM**: emettere `BodyFontSizePt` come valore letterale in
+  punti nel CSS per `body`, `#winchm_template_content` e `table`. MSHTML non supporta
+  `var(...)`; le tabelle nei modi documento legacy non ereditano sempre la dimensione
+  dal corpo. Anche le pagine senza skin devono includere il collegamento a `help.css`.
+- **Designer WinForms**: `MainForm.Designer.cs` contiene `InitializeComponent`, i
+  controlli, le proprietà di layout e i collegamenti agli eventi. Modificare la UI
+  dal Designer di Visual Studio; mantenere in `MainForm.cs` la logica applicativa.
+  Il costruttore senza argomenti inizializza solo i controlli: impostazioni, icone
+  esterne e progetto iniziale vengono caricati in `OnLoad`, escluso il design time.
 - **Ordine di docking in WinForms (barra strumenti vs pannello)**: il motore di layout
   percorre i figli **dallo sfondo verso la fronte** (`DefaultLayout.LayoutDockedControls`
   itera `for (i = Count - 1; i >= 0; i--)`), e l'indice 0 di `Controls` è la fronte
@@ -57,8 +50,8 @@ si filtrano con `grep -v NETSDK1188`.
   controllo `Dock = Fill` deve essere **in fronte** (indice 0) per essere disposto per
   ultimo e prendere lo spazio rimasto sotto la barra: con il pannello dietro la barra, il
   pannello viene disposto per primo con l'intera area e la barra (disegnata sopra) copre la
-  prima riga dei campi. In `MainForm` la barra è aggiunta per prima e il pannello è portato
-  in fronte con `root.BringToFront()`. Non serve invece alcun `BringToFront` sulla barra.
+  prima riga dei campi. In `InitializeComponent` il pannello `_root` viene aggiunto
+  prima della barra, così resta all'indice 0. Non serve alcun `BringToFront` sulla barra.
 - **Progetti `.w2c`**: i parametri della conversione si salvano in un file `.w2c`
   (`Word2Chm.Core.Project.ProjectFile`, JSON camelCase con `version`). Il file contiene
   **percorsi, non il documento**: si apre con "Apri..." o con il doppio click, e in quest'ultimo
@@ -75,10 +68,8 @@ si filtrano con `grep -v NETSDK1188`.
   snapshot che salva, quindi non esiste un secondo posto da cui possano divergere; le modifiche
   non salvate si confrontano serializzando il progetto (`HasUnsavedChanges`) e compaiono come
   `*` nel titolo.
-- **Invariant globalization**: `CultureInfo.GetCultures` e la normalizzazione
-  Unicode (`String.Normalize`) non sono affidabili in questo ambiente. Per gli
-  slug usare `Slugger.Deaccent`, che usa una mappa di accenti esplicita; per le
-  lingue usare la mappa LCID in `ChmProjectGenerator`.
+- **Slug e lingue**: conservare `Slugger.Deaccent` e la mappa LCID in
+  `ChmProjectGenerator` per mantenere stabili nomi dei file e codici lingua.
 - **ID di contesto**: l'utente scrive il simbolo nel titolo (`Titolo {#IDH_NOME}`) e
   fornisce con la GUI (`ContextIdHeaderPath`, campo "File ID (.h)") l'header C++ che
   definisce i numeri. Il `.h` è l'unica fonte dei valori: così un solo header serve
@@ -171,7 +162,10 @@ si filtrano con `grep -v NETSDK1188`.
 - **Titolo di pagina duplicato**: lo skin mostra `($title$)` nell'header, quindi il
   primo blocco della pagina (l'`HeadingBlock` che l'ha aperta) va saltato e sostituito
   con uno `<span id="...">` vuoto, perché sommario e indice continuano a linkare quell'ancora.
-  Si confronta la *posizione* (`index == 0`), non `page.Anchor`, che non è popolato.
+  Si confronta la *posizione* (`index == 0`). `HelpPage.Anchor` identifica il titolo
+  iniziale: sommario, breadcrumb e indice puntano al solo file per quel titolo,
+  evitando lo scroll di MSHTML verso uno span vuoto. I sottotitoli e i titoli
+  accorpati a una pagina precedente mantengono invece il frammento `#anchor`.
 - **Icone del sommario**: senza `ImageNumber` esplicito hh.exe usa il punto interrogativo
   per le foglie. `1` = libro/contenitore, `11` = documento/foglia (confermato da `.hhc`
   reali Doxygen). Va emesso sia nel `.hhc` sia nel `.hhk` (anche per i nodi padre).
@@ -209,11 +203,6 @@ si filtrano con `grep -v NETSDK1188`.
   Precedenza effettiva: paragrafo → stile carattere (toggle, oppure off se `<w:i w:val="0"/>`)
   → `<w:i>`/`<w:i w:val="0"/>` diretto sul run. `w:rPr` dentro `w:pPr` non è ereditato
   dai run, quindi non va usato come corsivo del paragrafo.
-- **Come verificare la formattazione senza Word**: LibreOffice è installato e genera un
-  render di riferimento. Serve `LD_LIBRARY_PATH=/usr/lib/libreoffice/program` (senza,
-  `soffice.bin` non trova `libreglo.so`) e un profilo utente dedicato:
-  `LD_LIBRARY_PATH=/usr/lib/libreoffice/program soffice.bin -env:UserInstallation=file:///tmp/louser --headless --convert-to html --outdir /tmp/lorender sample/SkipperQt_IT.docx`.
-  Nel render, `<em class="western"><span style="font-style: normal">` = corsivo annullato.
-  Confrontare i modelli sui paragrafi del documento reale (non su casi inventati) è ciò
-  che ha smascherato il toggle: 62% di accordo per la lettura solo-run, 97% per lo stile
-  come verità, 99,6% per il toggle.
+- **Verifica della formattazione**: confrontare il documento reale
+  `sample/SkipperQt_IT.docx` in Word su Windows con l'HTML generato e la guida nel
+  visualizzatore CHM. Verificare in particolare corsivo, tabelle, immagini e collegamenti.

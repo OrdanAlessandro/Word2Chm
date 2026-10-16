@@ -29,7 +29,6 @@ public static class CssGenerator
             --border: #d0d7de;
             --accent: #0969da;
             --code-bg: #f6f8fa;
-            --body-font-size: __BODY_FONT_SIZE__pt;
         }
 
         * { box-sizing: border-box; }
@@ -38,16 +37,15 @@ public static class CssGenerator
             margin: 0;
             padding: 0;
             font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-            font-size: var(--body-font-size);
+            font-size: __BODY_FONT_SIZE__pt;
             line-height: 1.55;
             color: var(--fg);
             background: var(--bg);
         }
 
-        /* The WinCHM skin sizes its content div through an id selector, which outranks the
-           body rule above. The size is repeated here so the configured value also applies
-           inside the skin. */
-        #winchm_template_content { font-size: var(--body-font-size); }
+        /* HTML Help's MSHTML engine does not support CSS custom properties. Use a literal
+           point size, including on the skin's content div to override its own size. */
+        #winchm_template_content { font-size: __BODY_FONT_SIZE__pt; }
 
         .page {
             max-width: 900px;
@@ -78,6 +76,8 @@ public static class CssGenerator
         li.level-3 { margin-left: 3.6em; }
 
         table {
+            /* Legacy document modes do not reliably inherit the body's size into tables. */
+            font-size: __BODY_FONT_SIZE__pt;
             border-collapse: collapse;
             width: 100%;
             margin: 1em 0;

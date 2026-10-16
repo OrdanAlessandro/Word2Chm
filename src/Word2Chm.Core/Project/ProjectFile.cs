@@ -60,6 +60,9 @@ public sealed class ProjectFile
     /// <summary>Whether the output folder is opened when the conversion finishes.</summary>
     public bool OpenOutputOnFinish { get; set; }
 
+    /// <summary>Open the newly compiled guide in the Windows help viewer.</summary>
+    public bool OpenChmOnFinish { get; set; }
+
     private static readonly JsonSerializerOptions WriteOptions = new()
     {
         WriteIndented = true,
